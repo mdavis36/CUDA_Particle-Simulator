@@ -30,7 +30,7 @@ bool Simulation::init()
 	//This is where all simulation object will be initialized to set up the simulation
 	glm::vec3 ranPos;
 
-	for (int i = 0; i < 100000; i++) {
+	for (int i = 0; i < 10000; i++) {
 		ranPos.x = -10 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (20)));
 		ranPos.z = -10 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (20)));
 		ranPos.y = 3 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (10)));
