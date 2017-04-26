@@ -27,6 +27,9 @@
     <ClCompile Include="integrator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="viewController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="simulation.h">
@@ -36,6 +39,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Integrator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="viewController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

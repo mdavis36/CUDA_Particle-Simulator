@@ -150,11 +150,13 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="particle.cpp" />
     <ClCompile Include="simulation.cpp" />
+    <ClCompile Include="viewController.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Integrator.h" />
     <ClInclude Include="particle.h" />
     <ClInclude Include="simulation.h" />
+    <ClInclude Include="viewController.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

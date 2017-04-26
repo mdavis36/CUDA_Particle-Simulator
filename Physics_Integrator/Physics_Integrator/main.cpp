@@ -74,8 +74,8 @@ void glut_DisplayFunc() {
 	viewDir.z = (float)-MV[10];
 	Right = glm::cross(viewDir, Up);
 	
-	sim.render();
 	sim.update(delta_time);
+	sim.render();
 
 	glutSwapBuffers();
 }
@@ -100,6 +100,14 @@ void glut_keyboardFunc(unsigned char key, int x, int y) {
 	if (key == 's') {
 		sim.start();
 	}
+
+	if (key == 'r') {
+		sim.reset();
+	}
+
+	if (key == 'p') {
+		sim.pause();
+	}
 }
 
 int main(int argc, char** argv) {
@@ -110,7 +118,7 @@ int main(int argc, char** argv) {
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	glutInitWindowSize(DISPLAY_WIDTH, DISPLAY_HEIGHT);
 	glutCreateWindow(DISPLAY_TITLE);
-	glPointSize(2);
+	glPointSize(3);
 	cout << "PASS\n";
 
 

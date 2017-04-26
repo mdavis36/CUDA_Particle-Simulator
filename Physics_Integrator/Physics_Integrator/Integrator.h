@@ -18,7 +18,7 @@ using namespace std;
 class Integrator {
 public:
 	Integrator();
-	void integrate_verlet(glm::vec3 *pos, glm::vec3 *last_pos, float ts, float m, glm::vec3 force);
+	void integrate_verlet(glm::vec3 *pos, glm::vec3 *last_pos, double ts, float m, glm::vec3 force);
 	void integrate_euler();
 };
 

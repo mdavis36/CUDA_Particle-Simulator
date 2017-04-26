@@ -10,60 +10,64 @@
 #ifndef SIMULATION_H
 #define SIMULATION_H
 
+// Class Dependencies
 #include "particle.h"
 
+// OpenGL Imports
 #include<glew.h>
 #include<glm.hpp>
 
+// Other Library
 #include <Windows.h>
 #include <vector>
+
+//Simulation States
 const static int NOT_INITIALIZED = -1;
 const static int INITIALIZED = 0;
 const static int RUNNING = 1;
 const static int PAUSED = 2;
 const static int FINISHED = 3;
-class Simulation {
 
-	Integrator integrator;
-
-	const int GRID_SIZE = 10;	
-
-	float step_time = 0.0f;
-	float time_modifier = 1.0f;
-
-	int simulation_state = NOT_INITIALIZED;
-
-	glm::vec3 f_gravity = glm::vec3(0.0f,-9.81,0.0f);
-
+class Simulation 
+{
 public:
 	Simulation();
 	~Simulation();
 
-
-	bool init();
-	void update(float rdt);
-	void render();
-
+	// Simulation Control Functions
 	bool start();
 	bool pause();
 	bool end();
+	bool reset();
 
+	// Simulation Step Functions
+	void update(float rdt);
+	void render();
+
+	// Getter Functions
 	double getSimFrameTime();
 	int getSimCurrState();
 
 private:
-	//Simulation time
-	LARGE_INTEGER sim_start_time;
-	LARGE_INTEGER sim_end_time;
+	// Simulation Environment Variables
+	const int GRID_SIZE = 20;
+	glm::vec3 a_gravity = glm::vec3(0.0f, -9.81, 0.0f);
 
+	// Simulation Time Variables
 	LARGE_INTEGER frequency;       
 	LARGE_INTEGER t1;
 	LARGE_INTEGER t2;           
 	double frame_time;
+	double sim_time_accu;
 
+	// Simulation Variables
+	const int PARTICLE_COUNT = 6000;
+	int sim_state = NOT_INITIALIZED;
+	Integrator integrator;
 	vector<Particle*> particles;
+
+	bool init();
+	void clean();
 };
-
-
 
 #endif

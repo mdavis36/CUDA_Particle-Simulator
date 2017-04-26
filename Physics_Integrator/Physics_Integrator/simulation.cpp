@@ -6,18 +6,26 @@
 * This is the primary simulation class, it handles simulation time, updates, simulation state and
 * rendering of the simulation environment and simulation objects
 */
+
 #include <iostream>
 using namespace std;
 
 #include "simulation.h"
 
+
+// ********************************************************************************
+// *                               -- PUBLIC --                                   *
+// ********************************************************************************
+
+// -------------------- Simulation Constructors and Destructor --------------------
+
 Simulation::Simulation()
 {
-	if (!init()) {
+	if (!init()) 
+	{
 		cout << "Failed to initialize simulation.\n";
 		exit(-4);
 	}
-	simulation_state = INITIALIZED;
 }
 
 Simulation::~Simulation()
@@ -25,49 +33,98 @@ Simulation::~Simulation()
 	particles.clear();
 }
 
-bool Simulation::init()
+
+// -------------------- Simulation Control Functions --------------------
+
+bool Simulation::start()
 {
-	//This is where all simulation object will be initialized to set up the simulation
-	glm::vec3 ranPos;
+	if (sim_state == INITIALIZED) 
+	{
+		cout << "Starting Simulation ..." << endl;
+		sim_state = RUNNING;
 
-	for (int i = 0; i < 10000; i++) {
-		ranPos.x = -10 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (20)));
-		ranPos.z = -10 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (20)));
-		ranPos.y = 3 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (10)));
-		particles.push_back(new Particle(ranPos));
+		sim_time_accu = 0;
+
+		// Get ticks per second.
+		QueryPerformanceFrequency(&frequency);
+		// Start timer.
+		QueryPerformanceCounter(&t1);
+		
+		return true;
 	}
-
-	return true;
+	return false;
 }
+
+bool Simulation::pause()
+{
+	if (sim_state == PAUSED) {
+		sim_state = RUNNING;
+		QueryPerformanceCounter(&t1);
+		return true;
+	}
+	else if (sim_state == RUNNING) {
+		sim_state = PAUSED;
+		return true;
+	}
+	return false;
+}
+
+bool Simulation::end()
+{
+	if (sim_state >= RUNNING && sim_state != FINISHED) {
+		cout << "Simulation has ended.\n";
+		cout << "Simulation ran for : " << sim_time_accu << endl;
+	}
+	sim_state = FINISHED;
+	return false;
+}
+
+bool Simulation::reset()
+{
+	end();
+	cout << "Resetting Simulation...\n";
+	clean();
+	init();
+	return false;
+}
+
+
+// -------------------- Simulation Step Functions --------------------
 
 void Simulation::update(float rdt)
 {
-	if (simulation_state == RUNNING) {
-		//Using high res. counter
+	if (sim_state == RUNNING)
+	{
+		// Using high res. counter.
 		QueryPerformanceCounter(&t2);
-		// compute and print the elapsed time in millisec
+
+		// Compute the elapsed time in seconds.
 		frame_time = ((t2.QuadPart - t1.QuadPart) * 1000.0 / frequency.QuadPart) / 1000.0;
 		t1 = t2;
+		sim_time_accu += frame_time;
 
-		// update will be the call for each simulation time step. This is where each object will be updated
-		bool isSimOver = true;
-		for (Particle* p : particles) {
-			p->update((double)frame_time, glm::vec3(0.0f, 0.0f, 0.0f), &integrator);
-
-			if (p->pos.y > 0) {
-				isSimOver = false;
-			}
+		// Update every particle and check to see if all particles have hit the floor.
+		bool checkSimOver = true;
+		for (Particle* p : particles)
+		{
+			p->update(frame_time, glm::vec3(0.0f, 0.0f, 0.0f), &integrator);
+			if (p->pos.y > 0) checkSimOver = false;
 		}
-		if (isSimOver) end();
+
+		if (checkSimOver) {
+			end();
+			//reset();
+			//play();
+		}
 	}
 }
 
 void Simulation::render()
 {
-	if (simulation_state >= INITIALIZED) {
-		//this will handle the simulation rendering 
+	if (sim_state >= INITIALIZED)
+	{
+		// Draw the floor grid.
 		glBegin(GL_LINES);
-
 		for (int i = -GRID_SIZE; i <= GRID_SIZE; i++)
 		{
 			if (i == 0)
@@ -83,45 +140,58 @@ void Simulation::render()
 		}
 		glEnd();
 
-		//Render all simulation objects here. 
-		for (Particle* p : particles) {
+		// Render all simulation objects here. 
+		for (Particle* p : particles)
+		{
 			p->draw();
 		}
 	}
 }
 
-bool Simulation::start()
+
+// -------------------- Getter Functions --------------------
+
+double Simulation::getSimFrameTime() { return frame_time; }
+
+int Simulation::getSimCurrState() {	return sim_state; }
+
+
+// ********************************************************************************
+
+
+
+// ********************************************************************************
+// *                               -- Private --                                  *
+// ********************************************************************************
+
+
+bool Simulation::init()
 {
-	// get ticks per second
-	QueryPerformanceFrequency(&frequency);
-	// start timer
-	QueryPerformanceCounter(&t1);
-	sim_start_time = t1;
+	// This is where all simulation object will be initialized to set up the simulation.
+	glm::vec3 ranPos;
 
-	simulation_state = RUNNING;
+	for (int i = 0; i < PARTICLE_COUNT; i++)
+	{
+		ranPos.x = -GRID_SIZE + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (2 * GRID_SIZE)));
+		ranPos.z = -GRID_SIZE + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (2 * GRID_SIZE)));
+		ranPos.y = 2 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (6)));
+		particles.push_back(new Particle(ranPos));
+	}
 
-	return false;
+	//particles.push_back(new Particle(glm::vec3(0.0f, 500.0f, 0.0f)));
+
+	sim_state = INITIALIZED;
+	return true;
 }
 
-bool Simulation::pause()
+
+void Simulation::clean()
 {
-	return false;
+	// De-allocate all of the particles from the vector.
+	while (!particles.empty()) {
+		delete particles.back();
+		particles.pop_back();
+	}
 }
 
-bool Simulation::end()
-{
-	QueryPerformanceCounter(&sim_end_time);
-	cout << "Simulation ran for : " << ((sim_end_time.QuadPart - sim_start_time.QuadPart) * 1000.0 / frequency.QuadPart) / 1000 << " seconds\n";
-	simulation_state = FINISHED;
-	return false;
-}
-
-double Simulation::getSimFrameTime()
-{
-	return frame_time;
-}
-
-int Simulation::getSimCurrState()
-{
-	return simulation_state;
-}
+// ********************************************************************************

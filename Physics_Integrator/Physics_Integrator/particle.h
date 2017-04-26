@@ -9,6 +9,7 @@
 #ifndef PARTICLE_H
 #define PARTICLE_H
 
+// OpenGL Imports
 #include <glm.hpp>
 #include "Integrator.h"
 
@@ -21,20 +22,21 @@ public:
 	Particle(glm::vec3 p);
 	~Particle();
 
-	bool init(glm::vec3 p);
-	void update(float time_step, glm::vec3 global_forces, Integrator *i);
+	// Particle Step Functions
+	void update(double time_step, glm::vec3 global_forces, Integrator *i);
 	void draw();
 
+	// Particle 
 	glm::vec3 last_pos;
 	glm::vec3 pos;
 
 	glm::vec3 force;
 
-	float mass;
 	glm::vec3 vel;
 	glm::vec3 acc;
+	float mass;
 private:
-
+	bool init(glm::vec3 p);
 };
 
 #endif
