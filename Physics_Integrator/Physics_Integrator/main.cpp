@@ -6,12 +6,12 @@
 * This is the main file of the Physics integrator program.
 */
 
-// include standard libraries
+// Include STandard Libs
 #include <iostream>
 #include <string>
 using namespace std;
 
-// include glut and openGL dependencies
+// OpenGL Imports
 #include <glew.h>
 #include <wglew.h>
 #include <GL/freeglut.h>
@@ -20,7 +20,7 @@ using namespace std;
 #include "simulation.h"
 Simulation sim;
 
-// Display
+// Display Variables
 const int DISPLAY_WIDTH = 1024;
 const int DISPLAY_HEIGHT = 960;
 char DISPLAY_TITLE[256] = "Physics Integrator : Verlet";
