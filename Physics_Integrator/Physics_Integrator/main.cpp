@@ -27,9 +27,7 @@ char DISPLAY_TITLE[256] = "Physics Integrator : Verlet";
 
 // Time Variables
 float start_time = 0.0f;
-float target_time_step = 1 / 60.0f;
 float new_time = 0.0f;
-float curr_time = 0.0f;
 float delta_time = 0.0f;
 
 // Frame Variables

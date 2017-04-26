@@ -1,4 +1,4 @@
-﻿Build started 4/26/2017 12:18:12 AM.
+﻿Build started 4/26/2017 12:27:48 AM.
      1>Project "C:\Users\micha\Documents\My Projects\particle-simulations\Physics_Integrator\Physics_Integrator\Physics_Integrator.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /IC:\freeGlut\freeglut\include /I"C:\GLEW\glew-2.0.0\include\GL" /IC:\GLM\glm\glm /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\" /Fd"Debug\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt simulation.cpp
@@ -13,4 +13,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:01.35
+Time Elapsed 00:00:01.71
