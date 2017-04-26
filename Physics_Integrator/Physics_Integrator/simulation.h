@@ -48,6 +48,9 @@ public:
 	double getSimFrameTime();
 	int getSimCurrState();
 
+	// Print Functions
+	void printControls();
+
 private:
 	// Simulation Environment Variables
 	const int GRID_SIZE = 20;

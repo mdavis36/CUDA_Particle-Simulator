@@ -9,9 +9,7 @@
 
 #include <iostream>
 using namespace std;
-
 #include "simulation.h"
-
 
 // ********************************************************************************
 // *                               -- PUBLIC --                                   *
@@ -40,7 +38,7 @@ bool Simulation::start()
 {
 	if (sim_state == INITIALIZED) 
 	{
-		cout << "Starting Simulation ..." << endl;
+		cout << "Starting Simulation of "<< PARTICLE_COUNT << " falling particles." << endl;
 		sim_state = RUNNING;
 
 		sim_time_accu = 0;
@@ -59,11 +57,13 @@ bool Simulation::pause()
 {
 	if (sim_state == PAUSED) {
 		sim_state = RUNNING;
+		cout << "Simulation Running.\n";
 		QueryPerformanceCounter(&t1);
 		return true;
 	}
 	else if (sim_state == RUNNING) {
 		sim_state = PAUSED;
+		cout << "Simulation Paused at : " << sim_time_accu << " seconds\n";
 		return true;
 	}
 	return false;
@@ -73,7 +73,7 @@ bool Simulation::end()
 {
 	if (sim_state >= RUNNING && sim_state != FINISHED) {
 		cout << "Simulation has ended.\n";
-		cout << "Simulation ran for : " << sim_time_accu << endl;
+		cout << "Simulation ran for : " << sim_time_accu << "\n\n";
 	}
 	sim_state = FINISHED;
 	return false;
@@ -82,7 +82,8 @@ bool Simulation::end()
 bool Simulation::reset()
 {
 	end();
-	cout << "Resetting Simulation...\n";
+	cout << "Resetting Simulation.\n";
+	printControls();
 	clean();
 	init();
 	return false;
@@ -156,6 +157,16 @@ double Simulation::getSimFrameTime() { return frame_time; }
 int Simulation::getSimCurrState() {	return sim_state; }
 
 
+// -------------------- GPrint Functions --------------------
+
+void Simulation::printControls()
+{
+	cout << "---------- Simulation Controls ----------\n";
+	cout << "\t s : Start the simulation.\n";
+	cout << "\t p : Pause and Un-Pause the simulation.\n";
+	cout << "\t r : Reset the simulation.\n\n";
+}
+
 // ********************************************************************************
 
 
@@ -163,7 +174,6 @@ int Simulation::getSimCurrState() {	return sim_state; }
 // ********************************************************************************
 // *                               -- Private --                                  *
 // ********************************************************************************
-
 
 bool Simulation::init()
 {
@@ -174,7 +184,7 @@ bool Simulation::init()
 	{
 		ranPos.x = -GRID_SIZE + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (2 * GRID_SIZE)));
 		ranPos.z = -GRID_SIZE + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (2 * GRID_SIZE)));
-		ranPos.y = 2 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (6)));
+		ranPos.y = 5 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (8)));
 		particles.push_back(new Particle(ranPos));
 	}
 

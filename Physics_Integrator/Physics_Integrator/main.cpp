@@ -17,8 +17,8 @@ using namespace std;
 #include <GL/freeglut.h>
 #pragma comment(lib, "glew32.lib")
 
-// my includes
 #include "simulation.h"
+Simulation sim;
 
 // Display
 const int DISPLAY_WIDTH = 1024;
@@ -32,19 +32,25 @@ float new_time = 0.0f;
 float curr_time = 0.0f;
 float delta_time = 0.0f;
 
+// Frame Variables
 int frame_count = 0;
 float fps = 0.0f;
 
-//Simulation
-Simulation sim;
-
 // Camera
+int oldX = 0, oldY = 0;
 float rX = 15, rY = 0;
+int state = 1;
+int selected_index = -1;
 float dist = -18;
 GLdouble MV[16];
 GLint viewport[4];
 GLdouble P[16];
 glm::vec3 Up = glm::vec3(0, 1, 0), viewDir, Right;
+
+
+// ********************************************************************************
+// *                           -- GLUT FUNCTIONS --                               *
+// ********************************************************************************
 
 void glut_CloseFunc() {}
 
@@ -110,8 +116,88 @@ void glut_keyboardFunc(unsigned char key, int x, int y) {
 	}
 }
 
-int main(int argc, char** argv) {
+void OnMouseDown(int button, int s, int x, int y)
+{
+	if (s == GLUT_DOWN)
+	{
+		oldX = x;
+		oldY = y;
+		int window_y = (DISPLAY_WIDTH - y);
+		float norm_y = float(window_y) / float(DISPLAY_HEIGHT / 2.0);
+		int window_x = x;
+		float norm_x = float(window_x) / float(DISPLAY_WIDTH / 2.0);
 
+		float winZ = 0;
+		glReadPixels(x, DISPLAY_HEIGHT - y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &winZ);
+		if (winZ == 1)
+			winZ = 0;
+		double objX = 0, objY = 0, objZ = 0;
+		gluUnProject(window_x, window_y, winZ, MV, P, viewport, &objX, &objY, &objZ);
+		glm::vec3 pt(objX, objY, objZ);
+		size_t i = 0;
+		/*for (i = 0; i<total_points; i++) {
+			if (glm::distance(X[i], pt)<0.1) {
+				selected_index = i;
+				printf("Intersected at %d\n", i);
+				break;
+			}
+		}*/
+	}
+
+	if (button == GLUT_MIDDLE_BUTTON)
+		state = 0;
+	else
+		state = 1;
+
+	if (s == GLUT_UP) {
+		selected_index = -1;
+		glutSetCursor(GLUT_CURSOR_INHERIT);
+	}
+}
+
+void OnMouseMove(int x, int y)
+{
+	if (selected_index == -1) {
+		if (state == 0)
+			dist *= (1 + (y - oldY) / 60.0f);
+		else
+		{
+			rY += (x - oldX) / 5.0f;
+			rX += (y - oldY) / 5.0f;
+		}
+	}
+	/*else {
+		float delta = 1500 / abs(dist);
+		float valX = (x - oldX) / delta;
+		float valY = (oldY - y) / delta;
+		if (abs(valX)>abs(valY))
+			glutSetCursor(GLUT_CURSOR_LEFT_RIGHT);
+		else
+			glutSetCursor(GLUT_CURSOR_UP_DOWN);
+
+		X[selected_index].x += Right[0] * valX;
+		float newValue = X[selected_index].y + Up[1] * valY;
+		if (newValue>0)
+			X[selected_index].y = newValue;
+		X[selected_index].z += Right[2] * valX + Up[2] * valY;
+		X_last[selected_index] = X[selected_index];
+	}*/
+	oldX = x;
+	oldY = y;
+
+	glutPostRedisplay();
+}
+
+// ********************************************************************************
+
+
+
+// ********************************************************************************
+// *                           -- INIT FUNCTIONS --                               *
+// ********************************************************************************
+
+void initializeGLUT(int argc, char** argv) 
+{
 	// Initilize GLUT(Graphics Library Utility Toolkit) and create a windowed display to render to.
 	cout << "Initializing GLUT Window : ";
 	glutInit(&argc, argv);
@@ -129,9 +215,13 @@ int main(int argc, char** argv) {
 	glutCloseFunc(glut_CloseFunc);
 	glutReshapeFunc(glut_ReshapeFunc);
 	glutKeyboardFunc(glut_keyboardFunc);
+	glutMouseFunc(OnMouseDown);
+	glutMotionFunc(OnMouseMove);
 	cout << "PASS\n";
+}
 
-
+void initializeGLEW() 
+{
 	// Initialize GLEW (Graphics Library Extension Wrangler) this is what links OpenGL. Check this is successful.
 	GLenum err = glewInit();
 	if (err != GLEW_OK) {
@@ -140,13 +230,28 @@ int main(int argc, char** argv) {
 		exit(-3);
 	}
 	cout << "GLEW Initilized Successfully.\n";
+}
 
+// ********************************************************************************
+
+
+
+// ********************************************************************************
+// *                               -- MAIN --                                   *
+// ********************************************************************************
+
+int main(int argc, char** argv) {
+	initializeGLUT(argc, argv);
+	initializeGLEW();
+	
+	sim.printControls();
 
 	// Call glutMainLoop() initializes and runs the main loop of the program.
-	cout << "Calling glutMainLoop() ...\n";
 	glutMainLoop();
 
 	cout << "Goodbye.\n";
 	system("PAUSE");
 	return 0;
 }
+
+// ********************************************************************************
