@@ -113,9 +113,9 @@ void Simulation::update(float rdt)
 		}
 
 		if (checkSimOver) {
-			end();
-			//reset();
-			//play();
+			//end();
+			reset();
+			start();
 		}
 	}
 }
@@ -124,6 +124,9 @@ void Simulation::render()
 {
 	if (sim_state >= INITIALIZED)
 	{
+		plane.draw();
+				
+		/*
 		// Draw the floor grid.
 		glBegin(GL_LINES);
 		for (int i = -GRID_SIZE; i <= GRID_SIZE; i++)
@@ -140,6 +143,7 @@ void Simulation::render()
 			glVertex3f((float)GRID_SIZE, 0, (float)i);
 		}
 		glEnd();
+		*/
 
 		// Render all simulation objects here. 
 		for (Particle* p : particles)
@@ -189,6 +193,8 @@ bool Simulation::init()
 	}
 
 	//particles.push_back(new Particle(glm::vec3(0.0f, 500.0f, 0.0f)));
+
+	plane = Plane(10.0f);
 
 	sim_state = INITIALIZED;
 	return true;

@@ -12,6 +12,7 @@
 
 // Class Dependencies
 #include "particle.h"
+#include "plane.h"
 
 // OpenGL Imports
 #include<glew.h>
@@ -53,7 +54,7 @@ public:
 
 private:
 	// Simulation Environment Variables
-	const int GRID_SIZE = 20;
+	const int GRID_SIZE = 5;
 	glm::vec3 a_gravity = glm::vec3(0.0f, -9.81, 0.0f);
 
 	// Simulation Time Variables
@@ -68,6 +69,8 @@ private:
 	int sim_state = NOT_INITIALIZED;
 	Integrator integrator;
 	vector<Particle*> particles;
+	Plane plane;
+
 
 	bool init();
 	void clean();

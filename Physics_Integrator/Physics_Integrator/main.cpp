@@ -142,7 +142,7 @@ void OnMouseDown(int button, int s, int x, int y)
 		}*/
 	}
 
-	if (button == GLUT_MIDDLE_BUTTON)
+	if (button == GLUT_RIGHT_BUTTON)
 		state = 0;
 	else
 		state = 1;
