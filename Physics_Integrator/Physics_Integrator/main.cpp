@@ -202,7 +202,7 @@ void initializeGLUT(int argc, char** argv)
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	glutInitWindowSize(DISPLAY_WIDTH, DISPLAY_HEIGHT);
 	glutCreateWindow(DISPLAY_TITLE);
-	glPointSize(3);
+	glPointSize(5);
 	cout << "PASS\n";
 
 

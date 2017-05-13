@@ -69,9 +69,8 @@ private:
 	int sim_state = NOT_INITIALIZED;
 	Integrator integrator;
 	vector<Particle*> particles;
-	Plane plane;
-
-
+	Plane* plane;
+	
 	bool init();
 	void clean();
 };

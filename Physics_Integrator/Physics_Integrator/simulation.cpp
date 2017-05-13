@@ -123,13 +123,34 @@ void Simulation::render()
 {
 	if (sim_state >= INITIALIZED)
 	{
-		plane.draw();
+		plane->draw();
 
 		// Render all simulation objects here. 
 		for (Particle* p : particles)
 		{
 			p->draw();
 		}
+
+		//draw orientation key
+		glBegin(GL_LINES);
+
+		//Red is Positive X
+		glColor3f(1.0f, 0.0f, 0.0f);
+		glVertex3f(0, 0, 0);
+		glVertex3f(1, 0, 0);
+
+		//Green is positive Y
+		glColor3f(0.0f, 1.0f, 0.0f);
+		glVertex3f(0, 0, 0);
+		glVertex3f(0, 1, 0);
+
+		//Blue is posiotive Z
+		glColor3f(0.0f, 0.0f, 1.0f);
+		glVertex3f(0, 0, 0);
+		glVertex3f(0, 0, 1);
+
+		glEnd();
+
 	}
 }
 
@@ -165,17 +186,17 @@ bool Simulation::init()
 	//integrator.setIType(INTEGRATE_VERLET);
 	integrator.setIType(INTEGRATE_EULER);
 
-	plane = Plane(20.0f);
-	///*
+	plane = new Plane(glm::vec3(10.0f, 0.0f, 0.0f), glm::vec3(-1.0f, 1.0f, 0.0f), 20.0f);
+	
 	glm::vec3 ranPos;
 	for (int i = 0; i < PARTICLE_COUNT; i++)
 	{
-		ranPos.x = -plane.width + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (2 * plane.width)));
-		ranPos.z = -plane.width + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (2 * plane.width)));
+		ranPos.x = -plane->width + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (2 * plane->width)));
+		ranPos.z = -plane->width + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (2 * plane->width)));
 		ranPos.y = 5 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (8)));
 		particles.push_back(new Particle(ranPos));
 	}
-	//*/
+	
 
 	//particles.push_back(new Particle(glm::vec3(0.0f, 500.0f, 0.0f)));
 

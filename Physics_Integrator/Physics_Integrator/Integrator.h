@@ -18,16 +18,13 @@ enum iType {
 	INTEGRATE_VERLET
 };
 
-//class Particle;
+//class Integrator
 class Integrator {
 public:
-	
 	Integrator();
 	Integrator(iType type);
-	void integrate_euler(vec3 * pos, vec3 * last_pos, double ts, vec3 * vel, vec3 * last_vel, vec3 acc);
-	void integrate_verlet(vec3 *pos, vec3 *last_pos, double ts, float m, vec3 acc);
-	//void integrate_verlet_velocity();
-	void integrate_euler();
+	void integrate_euler(vec3 * next_pos, vec3 * pos, double ts, vec3 * vel, vec3 * last_vel, vec3 acc);
+	void integrate_verlet(vec3 * next_pos,vec3 *pos, vec3 *last_pos, double ts, float m, vec3 acc);
 	iType getIType();
 	void setIType(iType type);
 	void printIType();

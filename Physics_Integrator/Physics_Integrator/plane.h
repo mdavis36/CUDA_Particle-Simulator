@@ -4,16 +4,18 @@
 
 #include<glm.hpp>
 #include<glew.h>
-
+using namespace glm;
 
 class Plane 
 {
 public:
 	Plane();
-	Plane(float width);
+	Plane(glm::vec3 centre, glm::vec3 normal, float width);
 	~Plane();
 
 	void draw();
+	float distTest(vec3 p);
+
 
 	float width;
 
