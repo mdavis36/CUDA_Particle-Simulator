@@ -39,6 +39,7 @@ bool Simulation::start()
 	if (sim_state == INITIALIZED) 
 	{
 		cout << "Starting Simulation of "<< PARTICLE_COUNT << " falling particles." << endl;
+		integrator.printIType();
 		sim_state = RUNNING;
 
 		sim_time_accu = 0;
@@ -113,9 +114,7 @@ void Simulation::update(float rdt)
 		}
 
 		if (checkSimOver) {
-			//end();
-			reset();
-			start();
+			end();
 		}
 	}
 }
@@ -125,25 +124,6 @@ void Simulation::render()
 	if (sim_state >= INITIALIZED)
 	{
 		plane.draw();
-				
-		/*
-		// Draw the floor grid.
-		glBegin(GL_LINES);
-		for (int i = -GRID_SIZE; i <= GRID_SIZE; i++)
-		{
-			if (i == 0)
-				glColor3f(0.0f, 1.0f, 1.0f);
-			else
-				glColor3f(0.5f, 0.5f, 0.5f);
-
-			glVertex3f((float)i, 0, (float)-GRID_SIZE);
-			glVertex3f((float)i, 0, (float)GRID_SIZE);
-
-			glVertex3f((float)-GRID_SIZE, 0, (float)i);
-			glVertex3f((float)GRID_SIZE, 0, (float)i);
-		}
-		glEnd();
-		*/
 
 		// Render all simulation objects here. 
 		for (Particle* p : particles)
@@ -182,19 +162,22 @@ void Simulation::printControls()
 bool Simulation::init()
 {
 	// This is where all simulation object will be initialized to set up the simulation.
-	glm::vec3 ranPos;
+	//integrator.setIType(INTEGRATE_VERLET);
+	integrator.setIType(INTEGRATE_EULER);
 
+	plane = Plane(20.0f);
+	///*
+	glm::vec3 ranPos;
 	for (int i = 0; i < PARTICLE_COUNT; i++)
 	{
-		ranPos.x = -GRID_SIZE + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (2 * GRID_SIZE)));
-		ranPos.z = -GRID_SIZE + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (2 * GRID_SIZE)));
+		ranPos.x = -plane.width + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (2 * plane.width)));
+		ranPos.z = -plane.width + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (2 * plane.width)));
 		ranPos.y = 5 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (8)));
 		particles.push_back(new Particle(ranPos));
 	}
+	//*/
 
 	//particles.push_back(new Particle(glm::vec3(0.0f, 500.0f, 0.0f)));
-
-	plane = Plane(10.0f);
 
 	sim_state = INITIALIZED;
 	return true;

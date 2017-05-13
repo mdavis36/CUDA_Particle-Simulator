@@ -10,12 +10,26 @@
 
 Integrator::Integrator()
 {
+	type = INTEGRATE_EULER;
 }
 
-void Integrator::integrate_verlet(glm::vec3 *pos, glm::vec3 *last_pos, double ts, float m, glm::vec3 acc) {
+Integrator::Integrator(iType type)
+{
+	this->type = type;
+}
+
+void Integrator::integrate_euler(vec3 * pos, vec3 * last_pos, double ts, vec3 *vel, vec3 *last_vel, vec3 acc)
+{
+	*last_vel = *vel;
+	*vel = *last_vel + (acc * (float)ts);
+	*last_pos = *pos;
+	*pos = *last_pos + ((*last_vel + *vel) / 2.0f) * (float)ts;
+}
+
+void Integrator::integrate_verlet(vec3 *pos, vec3 *last_pos, double ts, float m, vec3 acc) {
 	// Verlet integration
 	// Save the current position into a buffer
-	glm::vec3 buffer = *pos;
+	vec3 buffer = *pos;
 
 	// Perform the verlet integartion calculation
 	// Note : Future performance increase could be done by calculating t*t/m prior to integration
@@ -31,4 +45,30 @@ void Integrator::integrate_verlet(glm::vec3 *pos, glm::vec3 *last_pos, double ts
 void Integrator::integrate_euler()
 {
 	//do some math shit here
+}
+
+iType Integrator::getIType()
+{
+	return type;
+}
+
+void Integrator::setIType(iType type)
+{
+	this->type = type;
+}
+
+void Integrator::printIType()
+{
+	std::cout << "Integrating with ";
+	switch (type) {
+	case INTEGRATE_EULER:
+		std::cout << "Euler.\n";
+		break;
+	case INTEGRATE_VERLET:
+		std::cout << "Verlet.\n";
+		break;
+	default:
+		std::cout << "INTEGRATOR UNDEFINED.\n";
+		break;
+	}
 }

@@ -15,11 +15,14 @@ public:
 
 	void draw();
 
+	float width;
+
 private:
 	glm::vec3 centre;
 	glm::vec3 normal;
 
-	float width;
+
+	
 
 
 };

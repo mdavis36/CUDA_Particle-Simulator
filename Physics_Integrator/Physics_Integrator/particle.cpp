@@ -55,11 +55,24 @@ void Particle::update(double time_step, glm::vec3 global_forces, Integrator *i)
 	acc = glm::vec3(0.0f, -9.81f, 0.0f);
 	//acc += global_forces / mass;
 
-	i->integrate_verlet(&pos, &last_pos, time_step, mass, acc);
+	switch (i->getIType()) {
+	case INTEGRATE_EULER:		
+		i->integrate_euler(&pos, &last_pos, time_step, &vel, &last_vel, acc);
+		break;
+	case INTEGRATE_VERLET:
+		i->integrate_verlet(&pos, &last_pos, time_step, mass, acc);
+		break;
+	default:
+		cout << "ERROR: Incompatible Integrator for particle.\n";
+		break;
+	}
+
+
+	
 
 	// for this simulation make the particle rest on the ground.
 	if (pos.y < 0)
-		pos.y = -pos.y;
+		pos.y = 0;// -pos.y;
 }
 
 void Particle::draw()
@@ -82,6 +95,5 @@ bool Particle::init(glm::vec3 p)
 	pos = p;
 	last_pos = pos;
 	mass = 1000.0f;
-
 	return true;
 }
