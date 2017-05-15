@@ -1,5 +1,38 @@
 #include "plane.h"
 
+glm::quat Plane::RotationBetweenVectors(vec3 start, vec3 dest) {
+	start = normalize(start);
+	dest = normalize(dest);
+
+	float cosTheta = dot(start, dest);
+	vec3 rotationAxis;
+
+	if (cosTheta < -1 + 0.001f) {
+		// special case when vectors in opposite directions:
+		// there is no "ideal" rotation axis
+		// So guess one; any will do as long as it's perpendicular to start
+		rotationAxis = cross(vec3(0.0f, 0.0f, 1.0f), start);
+		if (length2(rotationAxis) < 0.01) // bad luck, they were parallel, try again!
+			rotationAxis = cross(vec3(1.0f, 0.0f, 0.0f), start);
+
+		rotationAxis = normalize(rotationAxis);
+		return angleAxis(180.0f, rotationAxis);
+	}
+
+	rotationAxis = cross(start, dest);
+
+	float s = sqrt((1 + cosTheta) * 2);
+	float invs = 1 / s;
+
+	return quat(
+		s * 0.5f,
+		rotationAxis.x * invs,
+		rotationAxis.y * invs,
+		rotationAxis.z * invs
+	);
+
+}
+
 Plane::Plane()
 {
 	centre = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -7,11 +40,11 @@ Plane::Plane()
 	this->width = 20;
 }
 
-Plane::Plane(glm::vec3 centre, glm::vec3 normal, float width)
+Plane::Plane(glm::vec3 c, glm::vec3 n, float w)
 {
-	this->centre = centre;
-	this->normal = normalize(normal);
-	this->width = width;
+	centre = c;
+	normal = normalize(n);
+	width = w;
 }
 
 Plane::~Plane()
@@ -23,46 +56,53 @@ void Plane::draw()
 	// Draw the floor grid.
 	glPushMatrix();
 	
+	// Translate 
 	glTranslatef(centre.x, centre.y, centre.z);
 
-	float xy_theta = acosf(dot(vec2(normal.x, normal.y), vec2(0.0f, 1.0f))) * (180 / 3.14f);
-	float xz_theta = acosf(dot(vec2(normal.x, normal.z), vec2(0.0f, 0.0f))) * (180 / 3.14f);
-	//float yz_theta = acosf(dot(vec2(normal.y, normal.z), vec2(1.0f, 0.0f))) * (180 / 3.14f);
+	// Do Rotation
+	vec3 up = vec3(0.0f, 1.0f, 0.0f);
+	if (!(abs(normal.y) == 1 && up.y == 1)) 
+	{
+		vec2 n_proj_zx = normalize(vec2(normal.z, normal.x));
+		vec2 up_proj_zx = normalize(vec2(up.x, -up.y));
 
-	glRotatef(xy_theta, 0.0f, 0.0f, 1.0f);
-	glRotatef(xz_theta, 0.0f, 1.0f, 0.0f);
-	//glRotatef(yz_theta, 1.0f, 0.0f, 0.0f);
+		float zx_theta = acosf(dot(n_proj_zx, up_proj_zx)) * (180 / 3.14f);
+		normal.x < 0 ? zx_theta = 90 - zx_theta : zx_theta = 90 - zx_theta;
+		normal.z < 0 ? true : zx_theta = 180 - zx_theta;
 
-	//glRotatef(180, 0, normal.y, normal.z);
+		float xy_theta = acosf(dot(normal, up)) * (180 / 3.14f);
+		normal.y < 0 ? xy_theta = 180 - xy_theta : xy_theta = 180 - xy_theta;
 
-	//glRotatef(acosf(dot(normal, vec3(0.0f, 1.0f, 0.0f))) * (180.0 / 3.14f), 1.0f, 1.0f, 1.0f);
+		std::cout << "----------------------------------\n";
+		std::cout << "normal : x : " << normal.x << "  y : " << normal.y << "  z : " << normal.z << "\n";
+		std::cout << "zx_theta : " << zx_theta << "\n";
+		std::cout << "xy_theta : " << xy_theta << "\n";
+
+		glRotatef(zx_theta, 0.0f, 1.0f, 0.0f);
+		glRotatef(xy_theta, 1.0f, 0.0f, 0.0f);
+	}
+
 	glBegin(GL_LINES);
 
-	for (int i = -width; i <= width; i++)
+	for (float i = -width; i <= width; i += 1)
 	{
 		if (i == 0)
 			glColor3f(0.0f, 1.0f, 1.0f);
 		else
-			glColor3f(0.5f, 0.5f, 0.5f);
-		
-		
-
+			glColor3f(0.5f, 0.5f, 0.5f);		
+		///*
 		glVertex3f((float)i, 0, (float)-width);
 		glVertex3f((float)i, 0, (float)width);
 
 		glVertex3f((float)-width, 0, (float)i);
 		glVertex3f((float)width, 0, (float)i);
-		/*
-		glVertex3f((float)i, (-normal.x * i - normal.z * i - d) * 1.0f / normal.z, (float)-width);
-		glVertex3f((float)i, (-normal.x * i - normal.z * i - d) * 1.0f / normal.z, (float)width);
-
-		glVertex3f((float)-width, (-normal.x * i - normal.z * i - d) * 1.0f / normal.z, (float)i);
-		glVertex3f((float)width, (-normal.x * i - normal.z * i - d) * 1.0f / normal.z, (float)i);
-		*/
-		//float theta
-		
+		//*/		
 	}
-	
+
+	glColor3f(1.0f, 0.0f, 0.0f);
+	glVertex3f(0.0f, 0.0f, 0.0f);
+	glVertex3f(0,0,-width);
+
 	glEnd();
 	glPopMatrix();
 
@@ -71,11 +111,6 @@ void Plane::draw()
 	glVertex3f(centre.x, centre.y, centre.z);
 	glVertex3f(centre.x + normal.x, centre.y + normal.y, centre.z + normal.z);
 	glEnd();
-
-	//glBegin(GL_POINT);
-	//glVertex3f(centre.x + normal.x, centre.y + normal.y, centre.z + normal.z);
-	//glEnd();
-
 }
 
 float Plane::distTest(vec3 p)

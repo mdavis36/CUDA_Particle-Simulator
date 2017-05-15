@@ -123,9 +123,13 @@ void Simulation::render()
 {
 	if (sim_state >= INITIALIZED)
 	{
-		plane->draw();
 
 		// Render all simulation objects here. 
+		for (Plane* pl : planes) 
+		{
+			pl->draw();
+		}
+		
 		for (Particle* p : particles)
 		{
 			p->draw();
@@ -186,19 +190,20 @@ bool Simulation::init()
 	//integrator.setIType(INTEGRATE_VERLET);
 	integrator.setIType(INTEGRATE_EULER);
 
-	plane = new Plane(glm::vec3(10.0f, 0.0f, 0.0f), glm::vec3(-1.0f, 1.0f, 0.0f), 20.0f);
-	
+	//planes.push_back(new Plane(glm::vec3(10.0f, 0.0f, 0.0f), glm::vec3(-1.0f, 1.0f, 0.0f), 20.0f));
+	planes.push_back(new Plane(glm::vec3(0.0f, 3.0f, 0.0f), glm::vec3(1.0f, 2.0f, 3.0f), 5.0f));
+	/*
 	glm::vec3 ranPos;
 	for (int i = 0; i < PARTICLE_COUNT; i++)
 	{
-		ranPos.x = -plane->width + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (2 * plane->width)));
-		ranPos.z = -plane->width + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (2 * plane->width)));
+		ranPos.x = -planes[0]->width + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (2 * planes[0]->width)));
+		ranPos.z = -planes[0]->width + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (2 * planes[0]->width)));
 		ranPos.y = 5 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (8)));
 		particles.push_back(new Particle(ranPos));
 	}
-	
+	*/
 
-	//particles.push_back(new Particle(glm::vec3(0.0f, 500.0f, 0.0f)));
+	particles.push_back(new Particle(glm::vec3(0.0f, 50.0f, 0.0f)));
 
 	sim_state = INITIALIZED;
 	return true;
@@ -211,6 +216,10 @@ void Simulation::clean()
 	while (!particles.empty()) {
 		delete particles.back();
 		particles.pop_back();
+	}
+	while (!planes.empty()) {
+		delete planes.back();
+		planes.pop_back();
 	}
 }
 
