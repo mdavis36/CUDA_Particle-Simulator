@@ -27,12 +27,11 @@ public:
 	glm::vec3 last_pos;
 	glm::vec3 pos;
 	glm::vec3 next_pos;
-
-
-	glm::vec3 force;
-
+	
 	glm::vec3 last_vel;
 	glm::vec3 vel;
+	
+	glm::vec3 force;
 	glm::vec3 acc;
 	float mass;
 private:
