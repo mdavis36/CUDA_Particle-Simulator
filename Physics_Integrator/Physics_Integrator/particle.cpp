@@ -71,8 +71,8 @@ void Particle::update(double time_step, glm::vec3 global_forces, Integrator *i)
 	
 
 	// for this simulation make the particle rest on the ground.
-	if (next_pos.y < 0)
-		next_pos.y = 0;// -pos.y;
+	//if (next_pos.y < 0)
+	//	next_pos.y = 0;// -pos.y;
 }
 
 void Particle::draw()

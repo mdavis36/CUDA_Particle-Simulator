@@ -73,11 +73,6 @@ void Plane::draw()
 		float xy_theta = acosf(dot(normal, up)) * (180 / 3.14f);
 		normal.y < 0 ? xy_theta = 180 - xy_theta : xy_theta = 180 - xy_theta;
 
-		std::cout << "----------------------------------\n";
-		std::cout << "normal : x : " << normal.x << "  y : " << normal.y << "  z : " << normal.z << "\n";
-		std::cout << "zx_theta : " << zx_theta << "\n";
-		std::cout << "xy_theta : " << xy_theta << "\n";
-
 		glRotatef(zx_theta, 0.0f, 1.0f, 0.0f);
 		glRotatef(xy_theta, 1.0f, 0.0f, 0.0f);
 	}

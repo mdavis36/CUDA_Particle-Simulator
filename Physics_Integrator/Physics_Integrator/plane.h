@@ -21,12 +21,11 @@ public:
 	void draw();
 	float distTest(vec3 p);
 
-
 	float width;
-
-private:
 	glm::vec3 centre;
 	glm::vec3 normal;
+private:
+	
 	glm::quat RotationBetweenVectors(vec3 start, vec3 dest);
 
 };

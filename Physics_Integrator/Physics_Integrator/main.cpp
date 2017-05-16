@@ -202,9 +202,8 @@ void initializeGLUT(int argc, char** argv)
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	glutInitWindowSize(DISPLAY_WIDTH, DISPLAY_HEIGHT);
 	glutCreateWindow(DISPLAY_TITLE);
-	glPointSize(5);
+	glPointSize(3);
 	cout << "PASS\n";
-
 
 	// Declare the GLUT functions for basic operation and events of the window.
 	cout << "Declaring GLUT Functions : ";

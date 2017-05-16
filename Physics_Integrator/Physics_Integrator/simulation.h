@@ -55,7 +55,7 @@ public:
 private:
 	// Simulation Environment Variables
 	const int GRID_SIZE = 5;
-	glm::vec3 a_gravity = glm::vec3(0.0f, -9.81, 0.0f);
+	glm::vec3 a_gravity = glm::vec3(0.0f, -3, 0.0f);
 
 	// Simulation Time Variables
 	LARGE_INTEGER frequency;       
@@ -71,8 +71,15 @@ private:
 	vector<Particle*> particles;
 	vector<Plane*> planes;
 	
+	// Private Simulation Functions
 	bool init();
+	void drawOrientationKey();
 	void clean();
+
+	//collisions
+	float distFromPlane(vec3 pos, Plane* plane);
+	vector<Plane*> getCollisions(Particle* p, vector<Plane*> planes);
+	vec3 reflect(vec3 pos, Plane* plane);
 };
 
 #endif

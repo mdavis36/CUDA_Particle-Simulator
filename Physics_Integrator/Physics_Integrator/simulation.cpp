@@ -106,16 +106,26 @@ void Simulation::update(float rdt)
 		sim_time_accu += frame_time;
 
 		// Update every particle and check to see if all particles have hit the floor.
-		bool checkSimOver = true;
+		//bool checkSimOver = true;
 		for (Particle* p : particles)
 		{
 			p->update(frame_time, glm::vec3(0.0f, 0.0f, 0.0f), &integrator);
-			if (p->pos.y > 0) checkSimOver = false;
+			
+			//// ----- starting collision -----
+			vec3 curr_pos = p->pos;
+			vector<Plane*> col_planes = getCollisions(p, planes);
+			if (col_planes.size() > 0)
+			{
+				//cout << "---------------------------" << "\n";
+				//cout << "Num of cols : " << col_planes.size() << "\n";
+			}
+			// ----- end collision -----
+			//if (p->pos.y > 0) checkSimOver = false;
 		}
 
-		if (checkSimOver) {
-			end();
-		}
+		//if (checkSimOver) {
+		//	end();
+		//}
 	}
 }
 
@@ -123,7 +133,6 @@ void Simulation::render()
 {
 	if (sim_state >= INITIALIZED)
 	{
-
 		// Render all simulation objects here. 
 		for (Plane* pl : planes) 
 		{
@@ -134,27 +143,7 @@ void Simulation::render()
 		{
 			p->draw();
 		}
-
-		//draw orientation key
-		glBegin(GL_LINES);
-
-		//Red is Positive X
-		glColor3f(1.0f, 0.0f, 0.0f);
-		glVertex3f(0, 0, 0);
-		glVertex3f(1, 0, 0);
-
-		//Green is positive Y
-		glColor3f(0.0f, 1.0f, 0.0f);
-		glVertex3f(0, 0, 0);
-		glVertex3f(0, 1, 0);
-
-		//Blue is posiotive Z
-		glColor3f(0.0f, 0.0f, 1.0f);
-		glVertex3f(0, 0, 0);
-		glVertex3f(0, 0, 1);
-
-		glEnd();
-
+		//drawOrientationKey();
 	}
 }
 
@@ -187,12 +176,20 @@ void Simulation::printControls()
 bool Simulation::init()
 {
 	// This is where all simulation object will be initialized to set up the simulation.
-	//integrator.setIType(INTEGRATE_VERLET);
-	integrator.setIType(INTEGRATE_EULER);
+	integrator.setIType(INTEGRATE_VERLET);
+	//integrator.setIType(INTEGRATE_EULER);
 
 	//planes.push_back(new Plane(glm::vec3(10.0f, 0.0f, 0.0f), glm::vec3(-1.0f, 1.0f, 0.0f), 20.0f));
-	planes.push_back(new Plane(glm::vec3(0.0f, 3.0f, 0.0f), glm::vec3(1.0f, 2.0f, 3.0f), 5.0f));
-	/*
+	//planes.push_back(new Plane(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 2.0f, 3.0f), 5.0f));
+
+	planes.push_back(new Plane(glm::vec3(10.0f, 0.0f, 0.0f), glm::vec3(-1.0f, 0.0f, 0.0f), 10.0f));
+	planes.push_back(new Plane(glm::vec3(-10.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 0.0f), 10.0f));
+	planes.push_back(new Plane(glm::vec3(0.0f, 10.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f), 10.0f));
+	planes.push_back(new Plane(glm::vec3(0.0f, -10.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 10.0f));
+	//planes.push_back(new Plane(glm::vec3(0.0f, 0.0f, 10.0f), glm::vec3(0.0f, 0.0f, -1.0f), 10.0f));
+	planes.push_back(new Plane(glm::vec3(0.0f, 0.0f, -10.0f), glm::vec3(0.0f, 0.0f, 1.0f), 10.0f));
+
+	///*
 	glm::vec3 ranPos;
 	for (int i = 0; i < PARTICLE_COUNT; i++)
 	{
@@ -201,12 +198,35 @@ bool Simulation::init()
 		ranPos.y = 5 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (8)));
 		particles.push_back(new Particle(ranPos));
 	}
-	*/
+	//*/
 
-	particles.push_back(new Particle(glm::vec3(0.0f, 50.0f, 0.0f)));
+	//particles.push_back(new Particle(glm::vec3(0.0f, 0.0f, 0.0f)));
 
 	sim_state = INITIALIZED;
 	return true;
+}
+
+void Simulation::drawOrientationKey()
+{
+	//draw orientation key
+	glBegin(GL_LINES);
+
+	//Red is Positive X
+	glColor3f(1.0f, 0.0f, 0.0f);
+	glVertex3f(0, 0, 0);
+	glVertex3f(1, 0, 0);
+
+	//Green is positive Y
+	glColor3f(0.0f, 1.0f, 0.0f);
+	glVertex3f(0, 0, 0);
+	glVertex3f(0, 1, 0);
+
+	//Blue is posiotive Z
+	glColor3f(0.0f, 0.0f, 1.0f);
+	glVertex3f(0, 0, 0);
+	glVertex3f(0, 0, 1);
+
+	glEnd();
 }
 
 
@@ -221,6 +241,34 @@ void Simulation::clean()
 		delete planes.back();
 		planes.pop_back();
 	}
+}
+
+float Simulation::distFromPlane(vec3 pos, Plane * plane)
+{
+	return dot(plane->normal, (pos - plane->centre));
+}
+
+vector<Plane*> Simulation::getCollisions(Particle * p, vector<Plane*> planes)
+{
+	vector<Plane*> col_planes;
+	for (Plane* pl : planes) {
+		float t1 = distFromPlane(p->pos, pl);
+		//
+		//
+		float t3 = distFromPlane(p->next_pos, pl);
+		if (t1 > 0 && t3 <= 0)
+		{
+			col_planes.push_back(pl);
+			p->pos = reflect(p->pos, pl);
+			p->next_pos = reflect(p->next_pos, pl);
+		}
+	}
+	return col_planes;
+}
+
+vec3 Simulation::reflect(vec3 pos, Plane * plane)
+{
+	return pos + 2 * (-distFromPlane(pos, plane) / dot(plane->normal, plane->normal)) * plane->normal;
 }
 
 // ********************************************************************************
