@@ -1,1 +1,6 @@
-﻿
+﻿  simulation.cpp
+c:\users\micha\documents\my projects\particle-simulations\physics_integrator\physics_integrator\simulation.cpp(115): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\micha\documents\my projects\particle-simulations\physics_integrator\physics_integrator\simulation.cpp(297): warning C4305: 'initializing': truncation from 'int' to 'float'
+c:\users\micha\documents\my projects\particle-simulations\physics_integrator\physics_integrator\simulation.cpp(363): warning C4715: 'Simulation::getSign': not all control paths return a value
+  Physics_Integrator.vcxproj -> C:\Users\micha\Documents\My Projects\particle-simulations\Physics_Integrator\Debug\Physics_Integrator.exe
+  Physics_Integrator.vcxproj -> C:\Users\micha\Documents\My Projects\particle-simulations\Physics_Integrator\Debug\Physics_Integrator.pdb (Partial PDB)

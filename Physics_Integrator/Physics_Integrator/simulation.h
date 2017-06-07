@@ -21,6 +21,7 @@
 // Other Library
 #include <Windows.h>
 #include <vector>
+#include <limits.h>
 
 //Simulation States
 const static int NOT_INITIALIZED = -1;
@@ -65,7 +66,7 @@ private:
 	double sim_time_accu;
 
 	// Simulation Variables
-	const int PARTICLE_COUNT = 6000;
+	const int PARTICLE_COUNT = 20;
 	int sim_state = NOT_INITIALIZED;
 	Integrator integrator;
 	vector<Particle*> particles;
@@ -77,9 +78,17 @@ private:
 	void clean();
 
 	//collisions
-	float distFromPlane(vec3 pos, Plane* plane);
+	float distFromPlane(const vec3 pos, const Plane* plane);
 	vector<Plane*> getCollisions(Particle* p, vector<Plane*> planes);
-	vec3 reflect(vec3 pos, Plane* plane);
+	vec3 reflect(const vec3 pos, const Plane* plane);
+	
+	Plane * getClosestCollisionPlane(const Particle * proj_p, const Particle * orig_p, const vector<Plane*> planes);
+	float getCollisionTimeFromStartOfTimeStep(const Particle * p, const Plane * pl, const float t_step);
+	float getCollisionFrac(const Particle * p, const Plane * pl);
+	Particle projectParticleAtSubTimeStep(const Particle * p, const Plane * pl, const float t_step_frac);
+
+	int getSign(float val);
+
 };
 
 #endif

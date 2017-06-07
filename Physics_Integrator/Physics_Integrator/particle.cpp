@@ -68,8 +68,6 @@ void Particle::update(double time_step, glm::vec3 global_forces, Integrator *i)
 	}
 
 
-	
-
 	// for this simulation make the particle rest on the ground.
 	//if (next_pos.y < 0)
 	//	next_pos.y = 0;// -pos.y;
@@ -95,6 +93,6 @@ bool Particle::init(glm::vec3 p)
 	pos = p;
 	last_pos = p;
 	next_pos = p;
-	mass = 1000.0f;
+	mass = 1.0f;
 	return true;
 }

@@ -25,8 +25,6 @@ public:
 	glm::vec3 centre;
 	glm::vec3 normal;
 private:
-	
-	glm::quat RotationBetweenVectors(vec3 start, vec3 dest);
 
 };
 
