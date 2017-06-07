@@ -86,17 +86,33 @@ Error:
     return cudaStatus;
 }
 
-__global__ void findMinValue(int *result, const int *arr)
+__global__ void dev_findMaxValue(int *g_idata, int *g_odata, unsigned int size)
 {
-	int x = blockIdx.x * blockDim.x + threadIdx.x;
-	
-	if (arr[x] > *result) *result = arr[x];
+	extern __shared__ int sdata[];
+
+	unsigned int tid = threadIdx.x;
+	unsigned int i = blockIdx.x * blockDim.x + threadIdx.x;
+
+	sdata[tid] = g_idata[i];
+	__syncthreads();
+
+	for (unsigned int s = 1; s < blockDim.x; s *= 2)
+	{
+		if (tid % (2 * s) == 0 && i < size)
+		{
+			if (sdata[tid] < sdata[tid + s]) sdata[tid] = sdata[tid + s];
+		}
+			
+		__syncthreads();
+	}
+
+	if (tid == 0) g_odata[blockIdx.x] = sdata[0];
 }
 
-cudaError_t findMinValue(int *result, const int *arr, unsigned int size)
+cudaError_t findMaxValue(int *i_arr, int *o_arr, unsigned int size, unsigned int block_size, unsigned int grid_size)
 {
-	int *dev_result = 0;
-	int *dev_arr = 0;
+	int *dev_i_arr = 0;
+	int *dev_o_arr = 0;
 	cudaError_t cudaStatus;
 
 	// Choose which GPU to run on, change this on a multi-GPU system.
@@ -106,35 +122,33 @@ cudaError_t findMinValue(int *result, const int *arr, unsigned int size)
 		goto Error;
 	}
 
-	cudaStatus = cudaMalloc((void**)&dev_result, size * sizeof(int));
+	cudaStatus = cudaMalloc((void**)&dev_i_arr, size * sizeof(int));
 	if (cudaStatus != cudaSuccess) {
 		fprintf(stderr, "cudaMalloc failed!");
 		goto Error;
 	}
 
-	cudaStatus = cudaMalloc((void**)&dev_arr, size * sizeof(int));
+	cudaStatus = cudaMalloc((void**)&dev_o_arr, size * sizeof(int));
 	if (cudaStatus != cudaSuccess) {
 		fprintf(stderr, "cudaMalloc failed!");
 		goto Error;
 	}
 
 	// Copy input vectors from host memory to GPU buffers.
-	cudaStatus = cudaMemcpy(dev_result, result, sizeof(int), cudaMemcpyHostToDevice);
+	cudaStatus = cudaMemcpy(dev_i_arr, i_arr, size * sizeof(int), cudaMemcpyHostToDevice);
 	if (cudaStatus != cudaSuccess) {
 		fprintf(stderr, "cudaMemcpy failed!");
 		goto Error;
 	}
 
-	cudaStatus = cudaMemcpy(dev_arr, arr, size * sizeof(int), cudaMemcpyHostToDevice);
+	cudaStatus = cudaMemcpy(dev_o_arr, o_arr, size * sizeof(int), cudaMemcpyHostToDevice);
 	if (cudaStatus != cudaSuccess) {
 		fprintf(stderr, "cudaMemcpy failed!");
 		goto Error;
 	}
 
-	unsigned int block_size = 512;
-	unsigned int grid_size = size / block_size + 1;
 	// Launch a kernel on the GPU with one thread for each element.
-	findMinValue<< <1, size >> >(dev_result, dev_arr);
+	dev_findMaxValue<<<grid_size, block_size, sizeof(int) * block_size>>>(dev_i_arr, dev_o_arr, size);
 
 	// Check for any errors launching the kernel
 	cudaStatus = cudaGetLastError();
@@ -152,15 +166,15 @@ cudaError_t findMinValue(int *result, const int *arr, unsigned int size)
 	}
 
 	// Copy output vector from GPU buffer to host memory.
-	cudaStatus = cudaMemcpy(result, dev_result, sizeof(int), cudaMemcpyDeviceToHost);
+	cudaStatus = cudaMemcpy(o_arr, dev_o_arr, size * sizeof(int), cudaMemcpyDeviceToHost);
 	if (cudaStatus != cudaSuccess) {
 		fprintf(stderr, "cudaMemcpy failed!");
 		goto Error;
 	}
 
 Error:
-	cudaFree(dev_result);
-	cudaFree(dev_arr);
+	cudaFree(dev_i_arr);
+	cudaFree(dev_o_arr);
 
 	return cudaStatus;
 }
