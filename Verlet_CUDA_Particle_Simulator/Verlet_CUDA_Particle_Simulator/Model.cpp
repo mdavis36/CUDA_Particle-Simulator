@@ -2,8 +2,7 @@
 
 Model::Model()
 {
-	_model_matrix_loc = 0;
-	_view_matrix_loc = 0;
+	_pvm_matrix_loc = 0;
 }
 
 bool Model::init()
@@ -40,18 +39,21 @@ bool Model::init()
 		cout << "Error Loading Shader 0" << endl;
 		return false;
 	}
-	// Create Programs
+	glUseProgram(programs[0]);
 
+	
+	p.init();
+
+	_pvm_matrix_loc = glGetUniformLocation(programs[0], "_pvm_matrix");
 
 	_projection_matrix = frustum(-0.1, 0.1, -0.1, 0.1, 0.1, 20.0);
-	vec3 eye = vec3(5.0, 5.0, 5.0);
+	vec3 eye = vec3(2.0, 7.0, 10.0);
 	vec3 aim = vec3(0.0, 0.0, 0.0);
 	vec3 up = vec3(0.0, 1.0, 0.0);
 	_view_matrix = lookAt(eye, aim, up);
 	//update(0.0, 0.0); //initializes the model_matrix
 
 	// Initialize Model objects
-
 	return true;
 }
 
@@ -59,6 +61,13 @@ void Model::draw()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	_model_matrix = mat4(1.0);
+
+
+	_pvm_matrix = _projection_matrix * _view_matrix * _model_matrix;
+	glUniformMatrix4fv(_pvm_matrix_loc, 1, GL_FALSE, value_ptr(_pvm_matrix));
+	
+	p.draw();
 
 	glFlush();
 }

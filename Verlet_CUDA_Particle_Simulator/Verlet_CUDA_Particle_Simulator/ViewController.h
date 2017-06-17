@@ -5,6 +5,7 @@
 #include <SDL.h>
 
 #include "Model.h"
+#include <thread>
 
 #include <iostream>
 using namespace std;
@@ -22,12 +23,21 @@ private:
 	bool _quit;
 
 	Model m;
+	vec3 p = normalize(vec3(243, 27, 227));
 
 	bool init();
 	void setAttributes();
 	void display();
 	void handleEvents(SDL_Event e);
 	void cleanup();
+
+	void cc(vec3 c)
+	{
+		glClearColor(c.x, c.y, c.z, 1.0);
+		glClear(GL_COLOR_BUFFER_BIT);
+		SDL_GL_SwapWindow(_sdl_window);
+	}
+
 public:
 
 	ViewController();

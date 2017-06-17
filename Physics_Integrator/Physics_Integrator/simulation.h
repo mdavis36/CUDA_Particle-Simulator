@@ -66,7 +66,7 @@ private:
 	double sim_time_accu;
 
 	// Simulation Variables
-	const int PARTICLE_COUNT = 20;
+	const int PARTICLE_COUNT = 2000;
 	int sim_state = NOT_INITIALIZED;
 	Integrator integrator;
 	vector<Particle*> particles;

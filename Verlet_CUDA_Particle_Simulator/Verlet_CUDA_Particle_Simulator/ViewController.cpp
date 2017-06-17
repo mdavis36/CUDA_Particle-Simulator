@@ -29,6 +29,7 @@ bool ViewController::init()
 		cout << "Failed to create SDl GL Context.\n";
 		return false;
 	}
+
 	return true;
 }
 
@@ -44,6 +45,8 @@ void ViewController::setAttributes()
 void ViewController::display()
 {
 	// Draw the model here
+	m.draw();
+	SDL_GL_SwapWindow(_sdl_window);
 }
 
 void ViewController::handleEvents(SDL_Event e)
@@ -80,6 +83,14 @@ void ViewController::handleEvents(SDL_Event e)
 				glClear(GL_COLOR_BUFFER_BIT);
 				SDL_GL_SwapWindow(_sdl_window);
 				break;
+			case SDLK_p:
+				glClearColor(p.x, p.y, p.z, 1.0);
+				glClear(GL_COLOR_BUFFER_BIT);
+				SDL_GL_SwapWindow(_sdl_window);
+			case SDLK_y:
+				glClearColor(1.0, 1.0, 0.0, 1.0);
+				glClear(GL_COLOR_BUFFER_BIT);
+				SDL_GL_SwapWindow(_sdl_window);
 			default:
 				break;
 			}
@@ -109,12 +120,34 @@ void ViewController::run()
 		return;
 	}
 
-	glClearColor(0.0, 0.0, 0.0, 1.0);
+	glClearColor(0.1, 0.1, 0.1, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT);
 	SDL_GL_SwapWindow(_sdl_window);
-
+	//int count = 0;
 	do
 	{
+		/*
+		switch (count % 5)
+		{
+		case 0:
+			cc(vec3(1.0, 0.0, 0.0));
+			break;
+		case 1:
+			cc(vec3(0.0, 1.0, 0.0));
+			break;
+		case 2:
+			cc(vec3(0.0, 0.0, 1.0));
+			break;
+		case 3:
+			cc(vec3(1.0, 1.0, 0.0));
+			break;
+		case 4:
+			cc(p);
+			break;
+		}
+		*/
+		//count++;
+		//this_thread::sleep_for(chrono::milliseconds(50));
 		display();
 		handleEvents(_event);
 	} while (!_quit);

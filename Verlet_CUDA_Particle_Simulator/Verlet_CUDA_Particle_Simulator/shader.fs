@@ -1,9 +1,9 @@
 #version 420 core
 
-in vec4 _in_color;
+in vec4 _vertex_color;
 out vec4 _out_color;
 
 void main()
 {
-	_out_color = _in_color;
+	_out_color = _vertex_color;
 }

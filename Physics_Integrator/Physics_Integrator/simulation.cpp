@@ -116,19 +116,19 @@ void Simulation::update(float rdt)
 			Particle proj_p = *p;
 			Plane * col_plane = getClosestCollisionPlane(&proj_p, p, planes);
 			while (col_plane != nullptr) {
-				cout << "Collision!\n";
+				//cout << "Collision!\n";
 
 				float col_frac = getCollisionFrac(&proj_p, col_plane);
-				cout << "col_frac : " << col_frac << "\n";
-				cout << "proj_p.pos.y : " << proj_p.pos.y << "proj_p.next_pos.y : " << proj_p.next_pos.y << "\n";
-				cout << "projecting about plane\n";
+				//cout << "col_frac : " << col_frac << "\n";
+				//cout << "proj_p.pos.y : " << proj_p.pos.y << "proj_p.next_pos.y : " << proj_p.next_pos.y << "\n";
+				//cout << "projecting about plane\n";
 				proj_p = projectParticleAtSubTimeStep(&proj_p, col_plane, col_frac);
-				cout << "proj_p.pos.y : " << proj_p.pos.y << "proj_p.last_pos.y : " << proj_p.last_pos.y << "\n";
-				cout << "subframetime : " << sub_frame_time << endl;
+				//cout << "proj_p.pos.y : " << proj_p.pos.y << "proj_p.last_pos.y : " << proj_p.last_pos.y << "\n";
+				//cout << "subframetime : " << sub_frame_time << endl;
 				sub_frame_time *= 1.0f - col_frac;
-				cout << "subframetime : " << sub_frame_time << endl;
+				//cout << "subframetime : " << sub_frame_time << endl;
 				proj_p.update(sub_frame_time, glm::vec3(0.0f, 0.0f, 0.0f), &integrator);
-				cout << "proj_p.next_pos.y : " << proj_p.next_pos.y << "\n";
+				//cout << "proj_p.next_pos.y : " << proj_p.next_pos.y << "\n";
 				col_plane = getClosestCollisionPlane(&proj_p, p, planes);
 			}	
 			*p = proj_p;
@@ -200,16 +200,16 @@ bool Simulation::init()
 	//integrator.setIType(INTEGRATE_EULER);
 
 	//planes.push_back(new Plane(glm::vec3(10.0f, 0.0f, 0.0f), glm::vec3(-1.0f, 1.0f, 0.0f), 20.0f));
-	planes.push_back(new Plane(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 2.0f, 0.0f), 5.0f));
+	//planes.push_back(new Plane(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 2.0f, 0.0f), 5.0f));
 
-	/*planes.push_back(new Plane(glm::vec3(10.0f, 0.0f, 0.0f), glm::vec3(-1.0f, 0.0f, 0.0f), 10.0f));
+	planes.push_back(new Plane(glm::vec3(10.0f, 0.0f, 0.0f), glm::vec3(-1.0f, 0.0f, 0.0f), 10.0f));
 	planes.push_back(new Plane(glm::vec3(-10.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 0.0f), 10.0f));
 	planes.push_back(new Plane(glm::vec3(0.0f, 10.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f), 10.0f));
 	planes.push_back(new Plane(glm::vec3(0.0f, -10.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 10.0f));
 	//planes.push_back(new Plane(glm::vec3(0.0f, 0.0f, 10.0f), glm::vec3(0.0f, 0.0f, -1.0f), 10.0f));
 	planes.push_back(new Plane(glm::vec3(0.0f, 0.0f, -10.0f), glm::vec3(0.0f, 0.0f, 1.0f), 10.0f));
-	*/
-	/*
+	
+	
 	glm::vec3 ranPos;
 	for (int i = 0; i < PARTICLE_COUNT; i++)
 	{
@@ -218,9 +218,9 @@ bool Simulation::init()
 		ranPos.y = 5 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (8)));
 		particles.push_back(new Particle(ranPos));
 	}
-	*/
+	
 
-	particles.push_back(new Particle(glm::vec3(0.0f, 5.0f, 0.0f)));
+	//particles.push_back(new Particle(glm::vec3(0.0f, 5.0f, 0.0f)));
 
 	sim_state = INITIALIZED;
 	return true;
@@ -337,7 +337,7 @@ Particle Simulation::projectParticleAtSubTimeStep(const Particle * p, const Plan
 	
 	//Calculate Collision point
 	vec3 col_point = ref_curr_pos + ((ref_next_pos - ref_curr_pos) * t_step_frac);
-	cout << "col_point : " << col_point.y << endl;
+	//cout << "col_point : " << col_point.y << endl;
 
 	/*//Set projected particles last_pos to reflected p.pos
 	proj_particle.last_pos = ref_curr_pos;
@@ -348,10 +348,10 @@ Particle Simulation::projectParticleAtSubTimeStep(const Particle * p, const Plan
 	*/
 	//Set projected particles last_pos to reflected p.pos
 	proj_particle.pos = ref_curr_pos;
-	cout << "proj_p.pos.y : " << proj_particle.pos.y << "\n";
+	//cout << "proj_p.pos.y : " << proj_particle.pos.y << "\n";
 	//Set projected particles pos to collision point
 	proj_particle.next_pos = col_point;
-	cout << "proj_p.next_pos.y : " << proj_particle.next_pos.y << "\n";
+	//cout << "proj_p.next_pos.y : " << proj_particle.next_pos.y << "\n";
 	return proj_particle;
 }
 
