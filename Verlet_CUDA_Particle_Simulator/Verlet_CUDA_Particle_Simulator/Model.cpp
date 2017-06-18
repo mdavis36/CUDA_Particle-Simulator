@@ -41,7 +41,7 @@ bool Model::init()
 	}
 	glUseProgram(programs[0]);
 
-	
+	or_key.init();
 	p.init();
 
 	_pvm_matrix_loc = glGetUniformLocation(programs[0], "_pvm_matrix");
@@ -61,13 +61,13 @@ void Model::draw()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	_model_matrix = mat4(1.0);
-
-
-	_pvm_matrix = _projection_matrix * _view_matrix * _model_matrix;
+	_pvm_matrix = _projection_matrix * _view_matrix * p.getModelMatrix();
 	glUniformMatrix4fv(_pvm_matrix_loc, 1, GL_FALSE, value_ptr(_pvm_matrix));
-	
 	p.draw();
+
+	_pvm_matrix = _projection_matrix * _view_matrix * or_key.getModelMatrix();
+	glUniformMatrix4fv(_pvm_matrix_loc, 1, GL_FALSE, value_ptr(_pvm_matrix));
+	or_key.draw();
 
 	glFlush();
 }

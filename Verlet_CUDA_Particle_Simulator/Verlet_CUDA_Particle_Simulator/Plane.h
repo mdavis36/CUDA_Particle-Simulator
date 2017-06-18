@@ -4,6 +4,7 @@
 #include <vector>
 #include <glew.h>
 #include <glm.hpp>
+#include <gtc/matrix_transform.hpp>
 #include <iostream>
 using namespace glm;
 using namespace std;
@@ -15,13 +16,9 @@ private:
 	vec3 _normal;
 	vec3 _center;
 
-	//std::vector<GLfloat> _positions;
-	//std::vector<GLfloat> _colors;
 	std::vector<vec3> _positions;
 	std::vector<vec4> _colors;
-
-	GLfloat _pos[4][3];
-	GLfloat _col[4][4];
+	mat4 _model_matrix;
 
 	GLuint _vao;
 	GLuint _buffers[2];	
@@ -32,6 +29,7 @@ public:
 	Plane(vec3 n, vec3 c, int w, int h);
 	bool init();
 	void draw();
+	mat4 getModelMatrix();
 
 };
 

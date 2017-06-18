@@ -131,8 +131,8 @@ void OnMouseDown(int button, int s, int x, int y)
 			winZ = 0;
 		double objX = 0, objY = 0, objZ = 0;
 		gluUnProject(window_x, window_y, winZ, MV, P, viewport, &objX, &objY, &objZ);
-		glm::vec3 pt(objX, objY, objZ);
-		size_t i = 0;
+		//glm::vec3 pt(objX, objY, objZ);
+		//size_t i = 0;
 		/*for (i = 0; i<total_points; i++) {
 			if (glm::distance(X[i], pt)<0.1) {
 				selected_index = i;

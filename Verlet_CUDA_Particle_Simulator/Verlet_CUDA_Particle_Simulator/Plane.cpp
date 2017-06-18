@@ -7,7 +7,7 @@ Plane::Plane()
 
 Plane::Plane(vec3 n, vec3 c, int w, int h)
 {
-	_normal = n;
+	_normal = normalize(n);
 	_center = c;
 	_width  = w;
 	_height = h;
@@ -37,7 +37,6 @@ bool Plane::init()
 	}
 
 	// Horizontal Lines
-	
 	for (int i = -_height; i <= _height; i++)
 	{
 
@@ -54,11 +53,36 @@ bool Plane::init()
 			_colors.push_back(vec4(1.0f, 1.0f, 1.0f, 1.0f));
 		}
 	}
-
 	_positions.push_back(vec3(0, 0, 0));
 	_positions.push_back(vec3(0, 1, 0));
 	_colors.push_back(vec4(1.0f, 1.0f, 0.0f, 1.0f));
 	_colors.push_back(vec4(1.0f, 1.0f, 0.0f, 1.0f));
+
+
+	_model_matrix = mat4(1.0);
+	_model_matrix = translate(_model_matrix, _center);
+	vec3 up = vec3(0.0f, 1.0f, 0.0f);
+	if (!(abs(_normal.y) == 1))
+	{
+		vec2 n_proj_zx = normalize(vec2(_normal.z, _normal.x));
+		vec2 up_proj_zx = normalize(vec2(up.x, -up.y));
+
+		float zx_theta = acosf(dot(n_proj_zx, up_proj_zx)) * (180 / 3.14f);
+		_normal.x < 0 ? zx_theta = 270 - zx_theta : zx_theta = 270 - zx_theta;
+		//_normal.x < 0 ? zx_theta = 90 - zx_theta : zx_theta = zx_theta;
+		_normal.z < 0 ? true : zx_theta = 180 - zx_theta;
+
+		float xy_theta = acosf(dot(_normal, up)) * (180 / 3.14f);
+		//_normal.y < 0 ? xy_theta = 180 - xy_theta : xy_theta = 180 - xy_theta;
+		//_normal.y < 0 ? xy_theta = 180 - xy_theta : xy_theta = xy_theta;
+
+		_model_matrix = rotate(_model_matrix, zx_theta * (3.14159f / 180), vec3(0.0f, 1.0f, 0.0f));
+		_model_matrix = rotate(_model_matrix, xy_theta * (3.14159f / 180), vec3(1.0f, 0.0f, 0.0f));
+	}
+	if (_normal.y == -1)
+	{
+		_model_matrix = rotate(_model_matrix, 3.14159f, vec3(1.0f, 0.0f, 0.0f));
+	}
 
 	glGenBuffers(2, _buffers); //Create two buffer objects, one for vertex positions and one for vertex colors
 
@@ -86,5 +110,9 @@ void Plane::draw()
 	glBindVertexArray(_vao);
 	glLineWidth(1.0f);
 	glDrawArrays(GL_LINES, 0, _positions.size());
-	//glDrawArrays(GL_TRIANGLE_STRIP, 0, _positions.size());
+}
+
+mat4 Plane::getModelMatrix()
+{
+	return _model_matrix;
 }

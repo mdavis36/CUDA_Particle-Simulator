@@ -10,6 +10,7 @@
 #include "LoadShaders.h"
 
 #include "Plane.h"
+#include "OrientationKey.h"
 
 #include <iostream>
 using namespace std;
@@ -26,8 +27,8 @@ private:
 
 	GLuint programs[1];
 
-	Plane p = Plane(vec3(0.0, 1.0, 0.0), vec3(0.0, 0.0, 0.0), 10, 5);
-
+	Plane p = Plane(vec3(-1.0, -1.0, 0.0), vec3(0.0, 0.0, 0.0), 6, 2);
+	OrientationKey or_key;
 
 	float degToRad(float deg) { return (deg * (3.14159f / 180.0f)); }
 public:
