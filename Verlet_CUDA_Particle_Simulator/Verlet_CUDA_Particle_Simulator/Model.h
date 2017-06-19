@@ -27,7 +27,10 @@ private:
 
 	GLuint programs[1];
 
-	Plane p = Plane(vec3(-1.0, -1.0, 0.0), vec3(0.0, 0.0, 0.0), 6, 2);
+	float _rot_x;
+	float _rot_y;
+
+	Plane p = Plane(vec3(0.0, 1.0, 0.0), vec3(5.0, -1.0, 0.0), 6, 2);
 	OrientationKey or_key;
 
 	float degToRad(float deg) { return (deg * (3.14159f / 180.0f)); }
@@ -35,7 +38,7 @@ public:
 	Model();
 	bool init();
 	void draw();
-
+	void update(float x, float y);
 };
 
 #endif

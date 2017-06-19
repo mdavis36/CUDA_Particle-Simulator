@@ -120,7 +120,7 @@ void OnMouseDown(int button, int s, int x, int y)
 	{
 		oldX = x;
 		oldY = y;
-		int window_y = (DISPLAY_WIDTH - y);
+		/*int window_y = (DISPLAY_WIDTH - y);
 		float norm_y = float(window_y) / float(DISPLAY_HEIGHT / 2.0);
 		int window_x = x;
 		float norm_x = float(window_x) / float(DISPLAY_WIDTH / 2.0);
@@ -130,7 +130,7 @@ void OnMouseDown(int button, int s, int x, int y)
 		if (winZ == 1)
 			winZ = 0;
 		double objX = 0, objY = 0, objZ = 0;
-		gluUnProject(window_x, window_y, winZ, MV, P, viewport, &objX, &objY, &objZ);
+		gluUnProject(window_x, window_y, winZ, MV, P, viewport, &objX, &objY, &objZ);*/
 		//glm::vec3 pt(objX, objY, objZ);
 		//size_t i = 0;
 		/*for (i = 0; i<total_points; i++) {

@@ -22,6 +22,17 @@ private:
 	SDL_Event _event;
 	bool _quit;
 
+	bool _rotating;
+	float _base_x;
+	float _base_y;
+	float _last_offset_x;
+	float _last_offset_y;
+	float _x_angle;
+	float _y_angle;
+	float _x_angle_init;
+	float _y_angle_init;
+	bool _firstclick;
+
 	Model m;
 	vec3 p = normalize(vec3(243, 27, 227));
 

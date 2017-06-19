@@ -5,6 +5,10 @@ ViewController::ViewController()
 	_sdl_window = 0;
 	_sdl_glcontext = 0;
 	_quit = false;
+
+	_x_angle_init, _y_angle_init = 0;
+	_x_angle, _y_angle = 0;
+	_firstclick = true;
 }
 
 bool ViewController::init()
@@ -94,6 +98,66 @@ void ViewController::handleEvents(SDL_Event e)
 			default:
 				break;
 			}
+		case SDL_MOUSEBUTTONDOWN:
+		{
+			if (SDL_GetMouseState(NULL, NULL) == SDL_BUTTON(1))  //Attach rotation to the left mouse button
+			{
+				// save position where button down event occurred. This 
+				// is the "zero" position for subsequent mouseMotion callbacks. 
+				_base_x = e.button.x;
+				_base_y = e.button.y;
+				_rotating = true;
+			}
+			break;
+		}
+		case SDL_MOUSEBUTTONUP:
+		{
+			if (_rotating)  //are we finishing a rotation?
+			{
+				//Remember where the motion ended, so we can pick up from here next time. 
+				_last_offset_x += (e.button.x - _base_x);
+				_last_offset_y += (e.button.y - _base_y);
+				_rotating = false;
+			}
+			break;
+		}
+		case SDL_MOUSEMOTION:
+		{
+			//Is the left mouse button also down?
+			if (SDL_GetMouseState(NULL, NULL) == SDL_BUTTON(1))
+			{
+				
+				float x, y;
+
+				//Calculating the conversion => window size to angle in degrees 
+				float scaleX = 120.0 / WINDOW_WIDTH;
+				float scaleY = 120.0 / WINDOW_HEIGHT;
+
+				x = (e.button.x - _base_x) + _last_offset_x;
+				y = (e.button.y - _base_y) + _last_offset_y;
+
+				// map "x" to a rotation about the y-axis. 
+				x *= scaleX;
+				_y_angle = x;
+
+				// map "y" to a rotation about the x-axis. 
+				y *= scaleY;
+				_x_angle = y;
+
+				if (_firstclick) 
+				{
+					_x_angle_init = _x_angle;
+					_y_angle_init = _y_angle;
+					_firstclick = false;
+				}
+
+				_y_angle -= _y_angle_init;
+				_x_angle -= _x_angle_init;
+				
+				m.update(_x_angle, _y_angle); //send the new angles to the Model object
+			}
+			break;
+		}
 		}
 	}
 }
