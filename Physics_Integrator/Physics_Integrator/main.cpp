@@ -2,7 +2,7 @@
 * FILE : Main.cpp
 * AUTHOR : Michael Davis
 * DATE : 4/17/2017
-* 
+*
 * This is the main file of the Physics integrator program.
 */
 
@@ -12,8 +12,8 @@
 using namespace std;
 
 // OpenGL Imports
-#include <glew.h>
-#include <wglew.h>
+#include <GL/glew.h>
+//#include <GL/wglew.h>
 #include <GL/freeglut.h>
 #pragma comment(lib, "glew32.lib")
 
@@ -26,9 +26,9 @@ const int DISPLAY_HEIGHT = 960;
 char DISPLAY_TITLE[256] = "Physics Integrator : Verlet";
 
 // Time Variables
-float start_time = 0.0f;
-float new_time = 0.0f;
-float delta_time = 0.0f;
+double start_time = 0.0f;
+double new_time = 0.0f;
+double delta_time = 0.0f;
 
 // Frame Variables
 int frame_count = 0;
@@ -53,7 +53,7 @@ glm::vec3 Up = glm::vec3(0, 1, 0), viewDir, Right;
 void glut_CloseFunc() {}
 
 void glut_DisplayFunc() {
-	new_time = (float)glutGet(GLUT_ELAPSED_TIME);
+	new_time = glutGet(GLUT_ELAPSED_TIME);
 	delta_time = new_time - start_time;
 
 	frame_count++;
@@ -63,9 +63,9 @@ void glut_DisplayFunc() {
 		frame_count = 0;
 	}
 
-	sprintf_s(DISPLAY_TITLE, "Physics Integrator --verlet : FPS: %3.3f : Frame Time: %3.9f", fps, sim.getSimFrameTime());
+	sprintf(DISPLAY_TITLE, "Physics Integrator --verlet : FPS: %3.3f : Frame Time: %3.9f", fps, sim.getSimFrameTime());
 	glutSetWindowTitle(DISPLAY_TITLE);
-	
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 	glTranslatef(0, 0, dist);
@@ -77,7 +77,7 @@ void glut_DisplayFunc() {
 	viewDir.y = (float)-MV[6];
 	viewDir.z = (float)-MV[10];
 	Right = glm::cross(viewDir, Up);
-	
+
 	sim.update(delta_time);
 	sim.render();
 
@@ -194,7 +194,7 @@ void OnMouseMove(int x, int y)
 // *                           -- INIT FUNCTIONS --                               *
 // ********************************************************************************
 
-void initializeGLUT(int argc, char** argv) 
+void initializeGLUT(int argc, char** argv)
 {
 	// Initilize GLUT(Graphics Library Utility Toolkit) and create a windowed display to render to.
 	cout << "Initializing GLUT Window : ";
@@ -217,7 +217,7 @@ void initializeGLUT(int argc, char** argv)
 	cout << "PASS\n";
 }
 
-void initializeGLEW() 
+void initializeGLEW()
 {
 	// Initialize GLEW (Graphics Library Extension Wrangler) this is what links OpenGL. Check this is successful.
 	GLenum err = glewInit();
@@ -240,7 +240,7 @@ void initializeGLEW()
 int main(int argc, char** argv) {
 	initializeGLUT(argc, argv);
 	initializeGLEW();
-	
+
 	sim.printControls();
 
 	// Call glutMainLoop() initializes and runs the main loop of the program.

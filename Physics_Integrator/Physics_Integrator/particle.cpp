@@ -7,7 +7,7 @@
 */
 
 
-#include <glew.h>
+#include <GL/glew.h>
 #include <iostream>
 using namespace std;
 #include "particle.h"
@@ -20,7 +20,7 @@ using namespace std;
 
 Particle::Particle()
 {
-	if (!init(glm::vec3(0,0,0))) 
+	if (!init(glm::vec3(0,0,0)))
 	{
 		cout << "Failed to initialize Particle" << endl;
 		system("PAUSE");
@@ -44,9 +44,9 @@ Particle::~Particle() { }
 
 void Particle::update(double time_step, glm::vec3 global_forces, Integrator *i)
 {
-	//We will be updateing the particle here, this is where the verlet integration will be used to update the position 
+	//We will be updateing the particle here, this is where the verlet integration will be used to update the position
 	//We could also add a variable to integrate via Euler later on in the prtoject
-	
+
 	// Compute forces on particle
 	//force = global_forces;
 
@@ -56,7 +56,7 @@ void Particle::update(double time_step, glm::vec3 global_forces, Integrator *i)
 	//acc += global_forces / mass;
 
 	switch (i->getIType()) {
-	case INTEGRATE_EULER:		
+	case INTEGRATE_EULER:
 		i->integrate_euler(&next_pos, &pos, time_step, &vel, &last_vel, acc);
 		break;
 	case INTEGRATE_VERLET:

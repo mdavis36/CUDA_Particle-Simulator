@@ -19,7 +19,7 @@ using namespace std;
 
 Simulation::Simulation()
 {
-	if (!init()) 
+	if (!init())
 	{
 		cout << "Failed to initialize simulation.\n";
 		exit(-4);
@@ -36,7 +36,7 @@ Simulation::~Simulation()
 
 bool Simulation::start()
 {
-	if (sim_state == INITIALIZED) 
+	if (sim_state == INITIALIZED)
 	{
 		cout << "Starting Simulation of "<< PARTICLE_COUNT << " falling particles." << endl;
 		integrator.printIType();
@@ -44,11 +44,15 @@ bool Simulation::start()
 
 		sim_time_accu = 0;
 
-		// Get ticks per second.
-		QueryPerformanceFrequency(&frequency);
-		// Start timer.
-		QueryPerformanceCounter(&t1);
-		
+		#ifdef _WIN32
+			// Get ticks per second.
+			QueryPerformanceFrequency(&frequency);
+			// Start timer.
+			QueryPerformanceCounter(&t1);
+		#else
+			clock_gettime(CLOCK_REALTIME, &t1);
+		#endif
+
 		return true;
 	}
 	return false;
@@ -59,7 +63,12 @@ bool Simulation::pause()
 	if (sim_state == PAUSED) {
 		sim_state = RUNNING;
 		cout << "Simulation Running.\n";
-		QueryPerformanceCounter(&t1);
+		#ifdef _WIN32
+			// Start timer.
+			QueryPerformanceCounter(&t1);
+		#else
+			clock_gettime(CLOCK_REALTIME, &t1);
+		#endif
 		return true;
 	}
 	else if (sim_state == RUNNING) {
@@ -97,11 +106,16 @@ void Simulation::update(float rdt)
 {
 	if (sim_state == RUNNING)
 	{
-		// Using high res. counter.
-		QueryPerformanceCounter(&t2);
+		#ifdef _WIN32
+			// Using high res. counter.
+			QueryPerformanceCounter(&t2);
+			// Compute the elapsed time in seconds.
+			frame_time = ((t2.QuadPart - t1.QuadPart) * 1000.0 / frequency.QuadPart) / 1000.0;
+		#else
+			clock_gettime(CLOCK_REALTIME, &t2);
+			frame_time = (t2.tv_nsec - t1.tv_nsec) / 1000000000.0;
+		#endif
 
-		// Compute the elapsed time in seconds.
-		frame_time = ((t2.QuadPart - t1.QuadPart) * 1000.0 / frequency.QuadPart) / 1000.0;
 		t1 = t2;
 		sim_time_accu += frame_time;
 
@@ -110,7 +124,7 @@ void Simulation::update(float rdt)
 		for (Particle* p : particles)
 		{
 			p->update(frame_time, glm::vec3(0.0f, 0.0f, 0.0f), &integrator);
-			
+
 			//// ----- starting collision -----
 			float sub_frame_time = frame_time;
 			Particle proj_p = *p;
@@ -130,7 +144,7 @@ void Simulation::update(float rdt)
 				proj_p.update(sub_frame_time, glm::vec3(0.0f, 0.0f, 0.0f), &integrator);
 				//cout << "proj_p.next_pos.y : " << proj_p.next_pos.y << "\n";
 				col_plane = getClosestCollisionPlane(&proj_p, p, planes);
-			}	
+			}
 			*p = proj_p;
 			//vec3 curr_pos = p->pos;
 			//vector<Plane*> col_planes = getCollisions(p, planes);
@@ -153,12 +167,12 @@ void Simulation::render()
 {
 	if (sim_state >= INITIALIZED)
 	{
-		// Render all simulation objects here. 
-		for (Plane* pl : planes) 
+		// Render all simulation objects here.
+		for (Plane* pl : planes)
 		{
 			pl->draw();
 		}
-		
+
 		for (Particle* p : particles)
 		{
 			p->draw();
@@ -208,8 +222,8 @@ bool Simulation::init()
 	planes.push_back(new Plane(glm::vec3(0.0f, -10.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 10.0f));
 	//planes.push_back(new Plane(glm::vec3(0.0f, 0.0f, 10.0f), glm::vec3(0.0f, 0.0f, -1.0f), 10.0f));
 	planes.push_back(new Plane(glm::vec3(0.0f, 0.0f, -10.0f), glm::vec3(0.0f, 0.0f, 1.0f), 10.0f));
-	
-	
+
+
 	glm::vec3 ranPos;
 	for (int i = 0; i < PARTICLE_COUNT; i++)
 	{
@@ -218,7 +232,7 @@ bool Simulation::init()
 		ranPos.y = 5 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (8)));
 		particles.push_back(new Particle(ranPos));
 	}
-	
+
 
 	//particles.push_back(new Particle(glm::vec3(0.0f, 5.0f, 0.0f)));
 
@@ -295,7 +309,7 @@ Plane * Simulation::getClosestCollisionPlane(const Particle * proj_p,const Parti
 {
 	Plane* closest_plane = nullptr;
 	float closest_dist = INT_MAX;
-	for (Plane* pl : planes) {	
+	for (Plane* pl : planes) {
 		float curr_orig_pos_dist = distFromPlane(orig_p->pos, pl);
 		float curr_proj_pos_dist = distFromPlane(proj_p->pos, pl);
 		float next_proj_pos_dist = distFromPlane(proj_p->next_pos, pl);
@@ -334,7 +348,7 @@ Particle Simulation::projectParticleAtSubTimeStep(const Particle * p, const Plan
 	//Reflect p.pos and p.next_pos across plane pl
 	vec3 ref_curr_pos = reflect(p->pos, pl);
 	vec3 ref_next_pos = reflect(p->next_pos, pl);
-	
+
 	//Calculate Collision point
 	vec3 col_point = ref_curr_pos + ((ref_next_pos - ref_curr_pos) * t_step_frac);
 	//cout << "col_point : " << col_point.y << endl;

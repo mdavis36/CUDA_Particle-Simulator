@@ -15,11 +15,16 @@
 #include "plane.h"
 
 // OpenGL Imports
-#include<glew.h>
-#include<glm.hpp>
+#include<GL/glew.h>
+#include<glm/glm.hpp>
 
 // Other Library
-#include <Windows.h>
+#ifdef _WIN32
+	#include <Windows.h>
+#else
+	#include <time.h>
+#endif
+
 #include <vector>
 #include <limits.h>
 
@@ -30,7 +35,7 @@ const static int RUNNING = 1;
 const static int PAUSED = 2;
 const static int FINISHED = 3;
 
-class Simulation 
+class Simulation
 {
 public:
 	Simulation();
@@ -59,19 +64,24 @@ private:
 	glm::vec3 a_gravity = glm::vec3(0.0f, -3, 0.0f);
 
 	// Simulation Time Variables
-	LARGE_INTEGER frequency;       
-	LARGE_INTEGER t1;
-	LARGE_INTEGER t2;           
+	#ifdef _WIN32
+		LARGE_INTEGER frequency;
+		LARGE_INTEGER t1;
+		LARGE_INTEGER t2;
+	#else
+		struct timespec t1, t2;
+	#endif
+
 	double frame_time;
 	double sim_time_accu;
 
 	// Simulation Variables
-	const int PARTICLE_COUNT = 2000;
+	const int PARTICLE_COUNT = 500;
 	int sim_state = NOT_INITIALIZED;
 	Integrator integrator;
 	vector<Particle*> particles;
 	vector<Plane*> planes;
-	
+
 	// Private Simulation Functions
 	bool init();
 	void drawOrientationKey();
@@ -81,7 +91,7 @@ private:
 	float distFromPlane(const vec3 pos, const Plane* plane);
 	vector<Plane*> getCollisions(Particle* p, vector<Plane*> planes);
 	vec3 reflect(const vec3 pos, const Plane* plane);
-	
+
 	Plane * getClosestCollisionPlane(const Particle * proj_p, const Particle * orig_p, const vector<Plane*> planes);
 	float getCollisionTimeFromStartOfTimeStep(const Particle * p, const Plane * pl, const float t_step);
 	float getCollisionFrac(const Particle * p, const Plane * pl);

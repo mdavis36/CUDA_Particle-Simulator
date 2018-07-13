@@ -2,16 +2,16 @@
 #define PLANE_H
 
 
-#include<glm.hpp>
-#include<gtx/rotate_vector.hpp>
-#include<gtx/quaternion.hpp>
-#include<gtx/norm.hpp>
-#include<glew.h>
+#include<glm/glm.hpp>
+#include<glm/gtx/rotate_vector.hpp>
+#include<glm/gtx/quaternion.hpp>
+#include<glm/gtx/norm.hpp>
+#include<GL/glew.h>
 using namespace glm;
 
 #include <iostream>
 
-class Plane 
+class Plane
 {
 public:
 	Plane();
@@ -29,5 +29,3 @@ private:
 };
 
 #endif
-
-

@@ -10,7 +10,7 @@
 #define INTEGRATOR_H
 
 #include<iostream>
-#include<glm.hpp>
+#include<glm/glm.hpp>
 using namespace glm;
 
 enum iType {
