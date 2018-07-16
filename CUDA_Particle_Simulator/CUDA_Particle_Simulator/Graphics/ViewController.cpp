@@ -8,11 +8,12 @@ ViewController::ViewController(Simulation *sim)
 	_sdl_glcontext = 0;
 	_quit = false;
 
-	_x_angle_init, _y_angle_init = 0;
+	_x_angle_init, _y_angle_init, _x_tran_init, _y_tran_init = 0.0f;
 	_x_angle, _y_angle = 0;
-	_firstclick = true;
+	_firstclick_r = true;
+	_firstclick_l = true;
 
-
+	_rot_base_x, _rot_base_y, _tran_base_x, _tran_base_y = 0.0f;
 
 }
 
@@ -68,7 +69,9 @@ void ViewController::handleEvents(SDL_Event e)
 			_quit = true;
 			break;
 
+		// Simulation controls.
 		case SDL_KEYDOWN:
+		{
 			switch (e.key.keysym.sym)
 			{
 			case SDLK_ESCAPE:
@@ -83,29 +86,14 @@ void ViewController::handleEvents(SDL_Event e)
 				glClear(GL_COLOR_BUFFER_BIT);
 				SDL_GL_SwapWindow(_sdl_window);
 				break;
-			case SDLK_g:
-				// Cover with green and update
-				glClearColor(0.0, 1.0, 0.0, 1.0);
-				glClear(GL_COLOR_BUFFER_BIT);
-				SDL_GL_SwapWindow(_sdl_window);
-				break;
-			case SDLK_b:
-				// Cover with blue and update
-				glClearColor(0.0, 0.0, 1.0, 1.0);
-				glClear(GL_COLOR_BUFFER_BIT);
-				SDL_GL_SwapWindow(_sdl_window);
-				break;
-			case SDLK_p:
-				glClearColor(p.x, p.y, p.z, 1.0);
-				glClear(GL_COLOR_BUFFER_BIT);
-				SDL_GL_SwapWindow(_sdl_window);
-			case SDLK_y:
-				glClearColor(1.0, 1.0, 0.0, 1.0);
-				glClear(GL_COLOR_BUFFER_BIT);
-				SDL_GL_SwapWindow(_sdl_window);
+
 			default:
 				break;
 			}
+			break;
+		}
+
+		// Model Zoom
 		case SDL_MOUSEWHEEL:
 		{
 			if (e.wheel.y > 0)
@@ -116,17 +104,29 @@ void ViewController::handleEvents(SDL_Event e)
 			{
 				_zoom += 0.1f;
 			}
-			m.update(_x_angle, _y_angle, _zoom);
+			if (_zoom <= 0.0) _zoom = 0;
+			m.update(_x_angle, _y_angle, _zoom, _trans.x, _trans.y);
+			break;
 		}
+
+		// Model Rotation and transform controls
 		case SDL_MOUSEBUTTONDOWN:
 		{
-			if (SDL_GetMouseState(NULL, NULL) == SDL_BUTTON(1))  //Attach rotation to the left mouse button
+			if (SDL_GetMouseState(NULL, NULL) == SDL_BUTTON(SDL_BUTTON_LEFT))  //Attach rotation to the left mouse button
 			{
 				// save position where button down event occurred. This
 				// is the "zero" position for subsequent mouseMotion callbacks.
-				_base_x = e.button.x;
-				_base_y = e.button.y;
+				_rot_base_x = e.button.x;
+				_rot_base_y = e.button.y;
 				_rotating = true;
+			}
+			if (SDL_GetMouseState(NULL, NULL) == SDL_BUTTON(SDL_BUTTON_RIGHT))  //Attach rotation to the left mouse button
+			{
+				// save position where button down event occurred. This
+				// is the "zero" position for subsequent mouseMotion callbacks.
+				_tran_base_x = e.button.x;
+				_tran_base_y = e.button.y;
+				_transforming = true;
 			}
 			break;
 		}
@@ -135,16 +135,23 @@ void ViewController::handleEvents(SDL_Event e)
 			if (_rotating)  //are we finishing a rotation?
 			{
 				//Remember where the motion ended, so we can pick up from here next time.
-				_last_offset_x += (e.button.x - _base_x);
-				_last_offset_y += (e.button.y - _base_y);
+				_last_rot_offset_x += (e.button.x - _rot_base_x);
+				_last_rot_offset_y += (e.button.y - _rot_base_y);
 				_rotating = false;
+			}
+			if (_transforming)  //are we finishing a rotation?
+			{
+				//Remember where the motion ended, so we can pick up from here next time.
+				_last_tran_offset_x += (e.button.x - _tran_base_x);
+				_last_tran_offset_y += (e.button.y - _tran_base_y);
+				_transforming = false;
 			}
 			break;
 		}
 		case SDL_MOUSEMOTION:
 		{
 			//Is the left mouse button also down?
-			if (SDL_GetMouseState(NULL, NULL) == SDL_BUTTON(1))
+			if (SDL_GetMouseState(NULL, NULL) == SDL_BUTTON(SDL_BUTTON_LEFT))
 			{
 
 				float x, y;
@@ -153,8 +160,8 @@ void ViewController::handleEvents(SDL_Event e)
 				float scaleX = 120.0 / WINDOW_WIDTH;
 				float scaleY = 120.0 / WINDOW_HEIGHT;
 
-				x = (e.button.x - _base_x) + _last_offset_x;
-				y = (e.button.y - _base_y) + _last_offset_y;
+				x = (e.button.x - _rot_base_x) + _last_rot_offset_x;
+				y = (e.button.y - _rot_base_y) + _last_rot_offset_y;
 
 				// map "x" to a rotation about the y-axis.
 				x *= scaleX;
@@ -164,17 +171,50 @@ void ViewController::handleEvents(SDL_Event e)
 				y *= scaleY;
 				_x_angle = y;
 
-				if (_firstclick)
+				if (_firstclick_l)
 				{
 					_x_angle_init = _x_angle;
 					_y_angle_init = _y_angle;
-					_firstclick = false;
+					_firstclick_l = false;
 				}
 
 				_y_angle -= _y_angle_init;
 				_x_angle -= _x_angle_init;
 
-				m.update(_x_angle, _y_angle, _zoom); //send the new angles to the Model object
+				m.update(_x_angle, _y_angle, _zoom, _trans.x, _trans.y); //send the new angles to the Model object
+			}
+
+			if (SDL_GetMouseState(NULL, NULL) == SDL_BUTTON(SDL_BUTTON_RIGHT))
+			{
+
+				float x, y;
+
+				//Calculating the conversion => window size to angle in degrees
+				float scaleX = 50.0f / WINDOW_WIDTH;
+				float scaleY = 50.0f / WINDOW_HEIGHT;
+
+				x = (e.button.x - _tran_base_x) + _last_tran_offset_x;
+				y = (e.button.y - _tran_base_y) + _last_tran_offset_y;
+
+				// map "x" to a rotation about the y-axis.
+				x *= scaleX;
+				_trans.x = x;
+
+				// map "y" to a rotation about the x-axis.
+				y *= scaleY;
+				_trans.y = -y;
+
+				if (_firstclick_r)
+				{
+					_x_tran_init = _trans.x;
+					_y_tran_init = _trans.y;
+					_firstclick_r = false;
+				}
+
+				_trans.x -= _x_tran_init;
+				_trans.y -= _y_tran_init;
+
+				m.update(_x_angle, _y_angle, _zoom, _trans.x, _trans.y); //send the new angles to the Model object
 			}
 			break;
 		}

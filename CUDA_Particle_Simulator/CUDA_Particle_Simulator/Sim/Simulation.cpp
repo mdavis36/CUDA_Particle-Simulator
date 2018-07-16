@@ -218,7 +218,7 @@ bool Simulation::init()
 	//planes.push_back(new Plane(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 2.0f, 0.0f), 5.0f));
 
 	//_scene_objects.push_back(new Plane(vec3(0.0, 1.0, 0.0), vec3(5.0, -1.0, 0.0), 6, 2));
-	_scene_objects.push_back(new Plane(vec3(0.0, 1.0, 0.0), vec3(0.0, 0.0, 0.0), 20, 20));
+	_scene_objects.push_back(new Plane(vec3(0.0, 1.0, 0.0), vec3(0.0, -1.0, 0.0), 20, 20));
 
       /*
 	glm::vec3 ranPos;

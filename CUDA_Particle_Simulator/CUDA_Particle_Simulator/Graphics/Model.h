@@ -10,7 +10,7 @@
 #include "LoadShaders.h"
 
 #include "../Plane.h"
-#include "../OrientationKey.h"
+#include "OrientationKey.h"
 #include "../Sim/Simulation.h"
 
 #include <iostream>
@@ -31,11 +31,10 @@ private:
 	float _rot_x;
 	float _rot_y;
 	float _zoom;
+	vec3 _trans = vec3(0.0f, 0.0f, 0.0f);
 
 	vec3 eye, aim, up;
 
-	//Plane p = Plane(vec3(0.0, 1.0, 0.0), vec3(5.0, -1.0, 0.0), 6, 2);
-	//Plane p2 = Plane(vec3(0.0, 1.0, 0.0), vec3(0.0, 2.5, 0.0), 6, 6);
 	OrientationKey or_key;
 
 	Simulation *_sim;
@@ -45,7 +44,7 @@ public:
 	Model();
 	bool init(Simulation *sim);
 	void draw();
-	void update(float x, float y, float z);
+	void update(float x, float y, float z, float xt, float yt);
 };
 
 #endif

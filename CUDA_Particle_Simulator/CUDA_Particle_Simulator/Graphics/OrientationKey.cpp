@@ -44,7 +44,7 @@ bool OrientationKey::init()
 	return true;
 }
 
-void OrientationKey::draw()
+void OrientationKey::draw() const
 {
 	if (!_initialized)
 	{

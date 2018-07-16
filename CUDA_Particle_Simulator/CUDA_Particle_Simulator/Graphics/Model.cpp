@@ -61,7 +61,7 @@ bool Model::init(Simulation *sim)
 	aim = vec3(0.0, 0.0, 0.0);
 	up = vec3(0.0, 1.0, 0.0);
 	_view_matrix = lookAt(eye, aim, up);
-	update(0.0, 0.0, 1.0); //initializes the model_matrix
+	update(0.0, 0.0, 1.0, 0.0, 0.0); //initializes the model_matrix
 
 	// Initialize Model objects
 	return true;
@@ -72,17 +72,13 @@ void Model::draw()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	_view_matrix = lookAt(eye * _zoom, aim, up);
+	_view_matrix = translate(_view_matrix, _trans);
 
 	mat4 rotate_matrix = rotate(mat4(1.0), degToRad(_rot_x), vec3(1,0,0));
+	//mat4 rotate_matrix =translate(mat4(1.0), _trans);
+	//rotate_matrix = rotate(rotate_matrix, degToRad(_rot_x), vec3(1,0,0));
 	rotate_matrix = rotate(rotate_matrix, degToRad(_rot_y), vec3(0,1,0));
 
-	// _pvm_matrix = _projection_matrix * _view_matrix * rotate_matrix * p.getModelMatrix();
-	// glUniformMatrix4fv(_pvm_matrix_loc, 1, GL_FALSE, value_ptr(_pvm_matrix));
-	// p.draw();
-	//
-	// _pvm_matrix = _projection_matrix * _view_matrix * rotate_matrix * p2.getModelMatrix();
-	// glUniformMatrix4fv(_pvm_matrix_loc, 1, GL_FALSE, value_ptr(_pvm_matrix));
-	// p2.draw();
 
 	for (Drawable *pl : _sim->_scene_objects)
 	{
@@ -99,9 +95,11 @@ void Model::draw()
 	glFlush();
 }
 
-void Model::update(float x, float y, float z)
+void Model::update(float x, float y, float z, float xt, float yt)
 {
 	_rot_x = x;
 	_rot_y = y;
 	_zoom = z;
+	_trans.x = xt;
+	_trans.y = yt;
 }

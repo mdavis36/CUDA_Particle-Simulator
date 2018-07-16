@@ -24,15 +24,32 @@ private:
 	bool _quit;
 
 	bool _rotating;
-	float _base_x;
-	float _base_y;
-	float _last_offset_x;
-	float _last_offset_y;
+	bool _transforming;
+
+	float _rot_base_x;
+	float _rot_base_y;
+
+	float _tran_base_x;
+	float _tran_base_y;
+
+	float _last_rot_offset_x;
+	float _last_rot_offset_y;
 	float _x_angle;
 	float _y_angle;
 	float _x_angle_init;
 	float _y_angle_init;
-	bool _firstclick;
+
+	float _last_tran_offset_x;
+	float _last_tran_offset_y;
+	float _x_tran_init;
+	float _y_tran_init;
+
+
+	bool _firstclick_r;
+	bool _firstclick_l;
+
+
+	vec3 _trans = vec3(0.0f,0.0f,0.0f);
 
 	float _zoom = 1.0f;
 

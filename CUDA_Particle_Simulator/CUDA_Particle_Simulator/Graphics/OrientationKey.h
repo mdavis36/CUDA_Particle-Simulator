@@ -6,13 +6,13 @@
 #include <glm/glm.hpp>
 #include <iostream>
 
-#include "Graphics/Drawable.h"
+#include "Drawable.h"
 
 using namespace glm;
 using namespace std;
 
 
-class OrientationKey
+class OrientationKey : public Drawable
 {
 private:
 	vector<vec3> _positions;
@@ -26,8 +26,8 @@ private:
 
 public:
 	OrientationKey();
-	bool init();
-	void draw();
+	virtual bool init();
+	virtual void draw() const;
 	mat4 getModelMatrix();
 };
 
