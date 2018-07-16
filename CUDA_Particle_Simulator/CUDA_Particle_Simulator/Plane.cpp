@@ -31,8 +31,8 @@ bool Plane::init()
 		}
 		else
 		{
-			_colors.push_back(vec4(1.0f, 1.0f, 1.0f, 1.0f));
-			_colors.push_back(vec4(1.0f, 1.0f, 1.0f, 1.0f));
+			_colors.push_back(vec4(0.8f, 0.8f, 0.8f, 1.0f));
+			_colors.push_back(vec4(0.8f, 0.8f, 0.8f, 1.0f));
 		}
 	}
 
@@ -49,8 +49,8 @@ bool Plane::init()
 		}
 		else
 		{
-			_colors.push_back(vec4(1.0f, 1.0f, 1.0f, 1.0f));
-			_colors.push_back(vec4(1.0f, 1.0f, 1.0f, 1.0f));
+			_colors.push_back(vec4(0.8f, 0.8f, 0.8f, 1.0f));
+			_colors.push_back(vec4(0.8f, 0.8f, 0.8f, 1.0f));
 		}
 	}
 	_positions.push_back(vec3(0, 0, 0));

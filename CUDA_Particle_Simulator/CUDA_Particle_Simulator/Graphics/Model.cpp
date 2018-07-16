@@ -5,6 +5,7 @@ Model::Model()
 	_pvm_matrix_loc = 0;
 	_rot_x = 0;
 	_rot_y = 0;
+	_zoom = 1.0f;
 }
 
 bool Model::init(Simulation *sim)
@@ -55,12 +56,12 @@ bool Model::init(Simulation *sim)
 
 	_pvm_matrix_loc = glGetUniformLocation(programs[0], "_pvm_matrix");
 
-	_projection_matrix = frustum(-0.1, 0.1, -0.1, 0.1, 0.1, 20.0);
-	vec3 eye = vec3(0.0, 7.0, 10.0);
-	vec3 aim = vec3(0.0, 0.0, 0.0);
-	vec3 up = vec3(0.0, 1.0, 0.0);
+	_projection_matrix = frustum(-0.1, 0.1, -0.1, 0.1, 0.1, 200.0);
+	eye = vec3(0.0, 7.0, 10.0);
+	aim = vec3(0.0, 0.0, 0.0);
+	up = vec3(0.0, 1.0, 0.0);
 	_view_matrix = lookAt(eye, aim, up);
-	update(0.0, 0.0); //initializes the model_matrix
+	update(0.0, 0.0, 1.0); //initializes the model_matrix
 
 	// Initialize Model objects
 	return true;
@@ -69,6 +70,8 @@ bool Model::init(Simulation *sim)
 void Model::draw()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	_view_matrix = lookAt(eye * _zoom, aim, up);
 
 	mat4 rotate_matrix = rotate(mat4(1.0), degToRad(_rot_x), vec3(1,0,0));
 	rotate_matrix = rotate(rotate_matrix, degToRad(_rot_y), vec3(0,1,0));
@@ -96,8 +99,9 @@ void Model::draw()
 	glFlush();
 }
 
-void Model::update(float x, float y)
+void Model::update(float x, float y, float z)
 {
 	_rot_x = x;
 	_rot_y = y;
+	_zoom = z;
 }

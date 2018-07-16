@@ -5,6 +5,9 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <iostream>
+
+#include "Graphics/Drawable.h"
+
 using namespace glm;
 using namespace std;
 

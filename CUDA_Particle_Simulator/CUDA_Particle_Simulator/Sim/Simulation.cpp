@@ -36,6 +36,7 @@ Simulation::~Simulation()
 
 bool Simulation::start()
 {
+	cout << "Start" << endl;
 	if (sim_state == INITIALIZED)
 	{
 		cout << "Starting Simulation of "<< PARTICLE_COUNT << " falling particles." << endl;
@@ -102,7 +103,7 @@ bool Simulation::reset()
 
 // -------------------- Simulation Step Functions --------------------
 
-void Simulation::update(float rdt)
+void Simulation::update()
 {
 	if (sim_state == RUNNING)
 	{
@@ -216,8 +217,8 @@ bool Simulation::init()
 	//planes.push_back(new Plane(glm::vec3(10.0f, 0.0f, 0.0f), glm::vec3(-1.0f, 1.0f, 0.0f), 20.0f));
 	//planes.push_back(new Plane(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 2.0f, 0.0f), 5.0f));
 
-	_scene_objects.push_back(new Plane(vec3(0.0, 1.0, 0.0), vec3(5.0, -1.0, 0.0), 6, 2));
-	_scene_objects.push_back(new Plane(vec3(0.0, 1.0, 0.0), vec3(0.0, 2.5, 0.0), 6, 6));
+	//_scene_objects.push_back(new Plane(vec3(0.0, 1.0, 0.0), vec3(5.0, -1.0, 0.0), 6, 2));
+	_scene_objects.push_back(new Plane(vec3(0.0, 1.0, 0.0), vec3(0.0, 0.0, 0.0), 20, 20));
 
       /*
 	glm::vec3 ranPos;

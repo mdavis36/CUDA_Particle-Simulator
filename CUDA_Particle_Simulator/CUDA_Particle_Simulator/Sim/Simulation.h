@@ -44,7 +44,7 @@ public:
 	bool reset();
 
 	// Simulation Step Functions
-	void update(float rdt);
+	void update();
 	void render();
 
 	// Getter Functions

@@ -12,6 +12,8 @@ ViewController::ViewController(Simulation *sim)
 	_x_angle, _y_angle = 0;
 	_firstclick = true;
 
+
+
 }
 
 bool ViewController::init()
@@ -72,6 +74,9 @@ void ViewController::handleEvents(SDL_Event e)
 			case SDLK_ESCAPE:
 				_quit = true;
 				break;
+			case SDLK_s:
+				_sim->start();
+				break;
 			case SDLK_r:
 				// Cover with red and update
 				glClearColor(1.0, 0.0, 0.0, 1.0);
@@ -101,6 +106,18 @@ void ViewController::handleEvents(SDL_Event e)
 			default:
 				break;
 			}
+		case SDL_MOUSEWHEEL:
+		{
+			if (e.wheel.y > 0)
+			{
+				_zoom -= 0.1f;
+			}
+			else if (e.wheel.y < 0)
+			{
+				_zoom += 0.1f;
+			}
+			m.update(_x_angle, _y_angle, _zoom);
+		}
 		case SDL_MOUSEBUTTONDOWN:
 		{
 			if (SDL_GetMouseState(NULL, NULL) == SDL_BUTTON(1))  //Attach rotation to the left mouse button
@@ -157,7 +174,7 @@ void ViewController::handleEvents(SDL_Event e)
 				_y_angle -= _y_angle_init;
 				_x_angle -= _x_angle_init;
 
-				m.update(_x_angle, _y_angle); //send the new angles to the Model object
+				m.update(_x_angle, _y_angle, _zoom); //send the new angles to the Model object
 			}
 			break;
 		}
@@ -193,28 +210,7 @@ void ViewController::run()
 	//int count = 0;
 	do
 	{
-		/*
-		switch (count % 5)
-		{
-		case 0:
-			cc(vec3(1.0, 0.0, 0.0));
-			break;
-		case 1:
-			cc(vec3(0.0, 1.0, 0.0));
-			break;
-		case 2:
-			cc(vec3(0.0, 0.0, 1.0));
-			break;
-		case 3:
-			cc(vec3(1.0, 1.0, 0.0));
-			break;
-		case 4:
-			cc(p);
-			break;
-		}
-		*/
-		//count++;
-		//this_thread::sleep_for(chrono::milliseconds(50));
+		_sim->update();
 		display();
 		handleEvents(_event);
 	} while (!_quit);

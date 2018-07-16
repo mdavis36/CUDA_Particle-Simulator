@@ -34,6 +34,8 @@ private:
 	float _y_angle_init;
 	bool _firstclick;
 
+	float _zoom = 1.0f;
+
 	Simulation *_sim;
 	Model m;
 	vec3 p = normalize(vec3(243, 27, 227));
