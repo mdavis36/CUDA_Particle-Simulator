@@ -1,6 +1,6 @@
 TARGET = Physics_Integrator.exe
 LIBS = -lglut -lGLEW -lGLU -lGL -lSDL2
-CC = nvcc
+CC = g++
 CFLAGS = -std=c++11
 
 .PHONY: default all clean

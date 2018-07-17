@@ -17,9 +17,9 @@
 #include <vector>
 #include <limits.h>
 
-#include "../Utils.h"
 #include "Plane.h"
 #include "../Graphics/Drawable.h"
+#include "../Utils/Utils.h"
 
 using namespace glm;
 

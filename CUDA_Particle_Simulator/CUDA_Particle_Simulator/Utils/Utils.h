@@ -1,5 +1,5 @@
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef TIMING_H
+#define TIMING_H
 
 #include <time.h>
 
@@ -11,7 +11,7 @@ const static int RUNNING = 1;
 const static int PAUSED = 2;
 const static int FINISHED = 3;
 
-namespace utility
+namespace timing
 {
       timespec diff_time(timespec start, timespec end);
       timespec add_time(timespec t1, timespec t2);

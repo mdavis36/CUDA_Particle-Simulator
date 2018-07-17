@@ -12,8 +12,8 @@ all: default
 run: all ; ./$(TARGET) &
 cpu: $(CPU_TARGET)
 
-OBJECTS = main.cpp Graphics/LoadShaders.cpp Graphics/Model.cpp Graphics/OrientationKey.cpp Sim/Plane.cpp Graphics/ViewController.cpp Sim/Simulation.cpp Utils.cpp
-HEADERS =          Graphics/LoadShaders.h   Graphics/Model.h   Graphics/OrientationKey.h   Sim/Plane.h   Graphics/ViewController.h   Sim/Simulation.h   Graphics/Drawable.h Utils.h CUDA/kernel.h
+OBJECTS = main.cpp Graphics/LoadShaders.cpp Graphics/Model.cpp Graphics/OrientationKey.cpp Sim/Plane.cpp Graphics/ViewController.cpp Sim/Simulation.cpp Utils/Utils.cpp
+HEADERS =          Graphics/LoadShaders.h   Graphics/Model.h   Graphics/OrientationKey.h   Sim/Plane.h   Graphics/ViewController.h   Sim/Simulation.h   Graphics/Drawable.h Utils/Utils.h CUDA/kernel.h
 CUDA_OBJECTS = CUDA/kernel.cu
 
 %.o: %.c $(HEADERS)

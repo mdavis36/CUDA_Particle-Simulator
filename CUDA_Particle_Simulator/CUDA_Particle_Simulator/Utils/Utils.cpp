@@ -1,6 +1,6 @@
 #include "Utils.h"
 
-namespace utility
+namespace timing
 {
 
 	timespec diff_time(timespec start, timespec end)

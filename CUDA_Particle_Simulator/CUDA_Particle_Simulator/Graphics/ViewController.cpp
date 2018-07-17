@@ -299,26 +299,26 @@ void ViewController::run()
 			clock_gettime(CLOCK_REALTIME, &end_up);
 
 			// get delta time for update.
-			delta_up = utility::diff_time(start_up, end_up);
+			delta_up = timing::diff_time(start_up, end_up);
 
 			// If the final time of the update is less that the TIME STEP
 			// of the simulation then wait until that is met. This helps
 			// run the simulation in real time if it is simple enough.
 			if (delta_up.tv_sec <= _sim->TIME_STEP.tv_sec && delta_up.tv_nsec < _sim->TIME_STEP.tv_nsec && _sim->sim_state == RUNNING){
-				wait = utility::diff_time(delta_up, _sim->TIME_STEP);
+				wait = timing::diff_time(delta_up, _sim->TIME_STEP);
 				nanosleep(&wait, nullptr);
 			}
 
 			// Check to see if the time since the beginning of this loop is
 			// larger or equal to 1/60 seconds, if so stop running updates.
 			clock_gettime(CLOCK_REALTIME, &end_frame);
-			delta_frame_time = utility::diff_time(start_frame, end_frame);
+			delta_frame_time = timing::diff_time(start_frame, end_frame);
 			if (delta_frame_time.tv_sec > 0 || delta_frame_time.tv_nsec > BILLION / 60) break;
 
 		}while(true);
 
 		// Accumilate the time for calculating FPS.
-		acc_time = utility::add_time(acc_time, delta_frame_time);
+		acc_time = timing::add_time(acc_time, delta_frame_time);
 
 		// After one full second, report the FPS and UPF( Average calculated)
 		if (acc_time.tv_sec >= 1)
