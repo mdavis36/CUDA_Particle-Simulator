@@ -1,5 +1,7 @@
 #include "ViewController.h"
 
+#include "../Utils.h"
+
 ViewController::ViewController(Simulation *sim)
 {
 	_sim = sim;
@@ -8,12 +10,19 @@ ViewController::ViewController(Simulation *sim)
 	_sdl_glcontext = 0;
 	_quit = false;
 
-	_x_angle_init, _y_angle_init, _x_tran_init, _y_tran_init = 0.0f;
-	_x_angle, _y_angle = 0;
+	_x_angle_init = 0.0f;
+	_y_angle_init = 0.0f;
+	_x_tran_init = 0.0f;
+	_y_tran_init = 0.0f;
+	_x_angle = 0;
+	_y_angle = 0;
 	_firstclick_r = true;
 	_firstclick_l = true;
 
-	_rot_base_x, _rot_base_y, _tran_base_x, _tran_base_y = 0.0f;
+	_rot_base_x = 0.0f;
+	_rot_base_y = 0.0f;
+	_tran_base_x = 0.0f;
+	_tran_base_y = 0.0f;
 
 }
 
@@ -104,7 +113,7 @@ void ViewController::handleEvents(SDL_Event e)
 			{
 				_zoom += 0.1f;
 			}
-			if (_zoom <= 0.0) _zoom = 0;
+			if (_zoom <= 0.0) _zoom = 0.0001;
 			m.update(_x_angle, _y_angle, _zoom, _trans.x, _trans.y);
 			break;
 		}
@@ -218,6 +227,8 @@ void ViewController::handleEvents(SDL_Event e)
 			}
 			break;
 		}
+
+		// End of event switch.
 		}
 	}
 }
@@ -247,12 +258,77 @@ void ViewController::run()
 	glClearColor(0.1, 0.1, 0.1, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT);
 	SDL_GL_SwapWindow(_sdl_window);
-	//int count = 0;
+
+
+	// Initialize the accumulative time to caculate FPS
+	acc_time = {0,0};
+
+	// Initialize fram and update counters
+	int frame_count = 0;
+	int update_count = 0;
+
+	// Main Application loop, this loop handles both the calls for physics
+	// simulation updates and graphics updates. This loop handles timing,
+	// ensuring that what is displayed to the user is at fastest real time
+	// OpenGL/SDL cap rendering to 60 fps. Therefore multiple simulation
+	// updates will be performed per render.
 	do
 	{
-		_sim->update();
+		// Get the start time of the frame before rendering.
+		clock_gettime(CLOCK_REALTIME, &start_frame);
+
+		// Display the simulation with OpenGL and handle SDL events.
 		display();
 		handleEvents(_event);
+
+		// Increment the frame count.
+		frame_count++;
+
+		// 0 the update time acculilator
+		acc_up = {0,0};
+		do
+		{
+			// Get the start time for this update.
+			clock_gettime(CLOCK_REALTIME, &start_up);
+
+			// run simulation update and increment counter.
+			_sim->update();
+			update_count++;
+
+			// Get the final time of the update.
+			clock_gettime(CLOCK_REALTIME, &end_up);
+
+			// get delta time for update.
+			delta_up = utility::diff_time(start_up, end_up);
+
+			// If the final time of the update is less that the TIME STEP
+			// of the simulation then wait until that is met. This helps
+			// run the simulation in real time if it is simple enough.
+			if (delta_up.tv_sec <= _sim->TIME_STEP.tv_sec && delta_up.tv_nsec < _sim->TIME_STEP.tv_nsec && _sim->sim_state == RUNNING){
+				wait = utility::diff_time(delta_up, _sim->TIME_STEP);
+				nanosleep(&wait, nullptr);
+			}
+
+			// Check to see if the time since the beginning of this loop is
+			// larger or equal to 1/60 seconds, if so stop running updates.
+			clock_gettime(CLOCK_REALTIME, &end_frame);
+			delta_frame_time = utility::diff_time(start_frame, end_frame);
+			if (delta_frame_time.tv_sec > 0 || delta_frame_time.tv_nsec > BILLION / 60) break;
+
+		}while(true);
+
+		// Accumilate the time for calculating FPS.
+		acc_time = utility::add_time(acc_time, delta_frame_time);
+
+		// After one full second, report the FPS and UPF( Average calculated)
+		if (acc_time.tv_sec >= 1)
+		{
+			cout << "FPS : " << frame_count << "\tAVG UPF : " << update_count / frame_count << endl;
+			frame_count = 0;
+			update_count = 0;
+			acc_time = {0,0};
+		}
+
 	} while (!_quit);
 
 	cleanup();

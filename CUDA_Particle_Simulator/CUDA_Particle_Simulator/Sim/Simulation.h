@@ -2,8 +2,6 @@
 #define SIMULATION_H
 
 // Class Dependencies
-//#include "particle.h"
-//#include "plane.h"
 
 // OpenGL Imports
 #include<GL/glew.h>
@@ -19,21 +17,19 @@
 #include <vector>
 #include <limits.h>
 
-#include "../Plane.h"
+#include "../Utils.h"
+#include "Plane.h"
 #include "../Graphics/Drawable.h"
 
 using namespace glm;
 
-//Simulation States
-const static int NOT_INITIALIZED = -1;
-const static int INITIALIZED = 0;
-const static int RUNNING = 1;
-const static int PAUSED = 2;
-const static int FINISHED = 3;
 
 class Simulation
 {
 public:
+	const struct timespec TIME_STEP = {0, BILLION / 2000};
+	int sim_state = NOT_INITIALIZED;
+
 	Simulation();
 	~Simulation();
 
@@ -59,8 +55,6 @@ public:
 
 private:
 	// Simulation Environment Variables
-	//const int GRID_SIZE = 5;
-	//glm::vec3 a_gravity = glm::vec3(0.0f, -3, 0.0f);
 
 	// Simulation Time Variables
 	#ifdef _WIN32
@@ -76,10 +70,6 @@ private:
 
 	// Simulation Variables
 	const int PARTICLE_COUNT = 500;
-	int sim_state = NOT_INITIALIZED;
-	//Integrator integrator;
-	//vector<Particle*> particles;
-
 
 	// Private Simulation Functions
 	bool init();
@@ -87,13 +77,8 @@ private:
 
 	//collisions
 	float distFromPlane(const vec3 pos, const Plane* plane);
-	//vector<Plane*> getCollisions(Particle* p, vector<Plane*> planes);
 	vec3 reflect(const vec3 pos, const Plane* plane);
 
-	//Plane * getClosestCollisionPlane(const Particle * proj_p, const Particle * orig_p, const vector<Plane*> planes);
-	//float getCollisionTimeFromStartOfTimeStep(const Particle * p, const Plane * pl, const float t_step);
-	//float getCollisionFrac(const Particle * p, const Plane * pl);
-	//Particle projectParticleAtSubTimeStep(const Particle * p, const Plane * pl, const float t_step_frac);
 
 	int getSign(float val);
 

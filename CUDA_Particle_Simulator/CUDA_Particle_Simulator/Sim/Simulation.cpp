@@ -36,7 +36,6 @@ Simulation::~Simulation()
 
 bool Simulation::start()
 {
-	cout << "Start" << endl;
 	if (sim_state == INITIALIZED)
 	{
 		cout << "Starting Simulation of "<< PARTICLE_COUNT << " falling particles." << endl;
@@ -114,11 +113,13 @@ void Simulation::update()
 			frame_time = ((t2.QuadPart - t1.QuadPart) * 1000.0 / frequency.QuadPart) / 1000.0;
 		#else
 			clock_gettime(CLOCK_REALTIME, &t2);
-			frame_time = (t2.tv_nsec - t1.tv_nsec) / 1000000000.0;
+			frame_time = (t2.tv_nsec - t1.tv_nsec) / BILLION;
 		#endif
 
 		t1 = t2;
 		sim_time_accu += frame_time;
+
+		//nanosleep(&TIME_STEP, nullptr);
 
 		// Update every particle and check to see if all particles have hit the floor.
 		//bool checkSimOver = true;
@@ -236,29 +237,6 @@ bool Simulation::init()
 	sim_state = INITIALIZED;
 	return true;
 }
-
-// void Simulation::drawOrientationKey()
-// {
-// 	//draw orientation key
-// 	glBegin(GL_LINES);
-//
-// 	//Red is Positive X
-// 	glColor3f(1.0f, 0.0f, 0.0f);
-// 	glVertex3f(0, 0, 0);
-// 	glVertex3f(1, 0, 0);
-//
-// 	//Green is positive Y
-// 	glColor3f(0.0f, 1.0f, 0.0f);
-// 	glVertex3f(0, 0, 0);
-// 	glVertex3f(0, 1, 0);
-//
-// 	//Blue is posiotive Z
-// 	glColor3f(0.0f, 0.0f, 1.0f);
-// 	glVertex3f(0, 0, 0);
-// 	glVertex3f(0, 0, 1);
-//
-// 	glEnd();
-// }
 
 
 void Simulation::clean()

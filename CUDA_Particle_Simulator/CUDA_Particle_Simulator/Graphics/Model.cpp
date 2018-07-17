@@ -75,8 +75,6 @@ void Model::draw()
 	_view_matrix = translate(_view_matrix, _trans);
 
 	mat4 rotate_matrix = rotate(mat4(1.0), degToRad(_rot_x), vec3(1,0,0));
-	//mat4 rotate_matrix =translate(mat4(1.0), _trans);
-	//rotate_matrix = rotate(rotate_matrix, degToRad(_rot_x), vec3(1,0,0));
 	rotate_matrix = rotate(rotate_matrix, degToRad(_rot_y), vec3(0,1,0));
 
 

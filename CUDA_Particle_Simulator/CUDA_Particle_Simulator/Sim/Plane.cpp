@@ -69,12 +69,9 @@ bool Plane::init()
 
 		float zx_theta = acosf(dot(n_proj_zx, up_proj_zx)) * (180 / 3.14f);
 		_normal.x < 0 ? zx_theta = 270 - zx_theta : zx_theta = 270 - zx_theta;
-		//_normal.x < 0 ? zx_theta = 90 - zx_theta : zx_theta = zx_theta;
 		_normal.z < 0 ? true : zx_theta = 180 - zx_theta;
 
 		float xy_theta = acosf(dot(_normal, up)) * (180 / 3.14f);
-		//_normal.y < 0 ? xy_theta = 180 - xy_theta : xy_theta = 180 - xy_theta;
-		//_normal.y < 0 ? xy_theta = 180 - xy_theta : xy_theta = xy_theta;
 
 		_model_matrix = rotate(_model_matrix, zx_theta * (3.14159f / 180), vec3(0.0f, 1.0f, 0.0f));
 		_model_matrix = rotate(_model_matrix, xy_theta * (3.14159f / 180), vec3(1.0f, 0.0f, 0.0f));
@@ -111,8 +108,3 @@ void Plane::draw() const
 	glLineWidth(1.0f);
 	glDrawArrays(GL_LINES, 0, _positions.size());
 }
-
-// mat4 Plane::getModelMatrix()
-// {
-// 	return _model_matrix;
-// }

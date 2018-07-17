@@ -3,13 +3,17 @@
 
 #include "GL/glew.h"
 #include <SDL2/SDL.h>
+#include <time.h>
+#include <thread>
+
 
 #include "Model.h"
 #include "../Sim/Simulation.h"
-#include <thread>
+
 
 #include <iostream>
 using namespace std;
+//using namespace utility;
 
 class ViewController
 {
@@ -18,11 +22,16 @@ private:
 	const int WINDOW_WIDTH = 1600;
 	const int WINDOW_HEIGHT = 1200;
 
+	const int FPS = 60;
+
+	// SDL variables
 	SDL_Window *_sdl_window;
 	SDL_GLContext _sdl_glcontext;
 	SDL_Event _event;
 	bool _quit;
 
+
+	// View Controller manipulation variables.
 	bool _rotating;
 	bool _transforming;
 
@@ -43,15 +52,18 @@ private:
 	float _last_tran_offset_y;
 	float _x_tran_init;
 	float _y_tran_init;
-
+	vec3 _trans = vec3(0.0f,0.0f,0.0f);
 
 	bool _firstclick_r;
 	bool _firstclick_l;
 
-
-	vec3 _trans = vec3(0.0f,0.0f,0.0f);
-
 	float _zoom = 1.0f;
+
+
+	// Timing variables.
+	struct timespec start_frame, end_frame, delta_frame_time, acc_time;
+	struct timespec start_up, end_up, delta_up, acc_up, wait;
+
 
 	Simulation *_sim;
 	Model m;

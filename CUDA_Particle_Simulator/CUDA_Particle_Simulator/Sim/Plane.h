@@ -7,7 +7,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 
-#include "Graphics/Drawable.h"
+#include "../Graphics/Drawable.h"
 
 using namespace glm;
 using namespace std;
@@ -17,7 +17,6 @@ class Plane : public Drawable
 private:
 	std::vector<vec3> _positions;
 	std::vector<vec4> _colors;
-	//mat4 _model_matrix;
 
 	GLuint _vao;
 	GLuint _buffers[2];
@@ -33,7 +32,6 @@ public:
 	Plane(vec3 n, vec3 c, int w, int h);
 	virtual bool init();
 	virtual void draw() const;
-	//mat4 getModelMatrix() { return _model_matrix; }
 
 };
 
