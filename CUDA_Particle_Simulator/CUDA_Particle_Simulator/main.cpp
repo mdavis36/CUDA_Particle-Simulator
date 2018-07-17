@@ -1,13 +1,14 @@
 #include <iostream>
 using namespace std;
 
-
-
 #include "Graphics/ViewController.h"
-#include "CUDA/kernel.h"
+
 #include "Sim/Simulation.h"
 
 
+#ifdef RUN_CUDA
+
+#include "CUDA/kernel.h"
 bool runCUDAExample(bool quietMode = false)
 {
 	const int arraySize = 5;
@@ -36,15 +37,17 @@ bool runCUDAExample(bool quietMode = false)
 	return true;
 }
 
+#endif
 
 int main(int argc, char * argv[])
 {
+
+#ifdef RUN_CUDA
 	if (!runCUDAExample()) return -1;
+#endif
 
 	Simulation sim;
 	ViewController vc(&sim);
 	vc.run();
-
-	system("pause");
 	return 0;
 }

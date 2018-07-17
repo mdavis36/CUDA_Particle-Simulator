@@ -9,16 +9,21 @@
 
 #include "Model.h"
 #include "../Sim/Simulation.h"
-
+#include "../Utils.h"
 
 #include <iostream>
 using namespace std;
-//using namespace utility;
 
 class ViewController
 {
 private:
-	const char WINDOW_TITLE[32] = "Verlet_CUDA_Particle_Simulator";
+
+#ifdef RUN_GPU
+	const char WINDOW_TITLE[32] = "CUDA_Particle_Simulator";
+#else
+	const char WINDOW_TITLE[32] = "Particle_Simulator";
+#endif
+
 	const int WINDOW_WIDTH = 1600;
 	const int WINDOW_HEIGHT = 1200;
 

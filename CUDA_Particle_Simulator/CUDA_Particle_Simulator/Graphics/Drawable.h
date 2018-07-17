@@ -8,6 +8,7 @@ class Drawable
 {
 public:
       Drawable() {}
+      virtual ~Drawable() {}
       mat4 _model_matrix;
       virtual bool init() = 0;
       virtual void draw() const = 0;
@@ -20,15 +21,8 @@ private:
       std::vector<vec3> _positions;
       std::vector<vec4> _colors;
 
-
       GLuint _vao;
       GLuint _buffers[2];
 };
-
-
-
-
-
-
 
 #endif

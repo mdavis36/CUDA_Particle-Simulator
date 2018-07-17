@@ -35,9 +35,9 @@ bool Model::init(Simulation *sim)
 
 	// Load Shader
 	ShaderInfo shaders0[] = {
-		{ GL_VERTEX_SHADER, "Graphics/shader.vs" },
-		{ GL_FRAGMENT_SHADER, "Graphics/shader.fs" },  //Phong Reflectance Model
-		{ GL_NONE, NULL }
+		{ GL_VERTEX_SHADER,   "Graphics/shader.vs", 0 },
+		{ GL_FRAGMENT_SHADER, "Graphics/shader.fs", 1 },  //Phong Reflectance Model
+		{ GL_NONE, 		    NULL, 			  2 }
 	};
 	if ((programs[0] = LoadShaders(shaders0)) == 0)
 	{
