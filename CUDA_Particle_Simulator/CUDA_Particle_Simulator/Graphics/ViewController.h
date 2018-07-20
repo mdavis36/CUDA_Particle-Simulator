@@ -78,6 +78,8 @@ private:
 	void setAttributes();
 	void display();
 	void handleEvents(SDL_Event e);
+	void incrementalUpdateMethod();
+	void finiteUdateMethod();
 	void cleanup();
 
 	void cc(vec3 c)

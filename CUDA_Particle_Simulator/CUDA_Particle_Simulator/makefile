@@ -2,7 +2,7 @@ TARGET = CUDA_Particle_Simulator.exe
 CPU_TARGET = Particle_Simulator.exe
 LIBS = -lglut -lGLEW -lGLU -lGL -lSDL2
 CC = nvcc
-CPU_CC = g++ -Wall -Wextra
+CPU_CC = g++ -Wall -Wextra -D_DEBUG
 CFLAGS = -std=c++11
 
 .PHONY: default all clean

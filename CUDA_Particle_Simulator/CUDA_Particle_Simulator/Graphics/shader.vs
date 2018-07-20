@@ -1,4 +1,4 @@
-#version 420 core
+#version 330
 
 layout(location = 0) in vec4 _in_vertex_position;
 layout(location = 1) in vec4 _in_vertex_color;

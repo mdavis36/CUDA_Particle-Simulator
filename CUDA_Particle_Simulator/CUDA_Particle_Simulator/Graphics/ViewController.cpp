@@ -1,6 +1,6 @@
 #include "ViewController.h"
 
-
+#define MAX_FPS 60
 
 ViewController::ViewController(Simulation *sim)
 {
@@ -55,9 +55,9 @@ bool ViewController::init()
 void ViewController::setAttributes()
 {
 	// Set OpenGL SDl Attributes
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, true);
 }
 
@@ -259,14 +259,27 @@ void ViewController::run()
 	glClear(GL_COLOR_BUFFER_BIT);
 	SDL_GL_SwapWindow(_sdl_window);
 
+	//incrementalUpdateMethod();
+	finiteUdateMethod();
+
+	cleanup();
+
+}
+
+void ViewController::finiteUdateMethod()
+{
+	int i;
 
 	// Initialize the accumulative time to caculate FPS
 	acc_time = {0,0};
+
+	struct timespec RENDER_STEP = {0, BILLION / MAX_FPS};
 
 	// Initialize fram and update counters
 	int frame_count = 0;
 	int update_count = 0;
 
+	struct timespec lost, temp;
 	// Main Application loop, this loop handles both the calls for physics
 	// simulation updates and graphics updates. This loop handles timing,
 	// ensuring that what is displayed to the user is at fastest real time
@@ -275,7 +288,7 @@ void ViewController::run()
 	do
 	{
 		// Get the start time of the frame before rendering.
-		clock_gettime(CLOCK_REALTIME, &start_frame);
+		clock_gettime(CLOCK_MONOTONIC, &start_frame);
 
 		// Display the simulation with OpenGL and handle SDL events.
 		display();
@@ -286,17 +299,107 @@ void ViewController::run()
 
 		// 0 the update time acculilator
 		acc_up = {0,0};
+		lost = {0,0};
+
+		// Get the start time for this update.
+		clock_gettime(CLOCK_MONOTONIC, &start_up);
+
+		for (i = 0; i < UPDATES_PER_SECOND / MAX_FPS; i++)
+		{
+			// run simulation update and increment counter.
+			_sim->update();
+			update_count++;
+		}
+
+		if (frame_count == MAX_FPS && frame_count < UPDATES_PER_SECOND + 1)
+		{
+			int buff_up = UPDATES_PER_SECOND - ((int)(UPDATES_PER_SECOND / MAX_FPS) * MAX_FPS);
+			cout << "buff_up : " << buff_up << endl;
+			for (i = 0; i < buff_up; i++)
+			{
+				_sim->update();
+				update_count++;
+			}
+		}
+
+		// Get the final time of the update.
+		clock_gettime(CLOCK_MONOTONIC, &end_up);
+
+		// get delta time for update.
+		delta_up = timing::diff_time(start_up, end_up);
+
+		if (delta_up.tv_sec <= RENDER_STEP.tv_sec && delta_up.tv_nsec < RENDER_STEP.tv_nsec){
+			wait = timing::diff_time(delta_up, _sim->TIME_STEP);
+			if (nanosleep(&wait, &temp)!=0)
+			{
+				//cout << "Failed to sleep properly.\n";
+				nanosleep(&temp, nullptr);
+			}
+		}
+
+
+		clock_gettime(CLOCK_MONOTONIC, &end_frame);
+		delta_frame_time = timing::diff_time(start_frame, end_frame);
+		// Accumilate the time for calculating FPS.
+		acc_time = timing::add_time(acc_time, delta_frame_time);
+
+		// After one full second, report the FPS and UPF( Average calculated)
+		if (acc_time.tv_sec >= 1)
+		{
+			cout << "FPS : " << frame_count <<
+				  "\tUPS : " << update_count <<
+				  "\tAVG UPF : " << update_count / frame_count <<
+				  endl;
+
+			frame_count = 0;
+			update_count = 0;
+			acc_time = {0,0};
+		}
+
+	} while (!_quit);
+}
+
+void ViewController::incrementalUpdateMethod()
+{
+	// Initialize the accumulative time to caculate FPS
+	acc_time = {0,0};
+
+	// Initialize fram and update counters
+	int frame_count = 0;
+	int update_count = 0;
+
+	struct timespec lost, temp;
+	// Main Application loop, this loop handles both the calls for physics
+	// simulation updates and graphics updates. This loop handles timing,
+	// ensuring that what is displayed to the user is at fastest real time
+	// OpenGL/SDL cap rendering to 60 fps. Therefore multiple simulation
+	// updates will be performed per render.
+	do
+	{
+		// Get the start time of the frame before rendering.
+		clock_gettime(CLOCK_MONOTONIC, &start_frame);
+
+		// Display the simulation with OpenGL and handle SDL events.
+		display();
+		handleEvents(_event);
+
+		// Increment the frame count.
+		frame_count++;
+
+		// 0 the update time acculilator
+		acc_up = {0,0};
+		lost = {0,0};
 		do
 		{
 			// Get the start time for this update.
-			clock_gettime(CLOCK_REALTIME, &start_up);
+			clock_gettime(CLOCK_MONOTONIC, &start_up);
 
 			// run simulation update and increment counter.
 			_sim->update();
 			update_count++;
 
 			// Get the final time of the update.
-			clock_gettime(CLOCK_REALTIME, &end_up);
+			clock_gettime(CLOCK_MONOTONIC, &end_up);
 
 			// get delta time for update.
 			delta_up = timing::diff_time(start_up, end_up);
@@ -304,33 +407,39 @@ void ViewController::run()
 			// If the final time of the update is less that the TIME STEP
 			// of the simulation then wait until that is met. This helps
 			// run the simulation in real time if it is simple enough.
+
 			if (delta_up.tv_sec <= _sim->TIME_STEP.tv_sec && delta_up.tv_nsec < _sim->TIME_STEP.tv_nsec && _sim->sim_state == RUNNING){
 				wait = timing::diff_time(delta_up, _sim->TIME_STEP);
-				nanosleep(&wait, nullptr);
+				if (nanosleep(&wait, &temp)!=0)
+				{
+					cout << "Failed to sleep properly.\n";
+					lost = timing::add_time(lost, temp);
+				}
 			}
+
 
 			// Check to see if the time since the beginning of this loop is
 			// larger or equal to 1/60 seconds, if so stop running updates.
-			clock_gettime(CLOCK_REALTIME, &end_frame);
+			clock_gettime(CLOCK_MONOTONIC, &end_frame);
 			delta_frame_time = timing::diff_time(start_frame, end_frame);
 			if (delta_frame_time.tv_sec > 0 || delta_frame_time.tv_nsec > BILLION / 60) break;
 
 		}while(true);
-
 		// Accumilate the time for calculating FPS.
 		acc_time = timing::add_time(acc_time, delta_frame_time);
 
 		// After one full second, report the FPS and UPF( Average calculated)
 		if (acc_time.tv_sec >= 1)
 		{
-			cout << "FPS : " << frame_count << "\tAVG UPF : " << update_count / frame_count << endl;
+			cout << "FPS : " << frame_count <<
+				  "\tUPS : " << update_count <<
+				  "\tAVG UPF : " << update_count / frame_count <<
+				  endl;
+
 			frame_count = 0;
 			update_count = 0;
 			acc_time = {0,0};
 		}
 
 	} while (!_quit);
-
-	cleanup();
-
 }

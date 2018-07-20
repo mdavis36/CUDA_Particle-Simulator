@@ -1,4 +1,4 @@
-#version 420 core
+#version 330
 
 in vec4 _vertex_color;
 out vec4 _out_color;

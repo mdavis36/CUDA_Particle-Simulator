@@ -1,6 +1,7 @@
 #ifndef SIMULATION_H
 #define SIMULATION_H
 
+#define UPDATES_PER_SECOND 55655
 // Class Dependencies
 
 // OpenGL Imports
@@ -27,7 +28,7 @@ using namespace glm;
 class Simulation
 {
 public:
-	const struct timespec TIME_STEP = {0, BILLION / 2000};
+	const struct timespec TIME_STEP = {0, BILLION / UPDATES_PER_SECOND};
 	int sim_state = NOT_INITIALIZED;
 
 	Simulation();
