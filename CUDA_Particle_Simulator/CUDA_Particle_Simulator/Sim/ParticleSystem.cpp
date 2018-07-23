@@ -11,9 +11,9 @@ ParticleSystem::ParticleSystem(int n)
       if (_num_particles == 1)
       {
             _particles.push_back(Particle(1,
-                                          vec3(1,5,1),
-                                          vec3(0,0,0),
-                                          vec3(0,0,0)
+                                          vec3(1.0f,5.0f,1.0f),
+                                          vec3(0.0f,0.0f,0.0f),
+                                          vec3(0.0f,0.0f,0.0f)
                                           )
                                     );
       }

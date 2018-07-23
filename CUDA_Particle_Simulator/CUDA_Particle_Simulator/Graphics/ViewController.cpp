@@ -312,17 +312,17 @@ void ViewController::finiteUdateMethod()
 				_sim->update(frame_count);
 				update_count++;
 			}
-
-			if (frame_count == MAX_FPS)
-			{
-				int buff_up = UPDATES_PER_SECOND - ((int)(UPDATES_PER_SECOND / MAX_FPS) * MAX_FPS);
-				//cout << "buff_up : " << buff_up << endl;
-				for (i = 0; i < buff_up; i++)
-				{
-					_sim->update(frame_count);
-					update_count++;
-				}
-			}
+			// TODO Fix timing inaccuracy, this lags the animation at the end of every second. Need to distribute updates more evenly.
+			// if (frame_count == MAX_FPS)
+			// {
+			// 	int buff_up = UPDATES_PER_SECOND - ((int)(UPDATES_PER_SECOND / MAX_FPS) * MAX_FPS);
+			// 	//cout << "buff_up : " << buff_up << endl;
+			// 	for (i = 0; i < buff_up; i++)
+			// 	{
+			// 		_sim->update(frame_count);
+			// 		update_count++;
+			// 	}
+			// }
 		}
 		// Get the final time of the update.
 		clock_gettime(CLOCK_MONOTONIC, &end_up);

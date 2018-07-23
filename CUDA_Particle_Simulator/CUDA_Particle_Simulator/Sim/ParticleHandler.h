@@ -13,7 +13,7 @@ namespace ParticleHandler {
       void Clear_Forces(ParticleSystem *p);
       void Compute_Forces(ParticleSystem *p);
 
-      void EulerStep(ParticleSystem p, float dt);
+      void EulerStep(ParticleSystem *p, float dt);
 
       void ScaleVector(float *v, float s, int size);
       void AddVectors(float *s, float *a, float *b, int size);

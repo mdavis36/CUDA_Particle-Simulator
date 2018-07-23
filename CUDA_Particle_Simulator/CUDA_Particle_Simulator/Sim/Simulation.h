@@ -1,7 +1,7 @@
 #ifndef SIMULATION_H
 #define SIMULATION_H
 
-#define UPDATES_PER_SECOND 120
+#define UPDATES_PER_SECOND 2000
 // Class Dependencies
 
 // OpenGL Imports
@@ -33,6 +33,7 @@ class Simulation
 {
 public:
 	const struct timespec TIME_STEP = {0, BILLION / UPDATES_PER_SECOND};
+	const float dt = (float)TIME_STEP.tv_nsec / (float)BILLION;
 	int sim_state = NOT_INITIALIZED;
 
 	Simulation();

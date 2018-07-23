@@ -121,7 +121,8 @@ void Simulation::update(int fn)
 		t1 = t2;
 		sim_time_accu += frame_time;
 
-		_p_sys->_particles[0].x[0] = fn%4;
+		EulerStep(_p_sys, dt);
+
 		//nanosleep(&TIME_STEP, nullptr);
 
 		// Update every particle and check to see if all particles have hit the floor.
