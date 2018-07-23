@@ -1,10 +1,10 @@
 #ifndef ORIENTATIONKEY_H
 #define ORIENTATIONKEY_H
 
-#include <vector>
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <iostream>
+#include <vector>
 
 #include "Drawable.h"
 
@@ -27,7 +27,7 @@ private:
 public:
 	OrientationKey();
 	virtual bool init();
-	virtual void draw() const;
+	virtual void draw();
 	mat4 getModelMatrix();
 };
 

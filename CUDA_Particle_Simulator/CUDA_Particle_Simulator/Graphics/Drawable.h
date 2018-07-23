@@ -11,7 +11,7 @@ public:
       virtual ~Drawable() {}
       mat4 _model_matrix;
       virtual bool init() = 0;
-      virtual void draw() const = 0;
+      virtual void draw() = 0;
       mat4 getModelMatrix() { return _model_matrix; }
 };
 

@@ -8,8 +8,10 @@
 */
 
 #include <iostream>
-using namespace std;
+
 #include "Simulation.h"
+
+using namespace std;
 
 // ********************************************************************************
 // *                               -- PUBLIC --                                   *
@@ -102,7 +104,7 @@ bool Simulation::reset()
 
 // -------------------- Simulation Step Functions --------------------
 
-void Simulation::update()
+void Simulation::update(int fn)
 {
 	if (sim_state == RUNNING)
 	{
@@ -119,6 +121,7 @@ void Simulation::update()
 		t1 = t2;
 		sim_time_accu += frame_time;
 
+		_p_sys->_particles[0].x[0] = fn%4;
 		//nanosleep(&TIME_STEP, nullptr);
 
 		// Update every particle and check to see if all particles have hit the floor.
@@ -215,24 +218,10 @@ bool Simulation::init()
 	//integrator.setIType(INTEGRATE_VERLET);
 	//integrator.setIType(INTEGRATE_EULER);
 
-	//planes.push_back(new Plane(glm::vec3(10.0f, 0.0f, 0.0f), glm::vec3(-1.0f, 1.0f, 0.0f), 20.0f));
-	//planes.push_back(new Plane(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 2.0f, 0.0f), 5.0f));
-
-	//_scene_objects.push_back(new Plane(vec3(0.0, 1.0, 0.0), vec3(5.0, -1.0, 0.0), 6, 2));
+	_p_sys = new ParticleSystem();
 	_scene_objects.push_back(new Plane(vec3(0.0, 1.0, 0.0), vec3(0.0, -1.0, 0.0), 20, 20));
-
-      /*
-	glm::vec3 ranPos;
-	for (int i = 0; i < PARTICLE_COUNT; i++)
-	{
-		ranPos.x = -planes[0]->width + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (2 * planes[0]->width)));
-		ranPos.z = -planes[0]->width + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (2 * planes[0]->width)));
-		ranPos.y = 5 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (8)));
-		particles.push_back(new Particle(ranPos));
-	}
-      */
-
-	//particles.push_back(new Particle(glm::vec3(0.0f, 5.0f, 0.0f)));
+	_scene_objects.push_back(_p_sys);
+	int num_particles = 1;
 
 	sim_state = INITIALIZED;
 	return true;

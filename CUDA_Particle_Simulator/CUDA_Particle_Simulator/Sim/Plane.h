@@ -1,11 +1,11 @@
 #ifndef PLANE_H
 #define PLANE_H
 
-#include <vector>
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
+#include <vector>
 
 #include "../Graphics/Drawable.h"
 
@@ -31,7 +31,7 @@ public:
 	Plane();
 	Plane(vec3 n, vec3 c, int w, int h);
 	virtual bool init();
-	virtual void draw() const;
+	virtual void draw();
 
 };
 

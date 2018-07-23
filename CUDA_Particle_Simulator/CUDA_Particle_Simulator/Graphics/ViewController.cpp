@@ -266,6 +266,7 @@ void ViewController::run()
 
 }
 
+//TODO : Fix issue when NUM_FRMAES_PER SECOND is less than MAX_FPS
 void ViewController::finiteUdateMethod()
 {
 	int i;
@@ -304,29 +305,30 @@ void ViewController::finiteUdateMethod()
 		// Get the start time for this update.
 		clock_gettime(CLOCK_MONOTONIC, &start_up);
 
-		for (i = 0; i < UPDATES_PER_SECOND / MAX_FPS; i++)
-		{
-			// run simulation update and increment counter.
-			_sim->update();
-			update_count++;
-		}
-
-		if (frame_count == MAX_FPS && frame_count < UPDATES_PER_SECOND + 1)
-		{
-			int buff_up = UPDATES_PER_SECOND - ((int)(UPDATES_PER_SECOND / MAX_FPS) * MAX_FPS);
-			cout << "buff_up : " << buff_up << endl;
-			for (i = 0; i < buff_up; i++)
+		if(update_count < UPDATES_PER_SECOND){
+			for (i = 0; i < UPDATES_PER_SECOND / MAX_FPS; i++)
 			{
-				_sim->update();
+				// run simulation update and increment counter.
+				_sim->update(frame_count);
 				update_count++;
 			}
-		}
 
+			if (frame_count == MAX_FPS)
+			{
+				int buff_up = UPDATES_PER_SECOND - ((int)(UPDATES_PER_SECOND / MAX_FPS) * MAX_FPS);
+				//cout << "buff_up : " << buff_up << endl;
+				for (i = 0; i < buff_up; i++)
+				{
+					_sim->update(frame_count);
+					update_count++;
+				}
+			}
+		}
 		// Get the final time of the update.
 		clock_gettime(CLOCK_MONOTONIC, &end_up);
 
 		// get delta time for update.
-		delta_up = timing::diff_time(start_up, end_up);
+		delta_up = timing::diff_time(start_frame, end_up);
 
 		if (delta_up.tv_sec <= RENDER_STEP.tv_sec && delta_up.tv_nsec < RENDER_STEP.tv_nsec){
 			wait = timing::diff_time(delta_up, _sim->TIME_STEP);
@@ -395,7 +397,7 @@ void ViewController::incrementalUpdateMethod()
 			clock_gettime(CLOCK_MONOTONIC, &start_up);
 
 			// run simulation update and increment counter.
-			_sim->update();
+			_sim->update(frame_count);
 			update_count++;
 
 			// Get the final time of the update.

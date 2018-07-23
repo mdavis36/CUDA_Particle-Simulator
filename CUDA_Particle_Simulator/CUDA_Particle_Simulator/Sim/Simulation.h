@@ -1,7 +1,7 @@
 #ifndef SIMULATION_H
 #define SIMULATION_H
 
-#define UPDATES_PER_SECOND 55655
+#define UPDATES_PER_SECOND 120
 // Class Dependencies
 
 // OpenGL Imports
@@ -15,14 +15,18 @@
 	#include <time.h>
 #endif
 
-#include <vector>
 #include <limits.h>
+#include <vector>
 
 #include "Plane.h"
+#include "ParticleSystem.h"
+#include "ParticleHandler.h"
+
 #include "../Graphics/Drawable.h"
 #include "../Utils/Utils.h"
 
 using namespace glm;
+using namespace ParticleHandler;
 
 
 class Simulation
@@ -41,7 +45,7 @@ public:
 	bool reset();
 
 	// Simulation Step Functions
-	void update();
+	void update(int fn);
 	void render();
 
 	// Getter Functions
@@ -51,8 +55,11 @@ public:
 	// Print Functions
 	void printControls();
 
+
+	ParticleSystem *_p_sys;
 	//TODO : Move back to private after hitable class created
 	vector<Drawable*> _scene_objects;
+
 
 private:
 	// Simulation Environment Variables

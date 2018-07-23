@@ -97,7 +97,7 @@ bool Plane::init()
 	return true;
 }
 
-void Plane::draw() const
+void Plane::draw()
 {
 	if (!_initialized)
 	{
