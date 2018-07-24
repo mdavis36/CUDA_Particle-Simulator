@@ -43,6 +43,7 @@ private:
 public:
 	Model();
 	bool init(Simulation *sim);
+	void initAssets();
 	void draw();
 	void update(float x, float y, float z, float xt, float yt);
 };

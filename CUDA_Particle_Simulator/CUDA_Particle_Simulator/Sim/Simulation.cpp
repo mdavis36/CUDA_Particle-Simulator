@@ -8,7 +8,7 @@
 */
 
 #include <iostream>
-
+#include <omp.h>
 #include "Simulation.h"
 
 using namespace std;
@@ -21,6 +21,12 @@ using namespace std;
 
 Simulation::Simulation()
 {
+	Simulation(5);
+}
+
+Simulation::Simulation(int n)
+{
+	num_particles = n;
 	if (!init())
 	{
 		cout << "Failed to initialize simulation.\n";
@@ -40,7 +46,7 @@ bool Simulation::start()
 {
 	if (sim_state == INITIALIZED)
 	{
-		cout << "Starting Simulation of "<< PARTICLE_COUNT << " falling particles." << endl;
+		cout << "Starting Simulation of "<< num_particles << " falling particles." << endl;
 		//integrator.printIType();
 		sim_state = RUNNING;
 
@@ -65,17 +71,11 @@ bool Simulation::pause()
 	if (sim_state == PAUSED) {
 		sim_state = RUNNING;
 		cout << "Simulation Running.\n";
-		#ifdef _WIN32
-			// Start timer.
-			QueryPerformanceCounter(&t1);
-		#else
-			clock_gettime(CLOCK_REALTIME, &t1);
-		#endif
 		return true;
 	}
 	else if (sim_state == RUNNING) {
 		sim_state = PAUSED;
-		cout << "Simulation Paused at : " << sim_time_accu << " seconds\n";
+		cout << "Simulation Paused.\n";
 		return true;
 	}
 	return false;
@@ -85,7 +85,6 @@ bool Simulation::end()
 {
 	if (sim_state >= RUNNING && sim_state != FINISHED) {
 		cout << "Simulation has ended.\n";
-		cout << "Simulation ran for : " << sim_time_accu << "\n\n";
 	}
 	sim_state = FINISHED;
 	return false;
@@ -104,24 +103,22 @@ bool Simulation::reset()
 
 // -------------------- Simulation Step Functions --------------------
 
-void Simulation::update(int fn)
+void Simulation::update()
 {
 	if (sim_state == RUNNING)
 	{
-		#ifdef _WIN32
-			// Using high res. counter.
-			QueryPerformanceCounter(&t2);
-			// Compute the elapsed time in seconds.
-			frame_time = ((t2.QuadPart - t1.QuadPart) * 1000.0 / frequency.QuadPart) / 1000.0;
-		#else
-			clock_gettime(CLOCK_REALTIME, &t2);
-			frame_time = (t2.tv_nsec - t1.tv_nsec) / BILLION;
-		#endif
-
-		t1 = t2;
-		sim_time_accu += frame_time;
 
 		EulerStep(_p_sys, dt);
+
+		#pragma omp parallel for num_threads(4)
+		for (int i = 0; i < _p_sys->_num_particles; i++)
+		{
+			if (_p_sys->_particles[i].x.y <= 0)
+			{
+				_p_sys->_particles[i].x.y = 0;
+			}
+		}
+
 
 		//nanosleep(&TIME_STEP, nullptr);
 
@@ -219,10 +216,10 @@ bool Simulation::init()
 	//integrator.setIType(INTEGRATE_VERLET);
 	//integrator.setIType(INTEGRATE_EULER);
 
-	_p_sys = new ParticleSystem();
-	_scene_objects.push_back(new Plane(vec3(0.0, 1.0, 0.0), vec3(0.0, -1.0, 0.0), 20, 20));
+	_p_sys = new ParticleSystem(num_particles);
+	_scene_objects.clear();
+	_scene_objects.push_back(new Plane(vec3(0.0, 1.0, 0.0), vec3(0.0, 0.0, 0.0), 20, 20));
 	_scene_objects.push_back(_p_sys);
-	int num_particles = 1;
 
 	sim_state = INITIALIZED;
 	return true;

@@ -7,6 +7,7 @@ ParticleSystem::ParticleSystem()
 
 ParticleSystem::ParticleSystem(int n)
 {
+      t = 0.0f;
       _num_particles = n;
       if (_num_particles == 1)
       {
@@ -17,17 +18,26 @@ ParticleSystem::ParticleSystem(int n)
                                           )
                                     );
       }
-      //Ramdomly generate positions of particles.
-      /*
-      glm::vec3 ranPos;
-      for (int i = 0; i < PARTICLE_COUNT; i++)
+      else
       {
-            ranPos.x = -planes[0]->width + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (2 * planes[0]->width)));
-            ranPos.z = -planes[0]->width + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (2 * planes[0]->width)));
-            ranPos.y = 5 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (8)));
-            particles.push_back(new Particle(ranPos));
+            //Ramdomly generate positions of particles.
+            int x_limit = 15;
+            int z_limit = 15;
+            glm::vec3 ranPos;
+            for (int i = 0; i < _num_particles; i++)
+            {
+                  ranPos.x = -x_limit + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (2 * x_limit)));
+                  ranPos.z = -z_limit + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (2 * z_limit)));
+                  ranPos.y = 5 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (8)));
+                  _particles.push_back(Particle(1,
+                                                    ranPos,
+                                                    vec3(0.0f,0.0f,0.0f),
+                                                    vec3(0.0f,0.0f,0.0f)
+                                                    )
+                                              );
+            }
       }
-      */
+
 
 }
 
@@ -78,11 +88,11 @@ void ParticleSystem::draw()
 	glEnableVertexAttribArray(1);
       if (!_initialized)
       {
-            cout << "ERROR : Cannot  render an object thats not initialized.\n";
+            cout << "ERROR : Cannot  render an object thats not initialized. ParticleSystem\n";
             return;
       }
       glBindVertexArray(_vao);
       glLineWidth(1.0f);
-      glPointSize(5.0f);
+      glPointSize(2.0f);
       glDrawArrays(GL_POINTS, 0, _positions.size());
 }

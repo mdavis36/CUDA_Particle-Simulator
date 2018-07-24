@@ -1,7 +1,7 @@
 #ifndef SIMULATION_H
 #define SIMULATION_H
 
-#define UPDATES_PER_SECOND 2000
+#define UPDATES_PER_SECOND 120
 // Class Dependencies
 
 // OpenGL Imports
@@ -37,6 +37,7 @@ public:
 	int sim_state = NOT_INITIALIZED;
 
 	Simulation();
+	Simulation(int n);
 	~Simulation();
 
 	// Simulation Control Functions
@@ -46,7 +47,7 @@ public:
 	bool reset();
 
 	// Simulation Step Functions
-	void update(int fn);
+	void update();
 	void render();
 
 	// Getter Functions
@@ -56,7 +57,7 @@ public:
 	// Print Functions
 	void printControls();
 
-
+	int num_particles = 0;
 	ParticleSystem *_p_sys;
 	//TODO : Move back to private after hitable class created
 	vector<Drawable*> _scene_objects;

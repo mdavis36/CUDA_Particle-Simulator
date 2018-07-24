@@ -1,5 +1,5 @@
 #include "ParticleHandler.h"
-
+#include <omp.h>
 namespace ParticleHandler
 {
       int ParticleDims(ParticleSystem *p)
@@ -7,9 +7,10 @@ namespace ParticleHandler
             return (p->_num_particles * 6);
       }
 
-      int ParticleGetState(ParticleSystem *p, float *dst)
+      void ParticleGetState(ParticleSystem *p, float *dst)
       {
             int i;
+            #pragma omp parallel for num_threads(4)
             for(i = 0; i < p->_num_particles; i++)
             {
                   dst[6 * i + 0] = p->_particles[i].x[0];
@@ -21,9 +22,10 @@ namespace ParticleHandler
             }
       }
 
-      int ParticleSetState(ParticleSystem *p, float *src)
+      void ParticleSetState(ParticleSystem *p, float *src)
       {
             int i;
+            #pragma omp parallel for num_threads(4)
             for(i = 0; i < p->_num_particles; i++)
             {
                   p->_particles[i].x[0] = src[6 * i + 0];
@@ -35,11 +37,12 @@ namespace ParticleHandler
             }
       }
 
-      int ParticleDerivative(ParticleSystem *p, float *dst)
+      void ParticleDerivative(ParticleSystem *p, float *dst)
       {
             int i;
             Clear_Forces(p);
             Compute_Forces(p);
+            #pragma omp parallel for num_threads(4)
             for(i = 0; i < p->_num_particles; i++)
             {
                   float m = p->_particles[i].m;
@@ -55,6 +58,7 @@ namespace ParticleHandler
       void Clear_Forces(ParticleSystem *p)
       {
             int i;
+            #pragma omp parallel for num_threads(4)
             for(i = 0; i < p->_num_particles; i++)
             {
                   p->_particles[i].f[0] = 0;
@@ -66,6 +70,7 @@ namespace ParticleHandler
       void Compute_Forces(ParticleSystem *p)
       {
             int i;
+            #pragma omp parallel for num_threads(4)
             for(i = 0; i < p->_num_particles; i++)
             {
                   p->_particles[i].f[0] = 0;
@@ -83,11 +88,13 @@ namespace ParticleHandler
             ParticleGetState(p, temp2);                          // t2 = s
             AddVectors(temp2, temp1, temp2, ParticleDims(p));    // t2 = t1 + t2 = s + s`*dt
             ParticleSetState(p, temp2);
+            p->t += dt;
       }
 
       void ScaleVector(float *v, float s, int size)
       {
             int i;
+            #pragma omp parallel for num_threads(4)
             for(i = 0; i < size; i++)
             {
                   v[i] *= s;
@@ -97,6 +104,7 @@ namespace ParticleHandler
       void AddVectors(float *s, float *a, float *b, int size)
       {
             int i;
+            #pragma omp parallel for num_threads(4)
             for(i = 0; i < size; i++)
             {
                   s[i] = a[i] + b[i];

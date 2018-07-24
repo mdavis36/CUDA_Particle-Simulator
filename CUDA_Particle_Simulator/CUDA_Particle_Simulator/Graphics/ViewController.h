@@ -1,6 +1,8 @@
 #ifndef VIEWCONTROLLER_H
 #define VIEWCONTROLLER_H
 
+#define MAX_FPS 60
+
 #include "GL/glew.h"
 #include <SDL2/SDL.h>
 #include <time.h>
@@ -18,14 +20,14 @@ class ViewController
 {
 private:
 
-#ifdef RUN_GPU
+#ifdef RUN_CUDA
 	const char WINDOW_TITLE[32] = "CUDA_Particle_Simulator";
 #else
 	const char WINDOW_TITLE[32] = "Particle_Simulator";
 #endif
 
-	const int WINDOW_WIDTH = 1600;
-	const int WINDOW_HEIGHT = 1200;
+	const int WINDOW_WIDTH = 2200;
+	const int WINDOW_HEIGHT = 1800;
 
 	const int FPS = 60;
 

@@ -16,6 +16,8 @@ Plane::Plane(vec3 n, vec3 c, int w, int h)
 
 bool Plane::init()
 {
+	vec4   line_color(0.4f, 0.4f, 0.4f, 1.0f);
+	vec4 center_color(0.0f, 1.0f, 1.0f, 1.0f);
 	glGenVertexArrays(1, &_vao);  //Create one vertex array object
 	glBindVertexArray(_vao);
 
@@ -26,13 +28,13 @@ bool Plane::init()
 		_positions.push_back(vec3((float)i, 0.0f, (float)-_height));
 		if (i == 0)
 		{
-			_colors.push_back(vec4(0.0f, 1.0f, 1.0f, 1.0f));
-			_colors.push_back(vec4(0.0f, 1.0f, 1.0f, 1.0f));
+			_colors.push_back(center_color);
+			_colors.push_back(center_color);
 		}
 		else
 		{
-			_colors.push_back(vec4(0.8f, 0.8f, 0.8f, 1.0f));
-			_colors.push_back(vec4(0.8f, 0.8f, 0.8f, 1.0f));
+			_colors.push_back(line_color);
+			_colors.push_back(line_color);
 		}
 	}
 
@@ -44,13 +46,13 @@ bool Plane::init()
 		_positions.push_back(vec3((float)-_width, 0.0f, (float)i));
 		if (i == 0)
 		{
-			_colors.push_back(vec4(0.0f, 1.0f, 1.0f, 1.0f));
-			_colors.push_back(vec4(0.0f, 1.0f, 1.0f, 1.0f));
+			_colors.push_back(center_color);
+			_colors.push_back(center_color);
 		}
 		else
 		{
-			_colors.push_back(vec4(0.8f, 0.8f, 0.8f, 1.0f));
-			_colors.push_back(vec4(0.8f, 0.8f, 0.8f, 1.0f));
+			_colors.push_back(line_color);
+			_colors.push_back(line_color);
 		}
 	}
 	_positions.push_back(vec3(0, 0, 0));
@@ -101,10 +103,10 @@ void Plane::draw()
 {
 	if (!_initialized)
 	{
-		cout << "ERROR : Cannot  render an object thats not initialized.\n";
+		cout << "ERROR : Cannot  render an object thats not initialized. Plane\n";
 		return;
 	}
 	glBindVertexArray(_vao);
-	glLineWidth(1.0f);
+	glLineWidth(0.5f);
 	glDrawArrays(GL_LINES, 0, _positions.size());
 }

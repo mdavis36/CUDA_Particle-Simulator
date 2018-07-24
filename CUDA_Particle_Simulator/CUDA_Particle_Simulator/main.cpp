@@ -39,6 +39,8 @@ bool runCUDAExample(bool quietMode = false)
 
 #endif
 
+int n_particles = 1000;
+
 int main(int argc, char * argv[])
 {
 
@@ -46,7 +48,9 @@ int main(int argc, char * argv[])
 	if (!runCUDAExample()) return -1;
 #endif
 
-	Simulation sim;
+	if (argc > 1) n_particles = atoi(argv[1]);
+
+	Simulation sim(n_particles);
 	ViewController vc(&sim);
 	vc.run();
 	return 0;

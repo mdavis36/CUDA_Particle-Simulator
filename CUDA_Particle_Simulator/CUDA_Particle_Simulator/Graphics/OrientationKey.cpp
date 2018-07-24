@@ -12,18 +12,18 @@ bool OrientationKey::init()
 
 	_positions.push_back(vec3(0, 0, 0));
 	_positions.push_back(vec3(1, 0, 0));
-	_colors.push_back(vec4(1.0f, 0.0f, 0.0f, 1.0f));
-	_colors.push_back(vec4(1.0f, 0.0f, 0.0f, 1.0f));
+	_colors.push_back(vec4(0.6f, 0.0f, 0.0f, 1.0f));
+	_colors.push_back(vec4(0.6f, 0.0f, 0.0f, 1.0f));
 
 	_positions.push_back(vec3(0, 0, 0));
 	_positions.push_back(vec3(0, 1, 0));
-	_colors.push_back(vec4(0.0f, 1.0f, 0.0f, 1.0f));
-	_colors.push_back(vec4(0.0f, 1.0f, 0.0f, 1.0f));
+	_colors.push_back(vec4(0.0f, 0.6f, 0.0f, 1.0f));
+	_colors.push_back(vec4(0.0f, 0.6f, 0.0f, 1.0f));
 
 	_positions.push_back(vec3(0, 0, 0));
 	_positions.push_back(vec3(0, 0, 1));
-	_colors.push_back(vec4(0.0f, 0.0f, 1.0f, 1.0f));
-	_colors.push_back(vec4(0.0f, 0.0f, 1.0f, 1.0f));
+	_colors.push_back(vec4(0.0f, 0.0f, 0.6f, 1.0f));
+	_colors.push_back(vec4(0.0f, 0.0f, 0.6f, 1.0f));
 
 	_model_matrix = mat4(1.0);
 
@@ -44,15 +44,15 @@ bool OrientationKey::init()
 	return true;
 }
 
-void OrientationKey::draw() 
+void OrientationKey::draw()
 {
 	if (!_initialized)
 	{
-		cout << "ERROR : Cannot  render an object thats not initialized.\n";
+		cout << "ERROR : Cannot  render an object thats not initialized. OrientationKey\n";
 		return;
 	}
 	glBindVertexArray(_vao);
-	glLineWidth(2.0f);
+	glLineWidth(5.0f);
 	glDrawArrays(GL_LINES, 0, _positions.size());
 }
 

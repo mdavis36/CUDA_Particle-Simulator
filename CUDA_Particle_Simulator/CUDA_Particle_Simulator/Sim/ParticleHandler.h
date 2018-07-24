@@ -6,9 +6,9 @@
 namespace ParticleHandler {
 
       int ParticleDims(ParticleSystem *p);
-      int ParticleGetState(ParticleSystem *p, float *dst);
-      int ParticleSetState(ParticleSystem *p, float *src);
-      int ParticleDerivative(ParticleSystem *p, float *dst);
+      void ParticleGetState(ParticleSystem *p, float *dst);
+      void ParticleSetState(ParticleSystem *p, float *src);
+      void ParticleDerivative(ParticleSystem *p, float *dst);
 
       void Clear_Forces(ParticleSystem *p);
       void Compute_Forces(ParticleSystem *p);

@@ -1,6 +1,5 @@
 #include "ViewController.h"
 
-#define MAX_FPS 60
 
 ViewController::ViewController(Simulation *sim)
 {
@@ -91,9 +90,8 @@ void ViewController::handleEvents(SDL_Event e)
 				break;
 			case SDLK_r:
 				// Cover with red and update
-				glClearColor(1.0, 0.0, 0.0, 1.0);
-				glClear(GL_COLOR_BUFFER_BIT);
-				SDL_GL_SwapWindow(_sdl_window);
+				_sim->reset();
+				m.initAssets();
 				break;
 
 			default:
@@ -255,7 +253,7 @@ void ViewController::run()
 		return;
 	}
 
-	glClearColor(0.1, 0.1, 0.1, 1.0);
+	glClearColor(0.2, 0.2, 0.2, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT);
 	SDL_GL_SwapWindow(_sdl_window);
 
@@ -309,7 +307,7 @@ void ViewController::finiteUdateMethod()
 			for (i = 0; i < UPDATES_PER_SECOND / MAX_FPS; i++)
 			{
 				// run simulation update and increment counter.
-				_sim->update(frame_count);
+				_sim->update();
 				update_count++;
 			}
 			// TODO Fix timing inaccuracy, this lags the animation at the end of every second. Need to distribute updates more evenly.
@@ -319,7 +317,7 @@ void ViewController::finiteUdateMethod()
 			// 	//cout << "buff_up : " << buff_up << endl;
 			// 	for (i = 0; i < buff_up; i++)
 			// 	{
-			// 		_sim->update(frame_count);
+			// 		_sim->update();
 			// 		update_count++;
 			// 	}
 			// }
@@ -348,10 +346,12 @@ void ViewController::finiteUdateMethod()
 		// After one full second, report the FPS and UPF( Average calculated)
 		if (acc_time.tv_sec >= 1)
 		{
-			cout << "FPS : " << frame_count <<
-				  "\tUPS : " << update_count <<
-				  "\tAVG UPF : " << update_count / frame_count <<
-				  endl;
+			string info_title = string(WINDOW_TITLE) +
+						"\tFPS : " + to_string(frame_count) +
+						"\tUPS : " + to_string(update_count) +
+						"\tAVG UPF : " + to_string((float)update_count / (float)frame_count);
+			SDL_SetWindowTitle(_sdl_window, info_title.c_str());
+			cout << info_title << endl;
 
 			frame_count = 0;
 			update_count = 0;
@@ -397,7 +397,7 @@ void ViewController::incrementalUpdateMethod()
 			clock_gettime(CLOCK_MONOTONIC, &start_up);
 
 			// run simulation update and increment counter.
-			_sim->update(frame_count);
+			_sim->update();
 			update_count++;
 
 			// Get the final time of the update.

@@ -21,7 +21,7 @@ bool Model::init(Simulation *sim)
 	}
 
 	// Clear the screen and draw red
-	glClearColor(1.0, 0.0, 0.0, 1.0);
+	glClearColor(0.2, 0.2, 0.2, 1.0);
 	glEnable(GL_DEPTH_TEST);
 
 	const GLubyte *renderer = glGetString(GL_RENDERER);
@@ -48,11 +48,7 @@ bool Model::init(Simulation *sim)
 
 
 	// Initialize all model assets
-	or_key.init();
-	for(Drawable *pl : _sim->_scene_objects)
-	{
-		pl->init();
-	}
+	initAssets();
 
 	_pvm_matrix_loc = glGetUniformLocation(programs[0], "_pvm_matrix");
 
@@ -65,6 +61,15 @@ bool Model::init(Simulation *sim)
 
 	// Initialize Model objects
 	return true;
+}
+
+void Model::initAssets()
+{
+	or_key.init();
+	for(Drawable *pl : _sim->_scene_objects)
+	{
+		pl->init();
+	}
 }
 
 void Model::draw()
