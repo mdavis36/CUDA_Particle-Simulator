@@ -26,7 +26,7 @@ private:
 	mat4 _view_matrix;
 	mat4 _projection_matrix;
 
-	GLuint programs[1] = {0};
+	GLuint programs[2] = {0, 1};
 
 	float _rot_x;
 	float _rot_y;

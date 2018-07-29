@@ -11,6 +11,9 @@
 
 using namespace std;
 
+const int PARTICLE_CUBE = 1;
+const int PARTICLE_SPHERE = 2;
+
 class ParticleSystem : public Drawable
 {
 private:
@@ -24,10 +27,10 @@ private:
 
 public:
       ParticleSystem();
-      ParticleSystem(int n);
+      ParticleSystem(int n, int form);
       ~ParticleSystem();
       virtual bool init();
-      virtual void draw();
+      virtual void draw(GLuint* programs);
 
       std::vector<Particle> _particles;
       int _num_particles;

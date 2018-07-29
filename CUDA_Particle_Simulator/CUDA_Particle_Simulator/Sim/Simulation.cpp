@@ -110,14 +110,14 @@ void Simulation::update()
 
 		EulerStep(_p_sys, dt);
 
-		#pragma omp parallel for num_threads(4)
-		for (int i = 0; i < _p_sys->_num_particles; i++)
-		{
-			if (_p_sys->_particles[i].x.y <= 0)
-			{
-				_p_sys->_particles[i].x.y = 0;
-			}
-		}
+		// #pragma omp parallel for num_threads(4)
+		// for (int i = 0; i < _p_sys->_num_particles; i++)
+		// {
+		// 	if (_p_sys->_particles[i].x.y <= 0)
+		// 	{
+		// 		_p_sys->_particles[i].x.y = 0;
+		// 	}
+		// }
 
 
 		//nanosleep(&TIME_STEP, nullptr);
@@ -216,7 +216,7 @@ bool Simulation::init()
 	//integrator.setIType(INTEGRATE_VERLET);
 	//integrator.setIType(INTEGRATE_EULER);
 
-	_p_sys = new ParticleSystem(num_particles);
+	_p_sys = new ParticleSystem(num_particles, PARTICLE_SPHERE);
 	_scene_objects.clear();
 	_scene_objects.push_back(new Plane(vec3(0.0, 1.0, 0.0), vec3(0.0, 0.0, 0.0), 20, 20));
 	_scene_objects.push_back(_p_sys);

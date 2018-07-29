@@ -1,7 +1,7 @@
 TARGET = CUDA_Particle_Simulator.exe
 CPU_TARGET = Particle_Simulator.exe
 LIBS = -lglut -lGLEW -lGLU -lGL -lSDL2
-CC = nvcc -Xcompiler -fopenmp
+CC = nvcc -Xcompiler -fopenmp -DCMAKE_C_COMPILER=/usr/bin/gcc-6
 CPU_CC = g++ -Wall -Wextra -D_DEBUG -fopenmp
 CFLAGS = -std=c++11
 

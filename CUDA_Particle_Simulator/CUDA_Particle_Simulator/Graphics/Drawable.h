@@ -2,6 +2,7 @@
 #define DRAWABLE_H
 
 #include <glm/glm.hpp>
+#include <GL/glew.h>
 using namespace glm;
 
 class Drawable
@@ -11,7 +12,7 @@ public:
       virtual ~Drawable() {}
       mat4 _model_matrix;
       virtual bool init() = 0;
-      virtual void draw() = 0;
+      virtual void draw(GLuint* programs) = 0;
       mat4 getModelMatrix() { return _model_matrix; }
 };
 

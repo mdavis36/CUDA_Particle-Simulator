@@ -44,8 +44,9 @@ bool OrientationKey::init()
 	return true;
 }
 
-void OrientationKey::draw()
+void OrientationKey::draw(GLuint* programs)
 {
+	glUseProgram(programs[0]);
 	if (!_initialized)
 	{
 		cout << "ERROR : Cannot  render an object thats not initialized. OrientationKey\n";

@@ -23,6 +23,8 @@ bool Model::init(Simulation *sim)
 	// Clear the screen and draw red
 	glClearColor(0.2, 0.2, 0.2, 1.0);
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	const GLubyte *renderer = glGetString(GL_RENDERER);
 	const GLubyte *vendor = glGetString(GL_VENDOR);
@@ -39,9 +41,19 @@ bool Model::init(Simulation *sim)
 		{ GL_FRAGMENT_SHADER, "Graphics/shader.fs", 1 },  //Phong Reflectance Model
 		{ GL_NONE, 		    NULL, 			  2 }
 	};
+	ShaderInfo shaders1[] = {
+		{ GL_VERTEX_SHADER,   "Graphics/shader_particle_system.vs", 0 },
+		{ GL_FRAGMENT_SHADER, "Graphics/shader_particle_system.fs", 1 },  //Phong Reflectance Model
+		{ GL_NONE, 		    NULL, 			  2 }
+	};
 	if ((programs[0] = LoadShaders(shaders0)) == 0)
 	{
 		cout << "Error Loading Shader 0" << endl;
+		return false;
+	}
+	if ((programs[1] = LoadShaders(shaders1)) == 1)
+	{
+		cout << "Error Loading Shader 1" << endl;
 		return false;
 	}
 	glUseProgram(programs[0]);
@@ -52,7 +64,7 @@ bool Model::init(Simulation *sim)
 
 	_pvm_matrix_loc = glGetUniformLocation(programs[0], "_pvm_matrix");
 
-	_projection_matrix = frustum(-0.1, 0.1, -0.1, 0.1, 0.1, 200.0);
+	_projection_matrix = frustum(-0.1, 0.1, -0.1, 0.1, 0.1, 20000.0);
 	eye = vec3(0.0, 7.0, 10.0);
 	aim = vec3(0.0, 0.0, 0.0);
 	up = vec3(0.0, 1.0, 0.0);
@@ -87,13 +99,13 @@ void Model::draw()
 	{
 		_pvm_matrix = _projection_matrix * _view_matrix * rotate_matrix * pl->getModelMatrix();
 		glUniformMatrix4fv(_pvm_matrix_loc, 1, GL_FALSE, value_ptr(_pvm_matrix));
-		pl->draw();
+		pl->draw(programs);
 	}
 
 
 	_pvm_matrix = _projection_matrix * _view_matrix * rotate_matrix * or_key.getModelMatrix();
 	glUniformMatrix4fv(_pvm_matrix_loc, 1, GL_FALSE, value_ptr(_pvm_matrix));
-	or_key.draw();
+	or_key.draw(programs);
 
 	glFlush();
 }

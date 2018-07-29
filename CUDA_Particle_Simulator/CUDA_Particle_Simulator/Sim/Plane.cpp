@@ -99,8 +99,9 @@ bool Plane::init()
 	return true;
 }
 
-void Plane::draw()
+void Plane::draw(GLuint* programs)
 {
+	glUseProgram(programs[0]);
 	if (!_initialized)
 	{
 		cout << "ERROR : Cannot  render an object thats not initialized. Plane\n";

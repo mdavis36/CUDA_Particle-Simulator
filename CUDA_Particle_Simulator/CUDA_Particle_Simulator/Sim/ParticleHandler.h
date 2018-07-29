@@ -2,6 +2,7 @@
 #define PARTICLEHANDLER_H
 
 #include "ParticleSystem.h"
+#include "glm/glm.hpp"
 
 namespace ParticleHandler {
 

@@ -31,7 +31,7 @@ public:
 	Plane();
 	Plane(vec3 n, vec3 c, int w, int h);
 	virtual bool init();
-	virtual void draw();
+	virtual void draw(GLuint* programs);
 
 };
 

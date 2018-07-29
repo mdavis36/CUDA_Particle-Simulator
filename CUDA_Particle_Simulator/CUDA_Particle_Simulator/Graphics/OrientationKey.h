@@ -27,7 +27,7 @@ private:
 public:
 	OrientationKey();
 	virtual bool init();
-	virtual void draw();
+	virtual void draw(GLuint* programs);
 	mat4 getModelMatrix();
 };
 
