@@ -3,6 +3,7 @@
 
 #include <GL/glew.h>
 #include <glm/glm.hpp>
+#include "glm/gtc/type_ptr.hpp"
 #include <iostream>
 #include <vector>
 
@@ -26,8 +27,8 @@ private:
 
 public:
 	OrientationKey();
-	virtual bool init();
-	virtual void draw(GLuint* programs);
+	virtual bool init(GLuint* programs);
+	virtual void draw(GLuint* programs, mat4 proj_mat, mat4 view_mat);
 	mat4 getModelMatrix();
 };
 

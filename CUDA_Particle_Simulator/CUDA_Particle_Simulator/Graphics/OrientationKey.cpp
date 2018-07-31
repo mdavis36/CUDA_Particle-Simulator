@@ -5,22 +5,24 @@ OrientationKey::OrientationKey()
 	_initialized = false;
 }
 
-bool OrientationKey::init()
+bool OrientationKey::init(GLuint* programs)
 {
 	glGenVertexArrays(1, &_vao);
 	glBindVertexArray(_vao);
 
-	_positions.push_back(vec3(0, 0, 0));
+	vec3 center = vec3(0,0.001,0);
+
+	_positions.push_back(center);
 	_positions.push_back(vec3(1, 0, 0));
 	_colors.push_back(vec4(0.6f, 0.0f, 0.0f, 1.0f));
 	_colors.push_back(vec4(0.6f, 0.0f, 0.0f, 1.0f));
 
-	_positions.push_back(vec3(0, 0, 0));
+	_positions.push_back(center);
 	_positions.push_back(vec3(0, 1, 0));
 	_colors.push_back(vec4(0.0f, 0.6f, 0.0f, 1.0f));
 	_colors.push_back(vec4(0.0f, 0.6f, 0.0f, 1.0f));
 
-	_positions.push_back(vec3(0, 0, 0));
+	_positions.push_back(center);
 	_positions.push_back(vec3(0, 0, 1));
 	_colors.push_back(vec4(0.0f, 0.0f, 0.6f, 1.0f));
 	_colors.push_back(vec4(0.0f, 0.0f, 0.6f, 1.0f));
@@ -39,13 +41,18 @@ bool OrientationKey::init()
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, 0);  //Do the shader plumbing here for this buffer
 	glEnableVertexAttribArray(1);
 
+	_pvm_matrix_loc = glGetUniformLocation(programs[0], "_pvm_matrix");
+
 	_initialized = true;
 
 	return true;
 }
 
-void OrientationKey::draw(GLuint* programs)
+void OrientationKey::draw(GLuint* programs, mat4 proj_mat, mat4 view_mat)
 {
+	mat4 _pvm_matrix = proj_mat * view_mat * _model_matrix;
+	glUniformMatrix4fv(_pvm_matrix_loc, 1, GL_FALSE, value_ptr(_pvm_matrix));
+
 	glUseProgram(programs[0]);
 	if (!_initialized)
 	{

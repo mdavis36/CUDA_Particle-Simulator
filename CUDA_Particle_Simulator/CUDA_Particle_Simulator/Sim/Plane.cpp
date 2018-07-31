@@ -14,7 +14,7 @@ Plane::Plane(vec3 n, vec3 c, int w, int h)
 	_initialized = false;
 }
 
-bool Plane::init()
+bool Plane::init(GLuint* programs)
 {
 	vec4   line_color(0.4f, 0.4f, 0.4f, 1.0f);
 	vec4 center_color(0.0f, 1.0f, 1.0f, 1.0f);
@@ -95,12 +95,17 @@ bool Plane::init()
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, 0);  //Do the shader plumbing here for this buffer
 	glEnableVertexAttribArray(1);
 
+	_pvm_matrix_loc = glGetUniformLocation(programs[0], "_pvm_matrix");
+
 	_initialized = true;
 	return true;
 }
 
-void Plane::draw(GLuint* programs)
+void Plane::draw(GLuint* programs, mat4 proj_mat, mat4 view_mat)
 {
+	mat4 _pvm_matrix = proj_mat * view_mat * _model_matrix;
+	glUniformMatrix4fv(_pvm_matrix_loc, 1, GL_FALSE, value_ptr(_pvm_matrix));
+
 	glUseProgram(programs[0]);
 	if (!_initialized)
 	{

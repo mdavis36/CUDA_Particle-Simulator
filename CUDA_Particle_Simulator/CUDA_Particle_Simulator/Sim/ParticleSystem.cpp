@@ -73,7 +73,7 @@ ParticleSystem::~ParticleSystem()
 }
 
 
-bool ParticleSystem::init()
+bool ParticleSystem::init(GLuint* programs)
 {
       int i;
       for (i = 0; i < _num_particles; i++)
@@ -102,14 +102,23 @@ bool ParticleSystem::init()
       glLineWidth(1.0f);
       glPointSize(2.0f);
 
+      _pvm_matrix_loc = glGetUniformLocation(programs[1], "_pvm_matrix");
+      _projection_matrix_loc = glGetUniformLocation(programs[1], "_projection_matrix");
+      _view_matrix_loc = glGetUniformLocation(programs[1], "_view_matrix");
 
 	_initialized = true;
 	return true;
 }
 
-void ParticleSystem::draw(GLuint* programs)
+void ParticleSystem::draw(GLuint* programs, mat4 proj_mat, mat4 view_mat)
 {
+      mat4 _pvm_matrix = proj_mat * view_mat * _model_matrix;
+	glUniformMatrix4fv(_pvm_matrix_loc, 1, GL_FALSE, value_ptr(_pvm_matrix));
+      glUniformMatrix4fv(_projection_matrix_loc, 1, GL_FALSE, value_ptr(proj_mat));
+      glUniformMatrix4fv(_view_matrix_loc, 1, GL_FALSE, value_ptr(view_mat));
+
       glUseProgram(programs[1]);
+
       _positions.clear();
 
       int i;

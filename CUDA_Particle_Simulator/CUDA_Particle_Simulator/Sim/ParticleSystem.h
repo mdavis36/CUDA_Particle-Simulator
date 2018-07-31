@@ -2,6 +2,7 @@
 #define PARTICLESYSTEM_H
 
 #include <GL/glew.h>
+#include "glm/gtc/type_ptr.hpp"
 #include <iostream>
 #include <vector>
 
@@ -29,8 +30,8 @@ public:
       ParticleSystem();
       ParticleSystem(int n, int form);
       ~ParticleSystem();
-      virtual bool init();
-      virtual void draw(GLuint* programs);
+      virtual bool init(GLuint* programs);
+      virtual void draw(GLuint* programs, mat4 proj_mat, mat4 view_mat);
 
       std::vector<Particle> _particles;
       int _num_particles;

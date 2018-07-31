@@ -11,7 +11,6 @@ vec4 far   = vec4(0.2, 0.0, 0.0, 0.0);
 
 void main()
 {
-	
 	float d = distance(vec3(0.0,15.0,0.0), _vertex_pos);
 	_out_color = mix(close, far, d / 500);
 

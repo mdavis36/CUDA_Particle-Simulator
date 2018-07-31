@@ -4,6 +4,7 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include "glm/gtc/type_ptr.hpp"
 #include <iostream>
 #include <vector>
 
@@ -30,9 +31,8 @@ public:
 
 	Plane();
 	Plane(vec3 n, vec3 c, int w, int h);
-	virtual bool init();
-	virtual void draw(GLuint* programs);
-
+	virtual bool init(GLuint* programs);
+	virtual void draw(GLuint* programs, mat4 proj_mat, mat4 view_mat);
 };
 
 

@@ -8,22 +8,14 @@ using namespace glm;
 class Drawable
 {
 public:
+      mat4 _model_matrix;
+      GLint _pvm_matrix_loc, _projection_matrix_loc, _view_matrix_loc;
+
       Drawable() {}
       virtual ~Drawable() {}
-      mat4 _model_matrix;
-      virtual bool init() = 0;
-      virtual void draw(GLuint* programs) = 0;
+      virtual bool init(GLuint* programs) = 0;
+      virtual void draw(GLuint* programs, mat4 proj_mat, mat4 view_mat) = 0;
       mat4 getModelMatrix() { return _model_matrix; }
-};
-
-class Plane_Asset : public Drawable
-{
-private:
-      std::vector<vec3> _positions;
-      std::vector<vec4> _colors;
-
-      GLuint _vao;
-      GLuint _buffers[2];
 };
 
 #endif

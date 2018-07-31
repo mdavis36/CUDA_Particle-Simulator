@@ -23,6 +23,7 @@ bool Model::init(Simulation *sim)
 	// Clear the screen and draw red
 	glClearColor(0.2, 0.2, 0.2, 1.0);
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -62,7 +63,6 @@ bool Model::init(Simulation *sim)
 	// Initialize all model assets
 	initAssets();
 
-	_pvm_matrix_loc = glGetUniformLocation(programs[0], "_pvm_matrix");
 
 	_projection_matrix = frustum(-0.1, 0.1, -0.1, 0.1, 0.1, 20000.0);
 	eye = vec3(0.0, 7.0, 10.0);
@@ -77,10 +77,10 @@ bool Model::init(Simulation *sim)
 
 void Model::initAssets()
 {
-	or_key.init();
+	or_key.init(programs);
 	for(Drawable *pl : _sim->_scene_objects)
 	{
-		pl->init();
+		pl->init(programs);
 	}
 }
 
@@ -90,22 +90,15 @@ void Model::draw()
 
 	_view_matrix = lookAt(eye * _zoom, aim, up);
 	_view_matrix = translate(_view_matrix, _trans);
-
-	mat4 rotate_matrix = rotate(mat4(1.0), degToRad(_rot_x), vec3(1,0,0));
-	rotate_matrix = rotate(rotate_matrix, degToRad(_rot_y), vec3(0,1,0));
-
+	_view_matrix = rotate(_view_matrix, degToRad(_rot_x), vec3(1,0,0));
+	_view_matrix = rotate(_view_matrix, degToRad(_rot_y), vec3(0,1,0));
 
 	for (Drawable *pl : _sim->_scene_objects)
 	{
-		_pvm_matrix = _projection_matrix * _view_matrix * rotate_matrix * pl->getModelMatrix();
-		glUniformMatrix4fv(_pvm_matrix_loc, 1, GL_FALSE, value_ptr(_pvm_matrix));
-		pl->draw(programs);
+		pl->draw(programs, _projection_matrix, _view_matrix);
 	}
 
-
-	_pvm_matrix = _projection_matrix * _view_matrix * rotate_matrix * or_key.getModelMatrix();
-	glUniformMatrix4fv(_pvm_matrix_loc, 1, GL_FALSE, value_ptr(_pvm_matrix));
-	or_key.draw(programs);
+	or_key.draw(programs, _projection_matrix, _view_matrix);
 
 	glFlush();
 }
