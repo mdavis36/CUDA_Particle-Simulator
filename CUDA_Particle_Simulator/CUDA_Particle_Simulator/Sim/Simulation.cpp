@@ -220,6 +220,7 @@ bool Simulation::init()
 	_scene_objects.clear();
 	_scene_objects.push_back(new Plane(vec3(0.0, 1.0, 0.0), vec3(0.0, 0.0, 0.0), 20, 20));
 	_scene_objects.push_back(_p_sys);
+	_scene_objects.push_back(new SceneObject());
 
 	sim_state = INITIALIZED;
 	return true;

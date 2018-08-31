@@ -9,7 +9,7 @@ class Drawable
 {
 public:
       mat4 _model_matrix;
-      GLint _pvm_matrix_loc, _projection_matrix_loc, _view_matrix_loc;
+      GLint _pvm_matrix_loc, _projection_matrix_loc, _view_matrix_loc, _model_matrix_loc;
 
       Drawable() {}
       virtual ~Drawable() {}

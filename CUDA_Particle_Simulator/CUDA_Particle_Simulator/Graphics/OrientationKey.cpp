@@ -50,6 +50,7 @@ bool OrientationKey::init(GLuint* programs)
 
 void OrientationKey::draw(GLuint* programs, mat4 proj_mat, mat4 view_mat)
 {
+#ifndef GL1
 	mat4 _pvm_matrix = proj_mat * view_mat * _model_matrix;
 	glUniformMatrix4fv(_pvm_matrix_loc, 1, GL_FALSE, value_ptr(_pvm_matrix));
 
@@ -62,6 +63,26 @@ void OrientationKey::draw(GLuint* programs, mat4 proj_mat, mat4 view_mat)
 	glBindVertexArray(_vao);
 	glLineWidth(5.0f);
 	glDrawArrays(GL_LINES, 0, _positions.size());
+#else
+	glBegin(GL_LINES);
+
+	//Red is Positive X
+	glColor3f(1.0f, 0.0f, 0.0f);
+	glVertex3f(0, 0, 0);
+	glVertex3f(1, 0, 0);
+
+	//Green is positive Y
+	glColor3f(0.0f, 1.0f, 0.0f);
+	glVertex3f(0, 0, 0);
+	glVertex3f(0, 1, 0);
+
+	//Blue is posiotive Z
+	glColor3f(0.0f, 0.0f, 1.0f);
+	glVertex3f(0, 0, 0);
+	glVertex3f(0, 0, 1);
+
+	glEnd();
+#endif
 }
 
 mat4 OrientationKey::getModelMatrix()

@@ -90,7 +90,7 @@ bool ParticleSystem::init(GLuint* programs)
       glGenBuffers(2, _buffers); //Create two buffer objects, one for vertex positions and one for vertex colors
 
       glBindBuffer(GL_ARRAY_BUFFER, _buffers[0]);  //Buffers[0] wi ll be the position for each vertex
-	glBufferData(GL_ARRAY_BUFFER, _positions.size() * sizeof(vec3), _positions.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, _positions.size() * sizeof(vec3), _positions.data(), GL_DYNAMIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);  //Do the shader plumbing here for this buffer
 	glEnableVertexAttribArray(0);
 

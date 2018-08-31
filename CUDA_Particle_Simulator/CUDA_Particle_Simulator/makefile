@@ -2,7 +2,7 @@ TARGET = CUDA_Particle_Simulator.exe
 CPU_TARGET = Particle_Simulator.exe
 LIBS = -lglut -lGLEW -lGLU -lGL -lSDL2
 CC = nvcc -Xcompiler -fopenmp -DCMAKE_C_COMPILER=/usr/bin/gcc-6
-CPU_CC = g++ -Wall -Wextra -D_DEBUG -fopenmp
+CPU_CC = g++ -Wall -Wextra -D_DEBUG -DGL1 -fopenmp
 CFLAGS = -std=c++11
 
 .PHONY: default all clean
@@ -12,8 +12,8 @@ all: default
 run: all ; ./$(TARGET) &
 cpu: $(CPU_TARGET)
 
-GRAPHICS = Graphics/LoadShaders.cpp Graphics/Model.cpp Graphics/OrientationKey.cpp Graphics/ViewController.cpp
-SIMULATION = Sim/Plane.cpp Sim/Simulation.cpp Sim/ParticleSystem.cpp Sim/Particle.cpp Sim/ParticleHandler.cpp
+GRAPHICS = Graphics/LoadShaders.cpp Graphics/Model.cpp Graphics/OrientationKey.cpp Graphics/ViewController.cpp Graphics/ObjLoader.cpp
+SIMULATION = Sim/Plane.cpp Sim/Simulation.cpp Sim/ParticleSystem.cpp Sim/Particle.cpp Sim/ParticleHandler.cpp Sim/SceneObject.cpp
 UTILS = Utils/Utils.cpp
 
 OBJECTS = main.cpp $(GRAPHICS) $(SIMULATION) $(UTILS)

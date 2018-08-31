@@ -2,9 +2,7 @@
 using namespace std;
 
 #include "Graphics/ViewController.h"
-
 #include "Sim/Simulation.h"
-
 
 #ifdef RUN_CUDA
 

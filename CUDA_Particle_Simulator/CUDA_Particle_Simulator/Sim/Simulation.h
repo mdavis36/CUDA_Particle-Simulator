@@ -21,6 +21,7 @@
 #include "Plane.h"
 #include "ParticleSystem.h"
 #include "ParticleHandler.h"
+#include "SceneObject.h"
 
 #include "../Graphics/Drawable.h"
 #include "../Utils/Utils.h"
@@ -59,6 +60,7 @@ public:
 
 	int num_particles = 0;
 	ParticleSystem *_p_sys;
+	SceneObject *_s_obj;
 	//TODO : Move back to private after hitable class created
 	vector<Drawable*> _scene_objects;
 

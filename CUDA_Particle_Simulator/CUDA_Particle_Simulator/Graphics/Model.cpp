@@ -3,8 +3,8 @@
 Model::Model()
 {
 	_pvm_matrix_loc = 0;
-	_rot_x = 0;
-	_rot_y = 0;
+	_rot_x = 0.0f;
+	_rot_y = 0.0f;
 	_zoom = 1.0f;
 }
 
@@ -25,6 +25,7 @@ bool Model::init(Simulation *sim)
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 	glEnable(GL_BLEND);
+	glEnable(GL_DEPTH_TEST);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	const GLubyte *renderer = glGetString(GL_RENDERER);
@@ -47,6 +48,12 @@ bool Model::init(Simulation *sim)
 		{ GL_FRAGMENT_SHADER, "Graphics/shader_particle_system.fs", 1 },  //Phong Reflectance Model
 		{ GL_NONE, 		    NULL, 			  2 }
 	};
+	ShaderInfo shaders2[] = {
+		{ GL_VERTEX_SHADER,   "Graphics/shader_scene_obj.vs", 0 },
+		{ GL_FRAGMENT_SHADER, "Graphics/shader_scene_obj.fs", 1 },  //Phong Reflectance Model
+		{ GL_NONE, 		    NULL, 			  2 }
+	};
+#ifndef GL1
 	if ((programs[0] = LoadShaders(shaders0)) == 0)
 	{
 		cout << "Error Loading Shader 0" << endl;
@@ -57,8 +64,17 @@ bool Model::init(Simulation *sim)
 		cout << "Error Loading Shader 1" << endl;
 		return false;
 	}
+	if ((programs[2] = LoadShaders(shaders2)) == 1)
+	{
+		cout << "Error Loading Shader 2" << endl;
+		return false;
+	}
 	glUseProgram(programs[0]);
-
+#else
+	glMatrixMode( GL_PROJECTION );
+	glLoadIdentity();
+	//gluPerspective(60, 2200, 1800, 1.f, 100.0f);
+#endif
 
 	// Initialize all model assets
 	initAssets();
