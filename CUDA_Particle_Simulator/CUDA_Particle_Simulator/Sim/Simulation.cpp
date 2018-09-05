@@ -108,7 +108,8 @@ void Simulation::update()
 	if (sim_state == RUNNING)
 	{
 
-		EulerStep(_p_sys, dt);
+		//EulerStep(_p_sys, dt);
+		RK4(_p_sys, dt);
 
 		// #pragma omp parallel for num_threads(4)
 		// for (int i = 0; i < _p_sys->_num_particles; i++)
@@ -216,7 +217,7 @@ bool Simulation::init()
 	//integrator.setIType(INTEGRATE_VERLET);
 	//integrator.setIType(INTEGRATE_EULER);
 
-	_p_sys = new ParticleSystem(num_particles, PARTICLE_SPHERE);
+	_p_sys = new ParticleSystem(num_particles, PARTICLE_CUBE);
 	_scene_objects.clear();
 	_scene_objects.push_back(new Plane(vec3(0.0, 1.0, 0.0), vec3(0.0, 0.0, 0.0), 20, 20));
 	_scene_objects.push_back(_p_sys);

@@ -63,8 +63,6 @@ ParticleSystem::ParticleSystem(int n, int form)
                                               );
             }
       }
-
-
 }
 
 ParticleSystem::~ParticleSystem()
