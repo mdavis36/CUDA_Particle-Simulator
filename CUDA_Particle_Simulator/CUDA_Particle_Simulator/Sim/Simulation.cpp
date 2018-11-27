@@ -119,71 +119,10 @@ void Simulation::update()
 		// 		_p_sys->_particles[i].x.y = 0;
 		// 	}
 		// }
-
-
-		//nanosleep(&TIME_STEP, nullptr);
-
-		// Update every particle and check to see if all particles have hit the floor.
-		//bool checkSimOver = true;
-		// for (Particle* p : particles)
-		// {
-		// 	p->update(frame_time, glm::vec3(0.0f, 0.0f, 0.0f), &integrator);
-            //
-		// 	//// ----- starting collision -----
-		// 	float sub_frame_time = frame_time;
-		// 	Particle proj_p = *p;
-		// 	Plane * col_plane = getClosestCollisionPlane(&proj_p, p, planes);
-		// 	while (col_plane != nullptr) {
-		// 		//cout << "Collision!\n";
-            //
-		// 		float col_frac = getCollisionFrac(&proj_p, col_plane);
-		// 		//cout << "col_frac : " << col_frac << "\n";
-		// 		//cout << "proj_p.pos.y : " << proj_p.pos.y << "proj_p.next_pos.y : " << proj_p.next_pos.y << "\n";
-		// 		//cout << "projecting about plane\n";
-		// 		proj_p = projectParticleAtSubTimeStep(&proj_p, col_plane, col_frac);
-		// 		//cout << "proj_p.pos.y : " << proj_p.pos.y << "proj_p.last_pos.y : " << proj_p.last_pos.y << "\n";
-		// 		//cout << "subframetime : " << sub_frame_time << endl;
-		// 		sub_frame_time *= 1.0f - col_frac;
-		// 		//cout << "subframetime : " << sub_frame_time << endl;
-		// 		proj_p.update(sub_frame_time, glm::vec3(0.0f, 0.0f, 0.0f), &integrator);
-		// 		//cout << "proj_p.next_pos.y : " << proj_p.next_pos.y << "\n";
-		// 		col_plane = getClosestCollisionPlane(&proj_p, p, planes);
-		// 	}
-		// 	*p = proj_p;
-		// 	//vec3 curr_pos = p->pos;
-		// 	//vector<Plane*> col_planes = getCollisions(p, planes);
-		// 	//if (col_planes.size() > 0)
-		// 	//{
-		// 		//cout << "---------------------------" << "\n";
-		// 		//cout << "Num of cols : " << col_planes.size() << "\n";
-		// 	//}
-		// 	// ----- end collision -----
-		// 	//if (p->pos.y > 0) checkSimOver = false;
-		// }
-
-		//if (checkSimOver) {
-		//	end();
-		//}
 	}
 }
 
-void Simulation::render()
-{
-	// if (sim_state >= INITIALIZED)
-	// {
-	// 	// Render all simulation objects here.
-	// 	for (Plane* pl : planes)
-	// 	{
-	// 		pl->draw();
-	// 	}
-      //
-	// 	// for (Particle* p : particles)
-	// 	// {
-	// 	// 	p->draw();
-	// 	// }
-	// 	// drawOrientationKey();
-	// }
-}
+void Simulation::render() {}
 
 
 // -------------------- Getter Functions --------------------
@@ -217,11 +156,22 @@ bool Simulation::init()
 	//integrator.setIType(INTEGRATE_VERLET);
 	//integrator.setIType(INTEGRATE_EULER);
 
-	_p_sys = new ParticleSystem(num_particles, PARTICLE_CUBE);
-	_scene_objects.clear();
-	_scene_objects.push_back(new Plane(vec3(0.0, 1.0, 0.0), vec3(0.0, 0.0, 0.0), 20, 20));
-	_scene_objects.push_back(_p_sys);
-	_scene_objects.push_back(new SceneObject());
+	_p_sys = new ParticleSystem(num_particles, PARTICLE_SPHERE);
+	_ground = new Plane(vec3(0.0, 1.0, 0.0), vec3(0.0, 0.0, 0.0), 20, 20);
+	_s_obj = new SceneObject("Resources/Lucy.obj");
+
+	std::cout << "Vertices Count  : " << _s_obj->_vertices.size() << std::endl;
+	std::cout << "Polygon Count   : " << _s_obj->_polygons.size() << std::endl;
+
+	OTH = new OctTreeHandler();
+	OTH->clear();
+	OTH->buildTree(_s_obj->_polygons, Volume(glm::vec3(-20,-20,-20), glm::vec3(20,20,20)));
+
+	_drawable_objects.clear();
+	_drawable_objects.push_back(_ground);
+	_drawable_objects.push_back(_p_sys);
+	_drawable_objects.push_back(_s_obj);
+	_drawable_objects.push_back(OTH);
 
 	sim_state = INITIALIZED;
 	return true;
@@ -230,14 +180,9 @@ bool Simulation::init()
 
 void Simulation::clean()
 {
-	// De-allocate all of the particles from the vector.
-	//while (!particles.empty()) {
-	//	delete particles.back();
-	//	particles.pop_back();
-	//}
-	while (!_scene_objects.empty()) {
-		delete _scene_objects.back();
-		_scene_objects.pop_back();
+	while (!_drawable_objects.empty()) {
+		delete _drawable_objects.back();
+		_drawable_objects.pop_back();
 	}
 }
 

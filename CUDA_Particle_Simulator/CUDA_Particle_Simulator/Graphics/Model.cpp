@@ -94,7 +94,7 @@ bool Model::init(Simulation *sim)
 void Model::initAssets()
 {
 	or_key.init(programs);
-	for(Drawable *pl : _sim->_scene_objects)
+	for(Drawable *pl : _sim->_drawable_objects)
 	{
 		pl->init(programs);
 	}
@@ -109,7 +109,7 @@ void Model::draw()
 	_view_matrix = rotate(_view_matrix, degToRad(_rot_x), vec3(1,0,0));
 	_view_matrix = rotate(_view_matrix, degToRad(_rot_y), vec3(0,1,0));
 
-	for (Drawable *pl : _sim->_scene_objects)
+	for (Drawable *pl : _sim->_drawable_objects)
 	{
 		pl->draw(programs, _projection_matrix, _view_matrix);
 	}

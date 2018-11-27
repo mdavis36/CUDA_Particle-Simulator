@@ -1,8 +1,16 @@
 #include "SceneObject.h"
 
-SceneObject::SceneObject()
+SceneObject::SceneObject(const char * filename)
 {
       _initialized = false;
+      if (!loadOBJ(filename, _vertices, _uvs, _normals)){
+            exit(-1);
+      }
+
+      for(int i = 0; i < _vertices.size(); i += 3)
+      {
+            _polygons.push_back( Polygon(_vertices[i], _vertices[i+1], _vertices[i+2]) );
+      }
 }
 
 SceneObject::~SceneObject()
@@ -12,8 +20,6 @@ SceneObject::~SceneObject()
 
 bool SceneObject::init(GLuint* programs)
 {
-      loadOBJ("Resources/Lucy.obj", _vertices, _uvs, _normals);
-
       _model_matrix = mat4(1.0);
       //_model_matrix = glm::translate(_model_matrix, glm::vec3(5.0, 0.0, 0.0));
 

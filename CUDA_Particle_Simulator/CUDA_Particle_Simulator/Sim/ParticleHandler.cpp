@@ -96,12 +96,12 @@ namespace ParticleHandler
             ScaleVector(temp1, dt, ParticleDims(p));             // t1 = t1 * dt = s`*dt
             ParticleGetState(p, temp2);                          // t2 = s
             AddVectors(temp3, temp1, temp2, ParticleDims(p));    // t2 = t1 + t2 = s + s`*dt
-            //AddVectors(temp2, temp1, temp2, ParticleDims(p));    // t2 = t1 + t2 = s + s`*dt
+            AddVectors(temp2, temp1, temp2, ParticleDims(p));    // t2 = t1 + t2 = s + s`*dt
 
             CheckCollisions(temp3, temp2, ParticleDims(p));
 
             ParticleSetState(p, temp3);
-            p->t += dt;
+            //p->t += dt;
       }
 
 
@@ -202,8 +202,8 @@ namespace ParticleHandler
                         curr[i+1] = last[i+1];
                         if (abs(last[i+4]) > 0.001)
                               curr[i+4] = -last[i+4] * .5;
-                        // else
-                        //       curr[i+4] = 0.0f;
+                        else
+                               curr[i+4] = 0.0f;
                         //       curr[i+1] = 0.0f;
                   }
             }

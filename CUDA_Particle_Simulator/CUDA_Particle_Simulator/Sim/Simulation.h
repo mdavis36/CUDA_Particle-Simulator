@@ -26,6 +26,8 @@
 #include "../Graphics/Drawable.h"
 #include "../Utils/Utils.h"
 
+#include "OctTreeHandler.h"
+
 using namespace glm;
 using namespace ParticleHandler;
 
@@ -60,9 +62,13 @@ public:
 
 	int num_particles = 0;
 	ParticleSystem *_p_sys;
+	Plane *_ground;
 	SceneObject *_s_obj;
+
+	OctTreeHandler* OTH;
+
 	//TODO : Move back to private after hitable class created
-	vector<Drawable*> _scene_objects;
+	vector<Drawable*> _drawable_objects;
 
 
 private:
