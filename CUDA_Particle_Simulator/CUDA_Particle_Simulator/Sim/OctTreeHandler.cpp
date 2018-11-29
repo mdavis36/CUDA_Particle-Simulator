@@ -1,6 +1,9 @@
 #include "OctTreeHandler.h"
 
-OctTreeHandler::OctTreeHandler() {}
+OctTreeHandler::OctTreeHandler()
+{
+      _doRender = false;
+}
 
 OctTreeHandler::~OctTreeHandler() {}
 
@@ -14,6 +17,12 @@ void OctTreeHandler::buildTree(std::vector<Polygon> p, Volume vol)
       root.generateOctTree(p, vol, 0, 0, node_list);
 
       std::cout << "Number Nodes : " << node_list.size() << std::endl;
+}
+
+void OctTreeHandler::toggleRender()
+{
+      if (_doRender) _doRender = false;
+      else _doRender = true;
 }
 
 void OctTreeHandler::clear()
@@ -96,16 +105,19 @@ bool OctTreeHandler::init(GLuint* programs)
 
 void OctTreeHandler::draw(GLuint* programs, mat4 proj_mat, mat4 view_mat)
 {
-      mat4 _pvm_matrix = proj_mat * view_mat * _model_matrix;
-	glUniformMatrix4fv(_pvm_matrix_loc, 1, GL_FALSE, value_ptr(_pvm_matrix));
+      if (_doRender)
+      {
+            mat4 _pvm_matrix = proj_mat * view_mat * _model_matrix;
+      	glUniformMatrix4fv(_pvm_matrix_loc, 1, GL_FALSE, value_ptr(_pvm_matrix));
 
-	glUseProgram(programs[0]);
-	if (!_initialized)
-	{
-		std::cout << "ERROR : Cannot  render an object thats not initialized. Plane\n";
-		return;
-	}
-	glBindVertexArray(_vao);
-	glLineWidth(0.5f);
-	glDrawArrays(GL_LINES, 0, _positions.size());
+      	glUseProgram(programs[0]);
+      	if (!_initialized)
+      	{
+      		std::cout << "ERROR : Cannot  render an object thats not initialized. Plane\n";
+      		return;
+      	}
+      	glBindVertexArray(_vao);
+      	glLineWidth(0.5f);
+      	glDrawArrays(GL_LINES, 0, _positions.size());
+      }
 }

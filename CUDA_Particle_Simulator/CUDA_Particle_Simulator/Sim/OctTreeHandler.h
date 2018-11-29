@@ -23,6 +23,7 @@ private:
       GLuint _buffers[2];
 
       bool _initialized;
+      bool _doRender;
 
       void generateOpenGLData();
 
@@ -34,6 +35,7 @@ public:
       std::vector<glm::vec3> vertices;
 
       void buildTree(std::vector<Polygon> p, Volume vol);
+      void toggleRender();
       void clear();
 
       virtual bool init(GLuint* programs);

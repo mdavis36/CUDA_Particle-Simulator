@@ -29,7 +29,7 @@ void OctTree::generateOctTree(std::vector<Polygon> _polygons, Volume _vol, int p
 {
 
       vol = _vol;
-      std::cout << "Node INDX : " << indx << " : "; vol.print();
+      //std::cout << "Node INDX : " << indx << " : "; vol.print();
 
       if (_polygons.size() <= 1 || vol.sz < 0.025)
       {

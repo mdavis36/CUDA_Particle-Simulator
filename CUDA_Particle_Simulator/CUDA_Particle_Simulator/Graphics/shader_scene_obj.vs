@@ -15,7 +15,7 @@ uniform mat4 _model_matrix;
 void main()
 {
 	_vertex_color = vec4(0.6, 0.6, 1.0, 1.0);
-	vec3 lightPosition = vec3(7.0, 10.0, 10.0);
+	vec3 lightPosition = vec3(-7.0, 10.0, 10.0);
 
 	vec4 worldPosition = _model_matrix * vec4(_in_vertex_position, 1);
 	gl_Position = _pvm_matrix * vec4(_in_vertex_position,1);

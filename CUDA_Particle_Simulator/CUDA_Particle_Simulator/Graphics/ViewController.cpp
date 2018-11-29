@@ -93,7 +93,9 @@ void ViewController::handleEvents(SDL_Event e)
 				_sim->reset();
 				m.initAssets();
 				break;
-
+			case SDLK_o:
+				_sim->OTH->toggleRender();
+				break;
 			default:
 				break;
 			}
