@@ -18,15 +18,15 @@
 #include <limits.h>
 #include <vector>
 
-#include "Plane.h"
-#include "ParticleSystem.h"
-#include "ParticleHandler.h"
-#include "SceneObject.h"
+#include "Scene/Plane.h"
+#include "Particles/ParticleSystem.h"
+#include "Particles/ParticleHandler.h"
+#include "Scene/SceneObject.h"
 
 #include "../Graphics/Drawable.h"
 #include "../Utils/Utils.h"
 
-#include "OctTreeHandler.h"
+#include "OctTree/OctTreeHandler.h"
 
 using namespace glm;
 using namespace ParticleHandler;

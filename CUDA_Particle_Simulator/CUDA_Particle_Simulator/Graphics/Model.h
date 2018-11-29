@@ -9,8 +9,8 @@
 #include "glm/gtc/type_ptr.hpp"
 #include "LoadShaders.h"
 
-#include "../Sim/Plane.h"
-#include "OrientationKey.h"
+#include "../Sim/Scene/Plane.h"
+#include "../Sim/Scene/OrientationKey.h"
 #include "../Sim/Simulation.h"
 
 #include <iostream>

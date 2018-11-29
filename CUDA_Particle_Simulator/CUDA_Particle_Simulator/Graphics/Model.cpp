@@ -39,18 +39,18 @@ bool Model::init(Simulation *sim)
 
 	// Load Shader
 	ShaderInfo shaders0[] = {
-		{ GL_VERTEX_SHADER,   "Graphics/shader.vs", 0 },
-		{ GL_FRAGMENT_SHADER, "Graphics/shader.fs", 1 },  //Phong Reflectance Model
+		{ GL_VERTEX_SHADER,   "Graphics/Shaders/shader.vs", 0 },
+		{ GL_FRAGMENT_SHADER, "Graphics/Shaders/shader.fs", 1 },  //Phong Reflectance Model
 		{ GL_NONE, 		    NULL, 			  2 }
 	};
 	ShaderInfo shaders1[] = {
-		{ GL_VERTEX_SHADER,   "Graphics/shader_particle_system.vs", 0 },
-		{ GL_FRAGMENT_SHADER, "Graphics/shader_particle_system.fs", 1 },  //Phong Reflectance Model
+		{ GL_VERTEX_SHADER,   "Graphics/Shaders/shader_particle_system.vs", 0 },
+		{ GL_FRAGMENT_SHADER, "Graphics/Shaders/shader_particle_system.fs", 1 },  //Phong Reflectance Model
 		{ GL_NONE, 		    NULL, 			  2 }
 	};
 	ShaderInfo shaders2[] = {
-		{ GL_VERTEX_SHADER,   "Graphics/shader_scene_obj.vs", 0 },
-		{ GL_FRAGMENT_SHADER, "Graphics/shader_scene_obj.fs", 1 },  //Phong Reflectance Model
+		{ GL_VERTEX_SHADER,   "Graphics/Shaders/shader_scene_obj.vs", 0 },
+		{ GL_FRAGMENT_SHADER, "Graphics/Shaders/shader_scene_obj.fs", 1 },  //Phong Reflectance Model
 		{ GL_NONE, 		    NULL, 			  2 }
 	};
 #ifndef GL1
