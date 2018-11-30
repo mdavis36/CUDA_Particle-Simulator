@@ -109,7 +109,7 @@ void Simulation::update()
 	{
 
 		//EulerStep(_p_sys, dt);
-		RK4(_p_sys, dt);
+		RK4(_p_sys, &_s_obj->_polygons, dt);
 
 		// #pragma omp parallel for num_threads(4)
 		// for (int i = 0; i < _p_sys->_num_particles; i++)

@@ -3,6 +3,7 @@
 
 #include "ParticleSystem.h"
 #include "glm/glm.hpp"
+#include "../Geometry/Polygon.h"
 
 namespace ParticleHandler {
 
@@ -14,15 +15,15 @@ namespace ParticleHandler {
       void Clear_Forces(ParticleSystem *p);
       void Compute_Forces(ParticleSystem *p);
 
-      void EulerStep(ParticleSystem *p, float dt);
-      void RK4(ParticleSystem *p, float dt);
+      void EulerStep(ParticleSystem *p, std::vector<Polygon>* poly, float dt);
+      void RK4(ParticleSystem *p, std::vector<Polygon>* poly, float dt);
 
       void CopyVector(float *out, float *in, int size);
 
       void ScaleVector(float *v, float s, int size);
       void AddVectors(float *s, float *a, float *b, int size);
 
-      void CheckCollisions(float *curr, float *last, int size);
+      void CheckCollisions(std::vector<Polygon>* poly, float *curr, float *last, int size);
 };
 
 #endif

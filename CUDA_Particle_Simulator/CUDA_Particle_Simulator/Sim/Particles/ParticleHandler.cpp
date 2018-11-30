@@ -86,7 +86,7 @@ namespace ParticleHandler
             }
       }
 
-      void EulerStep(ParticleSystem *p, float dt)
+      void EulerStep(ParticleSystem *p, std::vector<Polygon>* poly, float dt)
       {
             float temp1[ParticleDims(p)];
             float temp2[ParticleDims(p)];
@@ -98,7 +98,7 @@ namespace ParticleHandler
             AddVectors(temp3, temp1, temp2, ParticleDims(p));    // t2 = t1 + t2 = s + s`*dt
             AddVectors(temp2, temp1, temp2, ParticleDims(p));    // t2 = t1 + t2 = s + s`*dt
 
-            CheckCollisions(temp3, temp2, ParticleDims(p));
+            CheckCollisions(poly, temp3, temp2, ParticleDims(p));
 
             ParticleSetState(p, temp3);
             //p->t += dt;
@@ -116,13 +116,13 @@ namespace ParticleHandler
                   s_bar[6 * i + 1] = s_bar[6 * i + 4];
                   s_bar[6 * i + 2] = s_bar[6 * i + 5];
                   s_bar[6 * i + 3] = 0 / m;
-                  s_bar[6 * i + 4] = -9.81 / m;
+                  s_bar[6 * i + 4] = -.0981 / m;
                   s_bar[6 * i + 5] = 0 / m;
             }
       }
 
 
-      void RK4(ParticleSystem *p, float dt)
+      void RK4(ParticleSystem *p, std::vector<Polygon>* poly, float dt)
       {
             float k_0[ParticleDims(p)];
             float k_2[ParticleDims(p)];
@@ -157,7 +157,7 @@ namespace ParticleHandler
             ScaleVector(k_1, dt / 6, ParticleDims(p));
             AddVectors(k_1, k_0, k_1,ParticleDims(p));
 
-            CheckCollisions(k_1, k_0, ParticleDims(p));
+            CheckCollisions(poly, k_1, k_0, ParticleDims(p));
 
             ParticleSetState(p, k_1);
       }
@@ -192,23 +192,65 @@ namespace ParticleHandler
             }
       }
 
-      void CheckCollisions(float *curr, float *last, int size)
+      void CheckCollisions(std::vector<Polygon>* poly, float *curr, float *last, int size)
       {
             int i;
+
+            // http://geomalgorithms.com/a06-_intersect-2.html
+
+            //Iterate over each particle
             for (i = 0; i < size; i+=6)
             {
-                  if (curr[i+1] < 0 && last[i+1] > 0)
+                  glm::vec3 x_0( last[ i + 0 ], last[ i + 1 ], last[ i + 2 ]);
+                  glm::vec3 x_1( curr[ i + 0 ], curr[ i + 1 ], curr[ i + 2 ]);
+                  glm::vec3 x_01 = (x_1 - x_0);
+
+                  // for each polygon available
+                  #pragma omp parallel for num_threads(4)
+                  for (int j = 0; j < poly->size(); j++)
                   {
-                        curr[i+1] = last[i+1];
-                        if (abs(last[i+4]) > 0.001)
-                              curr[i+4] = -last[i+4] * .5;
-                        else
-                               curr[i+4] = 0.0f;
-                        //       curr[i+1] = 0.0f;
+                        glm::vec3 v_0  = poly->at(j).v[0];
+                        glm::vec3 v_1  = poly->at(j).v[1];
+                        glm::vec3 v_2  = poly->at(j).v[2];
+
+                        glm::vec3 v_01 = v_1 - v_0;
+                        glm::vec3 v_02 = v_2 - v_0;
+
+                        glm::vec3 n = glm::normalize( glm::cross( ( v_1 - v_0 ), ( v_2 - v_0 ) ) );
+                        float r_I = ( glm::dot(n, v_0 - x_0) ) / ( glm::dot(n, x_1 - x_0) );
+
+                        //    Calculate U and V
+                        // float denom =  glm::dot( -x_01, glm::cross( v_01, v_02) );
+                        // float u = ( glm::dot( glm::cross( v_02, -x_01 ), x_0 - v_0 ) ) / ( denom );
+                        // float v = ( glm::dot( glm::cross( -x_01, v_01 ), x_0 - v_0 ) ) / ( denom );
+                        // std::cout << u << "  " << v << "  " << denom << "  " << glm::cross( v_01, v_02)[0] << ", " << glm::cross( v_01, v_02)[1] << ", " << glm::cross( v_01, v_02)[2] << std::endl;
+                        //          if U+V <= 1 : Collision detected
+                        if (!(0 <= r_I && r_I <= 1))
+                        {
+                             continue;
+                        }
+
+                        glm::vec3 I(x_0 + r_I * x_01);
+
+                        // Check if intersection lies within triangle
+                        float uu, uv, vv, wu, wv, D;
+                        uu = glm::dot(v_01, v_01);
+                        uv = glm::dot(v_01, v_02);
+                        vv = glm::dot(v_02, v_02);
+                        glm::vec3 w = I - v_0;
+                        wu = glm::dot(w,v_01);
+                        wv = glm::dot(w,v_02);
+                        D = uv * uv - uu * vv;
+
+                        //test parametric co-ords
+                        float s, t;
+                        s = (uv * wv - vv * wu) / D;
+                        t = (uv * wu - uu * wv) / D;
+
+                        if (s >= 0 && t >= 0 && s+t <= 1) {
+                              std::cout << "COLLISION!!!! Particle " << i / 6 << " -> Polygon " << j << std::endl;
+                        }
                   }
             }
       }
-
-
-
 }
