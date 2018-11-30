@@ -13,7 +13,7 @@ run: all ; ./$(TARGET) &
 cpu: $(CPU_TARGET)
 
 GRAPHICS = Graphics/LoadShaders.cpp Graphics/Model.cpp Graphics/ViewController.cpp Graphics/ObjLoader.cpp
-SIMULATION = Sim/Scene/Plane.cpp Sim/Scene/OrientationKey.cpp Sim/Simulation.cpp Sim/Particles/ParticleSystem.cpp Sim/Particles/Particle.cpp Sim/Particles/ParticleHandler.cpp Sim/Scene/SceneObject.cpp Sim/OctTree/OctTree.cpp Sim/OctTree/OctTreeHandler.cpp Sim/Geometry/Polygon.cpp Sim/Geometry/Volume.cpp 
+SIMULATION = Sim/Scene/Plane.cpp Sim/Scene/OrientationKey.cpp Sim/Simulation.cpp Sim/Particles/ParticleSystem.cu Sim/Particles/Particle.cpp Sim/Particles/ParticleHandler.cpp Sim/Scene/SceneObject.cpp Sim/OctTree/OctTree.cpp Sim/OctTree/OctTreeHandler.cpp Sim/Geometry/Polygon.cpp Sim/Geometry/Volume.cpp
 UTILS = Utils/Utils.cpp
 
 OBJECTS = main.cpp $(GRAPHICS) $(SIMULATION) $(UTILS)

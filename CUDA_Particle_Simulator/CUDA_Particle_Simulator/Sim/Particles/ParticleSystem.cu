@@ -1,5 +1,12 @@
 #include "ParticleSystem.h"
 
+
+__global__ void kernel( float* ptr)
+{
+      ptr[0] += 15.0f;
+}
+
+
 ParticleSystem::ParticleSystem()
 {
       *this = ParticleSystem(1, PARTICLE_CUBE);
@@ -21,8 +28,8 @@ ParticleSystem::ParticleSystem(int n, int form)
       if(form == PARTICLE_CUBE)
       {
             //Ramdomly generate positions of particles.
-            int x_limit = 15;
-            int z_limit = 15;
+            int x_limit = 10;
+            int z_limit = 10;
             glm::vec3 ranPos;
             for (int i = 0; i < _num_particles; i++)
             {
@@ -80,7 +87,6 @@ bool ParticleSystem::init(GLuint* programs)
             _colors.push_back(vec4(1.0f, 0.0f, 0.0f, 1.0f));
       }
 
-
 	_model_matrix = mat4(1.0);
 
       glGenVertexArrays(1, &_vao);  //Create one vertex array object
@@ -130,6 +136,26 @@ void ParticleSystem::draw(GLuint* programs, mat4 proj_mat, mat4 view_mat)
 	glBufferData(GL_ARRAY_BUFFER, _positions.size() * sizeof(vec3), _positions.data(), GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);  //Do the shader plumbing here for this buffer
 	glEnableVertexAttribArray(0);
+
+
+      // ---------- CUDA / OpenGL Data Mapping ----------
+
+      // Register CUDA graphics resource with buffer, define what it will be used for.
+      cudaGraphicsGLRegisterBuffer( &res, _buffers[0], cudaGraphicsRegisterFlagsNone );
+
+      // Map OpenGL Resource to CUDA device ptr
+      cudaGraphicsMapResources(1, &res);
+      cudaGraphicsResourceGetMappedPointer(&device_ptr, &size, res);
+
+      // Kernel to move over the particle 5 in x dir
+      kernel<<<1,1>>>( (float*)device_ptr );
+
+      // Unmap OpenGL Resource from CUDA so the VBA can use it
+      cudaGraphicsUnmapResources(1, &res);
+      cudaGraphicsUnregisterResource(res);
+
+      // ------------------------------------------------
+
 
       if (!_initialized)
       {

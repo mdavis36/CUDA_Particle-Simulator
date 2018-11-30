@@ -10,6 +10,9 @@
 
 #include "../../Graphics/Drawable.h"
 
+#include <cuda_runtime.h>
+#include <cuda_gl_interop.h>
+
 using namespace std;
 
 const int PARTICLE_CUBE = 1;
@@ -25,6 +28,11 @@ private:
       GLuint _buffers[2];
 
       bool _initialized;
+
+      // CUDA - OpenGL Mapping variables
+      cudaGraphicsResource_t res = 0;
+      size_t size = 0;
+      void* device_ptr;
 
 public:
       ParticleSystem();

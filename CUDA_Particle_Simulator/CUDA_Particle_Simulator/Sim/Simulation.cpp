@@ -158,7 +158,7 @@ bool Simulation::init()
 
 	_p_sys = new ParticleSystem(num_particles, PARTICLE_SPHERE);
 	_ground = new Plane(vec3(0.0, 1.0, 0.0), vec3(0.0, 0.0, 0.0), 20, 20);
-	_s_obj = new SceneObject("../Resources/Lucy.obj");
+	_s_obj = new SceneObject("../Resources/smaug.obj");
 
 	std::cout << "Vertices Count  : " << _s_obj->_vertices.size() << std::endl;
 	std::cout << "Polygon Count   : " << _s_obj->_polygons.size() << std::endl;
