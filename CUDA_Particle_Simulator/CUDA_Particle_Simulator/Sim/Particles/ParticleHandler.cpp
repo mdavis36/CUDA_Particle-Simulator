@@ -157,7 +157,7 @@ namespace ParticleHandler
             ScaleVector(k_1, dt / 6, ParticleDims(p));
             AddVectors(k_1, k_0, k_1,ParticleDims(p));
 
-            CheckCollisions(poly, k_1, k_0, ParticleDims(p));
+            //CheckCollisions(poly, k_1, k_0, ParticleDims(p));
 
             ParticleSetState(p, k_1);
       }
@@ -219,12 +219,6 @@ namespace ParticleHandler
                         glm::vec3 n = glm::normalize( glm::cross( ( v_1 - v_0 ), ( v_2 - v_0 ) ) );
                         float r_I = ( glm::dot(n, v_0 - x_0) ) / ( glm::dot(n, x_1 - x_0) );
 
-                        //    Calculate U and V
-                        // float denom =  glm::dot( -x_01, glm::cross( v_01, v_02) );
-                        // float u = ( glm::dot( glm::cross( v_02, -x_01 ), x_0 - v_0 ) ) / ( denom );
-                        // float v = ( glm::dot( glm::cross( -x_01, v_01 ), x_0 - v_0 ) ) / ( denom );
-                        // std::cout << u << "  " << v << "  " << denom << "  " << glm::cross( v_01, v_02)[0] << ", " << glm::cross( v_01, v_02)[1] << ", " << glm::cross( v_01, v_02)[2] << std::endl;
-                        //          if U+V <= 1 : Collision detected
                         if (!(0 <= r_I && r_I <= 1))
                         {
                              continue;

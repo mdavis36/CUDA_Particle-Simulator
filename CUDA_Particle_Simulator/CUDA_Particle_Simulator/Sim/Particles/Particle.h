@@ -13,8 +13,7 @@ private:
 
 public:
       Particle(float m, vec3 x, vec3 v, vec3 f);
-      ~Particle();
-
+      
       void print();
 
       float m;

@@ -1,6 +1,5 @@
 #include "Particle.h"
 
-
 Particle::Particle(float m, vec3 x, vec3 v, vec3 f)
 {
       this->m = m;
@@ -8,9 +7,6 @@ Particle::Particle(float m, vec3 x, vec3 v, vec3 f)
       this->v = v;
       this->f = f;
 }
-
-Particle::~Particle(){}
-
 
 void Particle::print()
 {
