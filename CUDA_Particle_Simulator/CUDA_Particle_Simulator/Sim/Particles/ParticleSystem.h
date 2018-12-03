@@ -36,9 +36,7 @@ private:
       size_t size = 0;
       void* device_ptr;
 
-      Particle* d_particles;
-      dim3 block;
-      dim3 grid;
+
 
 public:
       ParticleSystem();
@@ -47,6 +45,10 @@ public:
       virtual bool init(GLuint* programs);
       virtual void draw(GLuint* programs, mat4 proj_mat, mat4 view_mat);
 
+      dim3 block;
+      dim3 grid;
+
+      Particle* d_particles;
       std::vector<Particle> _particles;
       int _num_particles;
       float t;

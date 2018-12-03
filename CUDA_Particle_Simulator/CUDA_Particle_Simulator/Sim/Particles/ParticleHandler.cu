@@ -2,11 +2,13 @@
 #include <omp.h>
 namespace ParticleHandler
 {
+      __host__
       int ParticleDims(ParticleSystem *p)
       {
             return (p->_num_particles * 6);
       }
 
+      __host__
       void ParticleGetState(ParticleSystem *p, float *dst)
       {
             int i;
@@ -22,6 +24,7 @@ namespace ParticleHandler
             }
       }
 
+      __host__
       void ParticleSetState(ParticleSystem *p, float *src)
       {
             int i;
@@ -37,6 +40,7 @@ namespace ParticleHandler
             }
       }
 
+      __host__
       void ParticleDerivative(ParticleSystem *p, float *dst)
       {
             int i;
@@ -55,6 +59,7 @@ namespace ParticleHandler
             }
       }
 
+      __host__
       void Clear_Forces(ParticleSystem *p)
       {
             int i;
@@ -67,6 +72,7 @@ namespace ParticleHandler
             }
       }
 
+      __host__
       void Compute_Forces(ParticleSystem *p)
       {
             int i;
@@ -86,6 +92,7 @@ namespace ParticleHandler
             }
       }
 
+      __host__
       void EulerStep(ParticleSystem *p, std::vector<Polygon>* poly, float dt)
       {
             float temp1[ParticleDims(p)];
@@ -104,7 +111,7 @@ namespace ParticleHandler
             //p->t += dt;
       }
 
-
+      __host__
       void F(float *s_bar, ParticleSystem * p, int size)
       {
             int i = 0;
@@ -121,7 +128,7 @@ namespace ParticleHandler
             }
       }
 
-
+      __host__
       void RK4(ParticleSystem *p, std::vector<Polygon>* poly, float dt)
       {
             float k_0[ParticleDims(p)];
@@ -157,11 +164,12 @@ namespace ParticleHandler
             ScaleVector(k_1, dt / 6, ParticleDims(p));
             AddVectors(k_1, k_0, k_1,ParticleDims(p));
 
-            //CheckCollisions(poly, k_1, k_0, ParticleDims(p));
+            CheckCollisions(poly, k_1, k_0, ParticleDims(p));
 
             ParticleSetState(p, k_1);
       }
 
+      __host__
       void CopyVector(float *out, float *in, int size)
       {
             int i;
@@ -172,6 +180,7 @@ namespace ParticleHandler
             }
       }
 
+      __host__
       void ScaleVector(float *v, float s, int size)
       {
             int i;
@@ -182,6 +191,7 @@ namespace ParticleHandler
             }
       }
 
+      __host__
       void AddVectors(float *s, float *a, float *b, int size)
       {
             int i;
@@ -192,6 +202,7 @@ namespace ParticleHandler
             }
       }
 
+      __host__
       void CheckCollisions(std::vector<Polygon>* poly, float *curr, float *last, int size)
       {
             int i;

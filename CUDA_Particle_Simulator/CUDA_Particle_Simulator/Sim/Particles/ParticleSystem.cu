@@ -35,9 +35,9 @@ __global__ void initParticles( Particle* particles, int num_particles )
       vec3 r;
       r.x = -x_limit + (curand_uniform(&state) * x_limit * 2);
       r.z = -z_limit + (curand_uniform(&state) * z_limit * 2);
-      r.y = 5 + (curand_uniform(&state) * 3);
+      r.y = 5 + (curand_uniform(&state) * 8);
 
-      particles[indx] = Particle( 0.1, r, vec3(0.0f,0.0f,0.0f), vec3(0.0f,0.0f,0.0f) );
+      particles[indx] = Particle( 1, r, vec3(0.0f,0.0f,0.0f), vec3(0.0f,0.0f,0.0f) );
 }
 
 ParticleSystem::ParticleSystem()
@@ -90,8 +90,8 @@ ParticleSystem::ParticleSystem(int n, int form)
       if(form == PARTICLE_SPHERE)
       {
             //Ramdomly generate positions of particles.
-            int radius = 10;
-            glm::vec3 center = vec3(0,15,0);
+            int radius = 2;
+            glm::vec3 center = vec3(0,6,2);
             glm::vec3 ranPos;
             glm::vec3 dist;
             for (int i = 0; i < _num_particles; i++)
@@ -137,12 +137,13 @@ bool ParticleSystem::init(GLuint* programs)
       glGenBuffers(2, _buffers); //Create two buffer objects, one for vertex positions and one for vertex colors
 
       glBindBuffer(GL_ARRAY_BUFFER, _buffers[0]);  //Buffers[0] wi ll be the position for each vertex
-	glBufferData(GL_ARRAY_BUFFER, _positions.size() * sizeof(vec3), _positions.data(), GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, _num_particles * sizeof(vec3), NULL, GL_DYNAMIC_DRAW);
+      //glBufferData(GL_ARRAY_BUFFER, _num_particles * sizeof(vec3), _positions.data(), GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);  //Do the shader plumbing here for this buffer
 	glEnableVertexAttribArray(0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, _buffers[1]);  //Buffers[1] will be the color for each vertex
-	glBufferData(GL_ARRAY_BUFFER, _colors.size() * sizeof(vec4), _colors.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, _num_particles * sizeof(vec4), _colors.data(), GL_STATIC_DRAW);
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, 0);  //Do the shader plumbing here for this buffer
 	glEnableVertexAttribArray(1);
 
@@ -171,12 +172,13 @@ void ParticleSystem::draw(GLuint* programs, mat4 proj_mat, mat4 view_mat)
       int i;
       for (i = 0; i < _num_particles; i++)
       {
-            _positions.push_back(_particles[i].x);
+            //_positions.push_back(_particles[i].x);
       }
 
       glBindVertexArray(_vao);
 	glBindBuffer(GL_ARRAY_BUFFER, _buffers[0]);  //Buffers[0] wi ll be the position for each vertex
-	glBufferData(GL_ARRAY_BUFFER, _positions.size() * sizeof(vec3), _positions.data(), GL_STATIC_DRAW);
+      glBufferData(GL_ARRAY_BUFFER, _num_particles * sizeof(vec3), NULL, GL_DYNAMIC_DRAW);
+	//glBufferData(GL_ARRAY_BUFFER, _num_particles * sizeof(vec3), _positions.data(), GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);  //Do the shader plumbing here for this buffer
 	glEnableVertexAttribArray(0);
 
@@ -205,5 +207,5 @@ void ParticleSystem::draw(GLuint* programs, mat4 proj_mat, mat4 view_mat)
             cout << "ERROR : Cannot  render an object thats not initialized. ParticleSystem\n";
             return;
       }
-      glDrawArrays(GL_POINTS, 0, _positions.size());
+      glDrawArrays(GL_POINTS, 0, _num_particles);
 }

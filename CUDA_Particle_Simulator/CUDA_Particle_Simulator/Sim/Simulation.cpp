@@ -108,7 +108,8 @@ void Simulation::update()
 	if (sim_state == RUNNING)
 	{
 		//EulerStep(_p_sys, dt);
-		RK4(_p_sys, &_s_obj->_polygons, dt);
+		//RK4(_p_sys, &_s_obj->_polygons, dt);
+		cuRK4(_p_sys, dt);
 	}
 }
 
