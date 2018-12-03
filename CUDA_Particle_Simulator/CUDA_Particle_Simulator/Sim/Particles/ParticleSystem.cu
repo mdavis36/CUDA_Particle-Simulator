@@ -1,11 +1,44 @@
 #include "ParticleSystem.h"
 
 
-__global__ void kernel( float* ptr)
-{
-      ptr[0] += 15.0f;
+extern "C" {
+      #include <stdio.h>
+      #define gpuErrchk(ans) { gpuAssert((ans), __FILE__, __LINE__); }
+      inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=true)
+      {
+         if (code != cudaSuccess)
+         {
+            fprintf(stderr,"GPUassert: %s %s %d\n", cudaGetErrorString(code), file, line);
+            if (abort) exit(code);
+         }
+      }
 }
 
+__global__ void cpyParticleDataToDraw( Particle* particles, vec3* positions, int num_particles )
+{
+      int indx = threadIdx.x + blockIdx.x * blockDim.x;
+      if (indx >= num_particles) return;
+      positions[indx] = particles[indx].x;
+}
+
+__global__ void initParticles( Particle* particles, int num_particles )
+{
+      int indx = threadIdx.x + blockIdx.x * blockDim.x;
+      if (indx >= num_particles) return;
+
+      int x_limit = 5;
+      int z_limit = 5;
+
+      curandState state;
+      curand_init( (unsigned long long)clock() + indx, 0, 0, &state );
+
+      vec3 r;
+      r.x = -x_limit + (curand_uniform(&state) * x_limit * 2);
+      r.z = -z_limit + (curand_uniform(&state) * z_limit * 2);
+      r.y = 5 + (curand_uniform(&state) * 3);
+
+      particles[indx] = Particle( 0.1, r, vec3(0.0f,0.0f,0.0f), vec3(0.0f,0.0f,0.0f) );
+}
 
 ParticleSystem::ParticleSystem()
 {
@@ -16,6 +49,16 @@ ParticleSystem::ParticleSystem(int n, int form)
 {
       t = 0.0f;
       _num_particles = n;
+
+
+      // ---------- Initialize CUDA Data ----------
+      block = dim3(512);
+      grid = dim3(std::ceil(n / block.x));
+      cudaMalloc(&d_particles, sizeof(Particle) * _num_particles);
+      initParticles<<<grid, block>>>( d_particles, _num_particles );
+      // ------------------------------------------
+
+
       if (_num_particles == 1)
       {
             _particles.push_back(Particle(0.1,
@@ -74,7 +117,7 @@ ParticleSystem::ParticleSystem(int n, int form)
 
 ParticleSystem::~ParticleSystem()
 {
-
+      cudaFree(d_particles);
 }
 
 
@@ -141,18 +184,18 @@ void ParticleSystem::draw(GLuint* programs, mat4 proj_mat, mat4 view_mat)
       // ---------- CUDA / OpenGL Data Mapping ----------
 
       // Register CUDA graphics resource with buffer, define what it will be used for.
-      cudaGraphicsGLRegisterBuffer( &res, _buffers[0], cudaGraphicsRegisterFlagsNone );
+      gpuErrchk( cudaGraphicsGLRegisterBuffer( &res, _buffers[0], cudaGraphicsRegisterFlagsWriteDiscard ) );
 
       // Map OpenGL Resource to CUDA device ptr
-      cudaGraphicsMapResources(1, &res);
-      cudaGraphicsResourceGetMappedPointer(&device_ptr, &size, res);
+      gpuErrchk( cudaGraphicsMapResources(1, &res) );
+      gpuErrchk( cudaGraphicsResourceGetMappedPointer(&device_ptr, &size, res) );
 
       // Kernel to move over the particle 5 in x dir
-      kernel<<<1,1>>>( (float*)device_ptr );
+      cpyParticleDataToDraw<<<dim3(512), dim3(std::ceil(_num_particles / 512))>>>( d_particles, (vec3*)device_ptr , _num_particles );
 
       // Unmap OpenGL Resource from CUDA so the VBA can use it
-      cudaGraphicsUnmapResources(1, &res);
-      cudaGraphicsUnregisterResource(res);
+      gpuErrchk( cudaGraphicsUnmapResources(1, &res) );
+      gpuErrchk( cudaGraphicsUnregisterResource(res) );
 
       // ------------------------------------------------
 

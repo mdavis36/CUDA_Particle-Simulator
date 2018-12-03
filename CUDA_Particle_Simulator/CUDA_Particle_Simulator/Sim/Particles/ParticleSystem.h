@@ -12,6 +12,8 @@
 
 #include <cuda_runtime.h>
 #include <cuda_gl_interop.h>
+#include "device_launch_parameters.h"
+#include <curand_kernel.h>
 
 using namespace std;
 
@@ -33,6 +35,10 @@ private:
       cudaGraphicsResource_t res = 0;
       size_t size = 0;
       void* device_ptr;
+
+      Particle* d_particles;
+      dim3 block;
+      dim3 grid;
 
 public:
       ParticleSystem();

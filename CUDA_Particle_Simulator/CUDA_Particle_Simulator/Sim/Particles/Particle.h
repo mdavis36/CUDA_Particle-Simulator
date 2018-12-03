@@ -3,6 +3,7 @@
 
 #include <glm/glm.hpp>
 #include <iostream>
+#include <cuda_runtime.h>
 
 using namespace glm;
 using namespace std;
@@ -12,8 +13,7 @@ class Particle
 private:
 
 public:
-      Particle(float m, vec3 x, vec3 v, vec3 f);
-      
+      __device__ __host__ Particle(float m, vec3 x, vec3 v, vec3 f);
       void print();
 
       float m;
