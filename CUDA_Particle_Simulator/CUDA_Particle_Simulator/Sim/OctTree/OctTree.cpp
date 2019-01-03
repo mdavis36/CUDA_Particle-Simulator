@@ -6,25 +6,6 @@ OctTree::OctTree(int i) : indx(i) {}
 
 OctTree::~OctTree() {}
 
-
-Volume OctTree::getChildVol(Volume v, int c)
-{
-      if (c > 7) return Volume();
-
-      float hw = v.hsz;
-
-      if (c == 0) return Volume(v.BBL, glm::vec3(v.BBL.x + hw, v.BBL.y + hw, v.BBL.z + hw));
-      if (c == 1) return Volume(glm::vec3(v.BBL.x + hw, v.BBL.y, v.BBL.z), glm::vec3(v.BBL.x + hw + hw, v.BBL.y + hw, v.BBL.z + hw));
-      if (c == 2) return Volume(glm::vec3(v.BBL.x, v.BBL.y, v.BBL.z + hw), glm::vec3(v.BBL.x + hw, v.BBL.y + hw, v.BBL.z + hw + hw));
-      if (c == 3) return Volume(glm::vec3(v.BBL.x + hw, v.BBL.y, v.BBL.z + hw), glm::vec3(v.BBL.x + hw + hw, v.BBL.y + hw, v.BBL.z + hw + hw));
-
-      if (c == 4) return Volume(glm::vec3(v.BBL.x, v.BBL.y + hw, v.BBL.z), glm::vec3(v.BBL.x + hw, v.BBL.y + hw + hw, v.BBL.z + hw));
-      if (c == 5) return Volume(glm::vec3(v.BBL.x + hw, v.BBL.y + hw, v.BBL.z), glm::vec3(v.BBL.x + hw + hw, v.BBL.y + hw + hw, v.BBL.z + hw));
-      if (c == 6) return Volume(glm::vec3(v.BBL.x, v.BBL.y + hw, v.BBL.z + hw), glm::vec3(v.BBL.x + hw, v.BBL.y + hw + hw, v.BBL.z + hw + hw));
-      if (c == 7) return Volume(glm::vec3(v.BBL.x + hw, v.BBL.y + hw, v.BBL.z + hw), glm::vec3(v.BBL.x + hw + hw, v.BBL.y + hw + hw, v.BBL.z + hw + hw));
-}
-
-
 void OctTree::generateOctTree(std::vector<Polygon> _polygons, Volume _vol, int p, int level, std::vector<OctTree*>& node_list)
 {
 

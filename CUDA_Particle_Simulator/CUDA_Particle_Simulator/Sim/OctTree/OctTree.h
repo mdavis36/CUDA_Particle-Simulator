@@ -23,8 +23,6 @@ public:
       OctTree(int i);
       ~OctTree();
 
-      Volume getChildVol(Volume v, int c);
-
       void generateOctTree(std::vector<Polygon> polygons, Volume _vol, int p, int level, std::vector<OctTree*>& node_list);
 };
 
