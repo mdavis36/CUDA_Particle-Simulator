@@ -19,14 +19,11 @@ using namespace std;
 
 // -------------------- Simulation Constructors and Destructor --------------------
 
-Simulation::Simulation()
-{
-	Simulation(5);
-}
+Simulation::Simulation() {}
 
-Simulation::Simulation(int n)
+Simulation::Simulation(configData c)
 {
-	num_particles = n;
+	cfg = c;
 	if (!init())
 	{
 		cout << "Failed to initialize simulation.\n";
@@ -94,6 +91,7 @@ bool Simulation::reset()
 {
 	end();
 	cout << "Resetting Simulation.\n";
+	cfg.init((char*)"config.cfg");
 	printControls();
 	clean();
 	init();
@@ -107,9 +105,11 @@ void Simulation::update()
 {
 	if (sim_state == RUNNING)
 	{
-		//EulerStep(_p_sys, dt);
-		//RK4(_p_sys, &_s_obj->_polygons, dt);
-		cuRK4(_p_sys, dt);
+		if (cfg.Update_Protocol == "") std::cout << "Error : No Update Protocol\n";
+		if (cfg.Update_Protocol == "CPU_EULER") EulerStep(_p_sys, &_s_obj->_polygons, dt);
+		if (cfg.Update_Protocol == "CPU_RK4")   RK4(_p_sys, &_s_obj->_polygons, dt);
+		if (cfg.Update_Protocol == "CPU_RK4_2")   RK4_2(_p_sys, &_s_obj->_polygons, dt);
+		if (cfg.Update_Protocol == "GPU_RK4") cuRK4(_p_sys, dt);
 	}
 }
 
@@ -146,10 +146,11 @@ bool Simulation::init()
 	// This is where all simulation object will be initialized to set up the simulation.
 	//integrator.setIType(INTEGRATE_VERLET);
 	//integrator.setIType(INTEGRATE_EULER);
+	num_particles = cfg.numParticles;
 
 	_p_sys = new ParticleSystem(num_particles, PARTICLE_SPHERE);
 	_ground = new Plane(vec3(0.0, 1.0, 0.0), vec3(0.0, 0.0, 0.0), 20, 20);
-	_s_obj = new SceneObject("../Resources/smaug.obj");
+	_s_obj = new SceneObject(cfg.OBJname);
 
 	std::cout << "Vertices Count  : " << _s_obj->_vertices.size() << std::endl;
 	std::cout << "Polygon Count   : " << _s_obj->_polygons.size() << std::endl;

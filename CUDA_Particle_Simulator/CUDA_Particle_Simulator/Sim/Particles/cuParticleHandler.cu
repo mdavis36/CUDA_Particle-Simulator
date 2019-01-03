@@ -56,7 +56,7 @@ namespace ParticleHandler
             s_bar[1] = s_bar[4];
             s_bar[2] = s_bar[5];
             s_bar[3] = 0 / m;
-            s_bar[4] = -0.981 / m;
+            s_bar[4] = -9.81 / m;
             s_bar[5] = 0 / m;
       }
 
@@ -127,6 +127,14 @@ namespace ParticleHandler
             AddVectors( k_1, k_0, k_1 );
 
             //CheckCollisions( poly, k_1, k_0 );
+            vec3 last(k_0[0], k_0[1], k_0[2]);
+            vec3 next(k_1[0], k_1[1], k_1[2]);
+
+            if (next.y < 0)
+            {
+                  k_1[1] = -k_1[1];
+                  k_1[4] = -0.4 * k_1[4];
+            }
 
             ParticleSetState( &ps[indx], k_1 );
       }

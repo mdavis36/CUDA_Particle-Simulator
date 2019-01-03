@@ -2,16 +2,16 @@
 
 
 extern "C" {
-      #include <stdio.h>
-      #define gpuErrchk(ans) { gpuAssert((ans), __FILE__, __LINE__); }
-      inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=true)
+	#include <stdio.h>
+	#define gpuErrchk(ans) { gpuAssert((ans), __FILE__, __LINE__); }
+	inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=true)
       {
-         if (code != cudaSuccess)
-         {
-            fprintf(stderr,"GPUassert: %s %s %d\n", cudaGetErrorString(code), file, line);
-            if (abort) exit(code);
-         }
-      }
+      	if (code != cudaSuccess)
+         	{
+            	fprintf(stderr,"GPUassert: %s %s %d\n", cudaGetErrorString(code), file, line);
+            	if (abort) exit(code);
+         	}
+	}
 }
 
 __global__ void cpyParticleDataToDraw( Particle* particles, vec3* positions, int num_particles )
@@ -123,22 +123,21 @@ ParticleSystem::~ParticleSystem()
 
 bool ParticleSystem::init(GLuint* programs)
 {
-      int i;
-      for (i = 0; i < _num_particles; i++)
-      {
+	int i;
+	for (i = 0; i < _num_particles; i++)
+	{
             _positions.push_back(_particles[i].x);
-            _colors.push_back(vec4(1.0f, 0.0f, 0.0f, 1.0f));
-      }
+      	_colors.push_back(vec4(1.0f, 0.0f, 0.0f, 1.0f));
+	}
 
 	_model_matrix = mat4(1.0);
-
-      glGenVertexArrays(1, &_vao);  //Create one vertex array object
+	glGenVertexArrays(1, &_vao);  //Create one vertex array object
 	glBindVertexArray(_vao);
-      glGenBuffers(2, _buffers); //Create two buffer objects, one for vertex positions and one for vertex colors
+	glGenBuffers(2, _buffers); //Create two buffer objects, one for vertex positions and one for vertex colors
 
-      glBindBuffer(GL_ARRAY_BUFFER, _buffers[0]);  //Buffers[0] wi ll be the position for each vertex
+	glBindBuffer(GL_ARRAY_BUFFER, _buffers[0]);  //Buffers[0] wi ll be the position for each vertex
 	glBufferData(GL_ARRAY_BUFFER, _num_particles * sizeof(vec3), NULL, GL_DYNAMIC_DRAW);
-      //glBufferData(GL_ARRAY_BUFFER, _num_particles * sizeof(vec3), _positions.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, _num_particles * sizeof(vec3), _positions.data(), GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);  //Do the shader plumbing here for this buffer
 	glEnableVertexAttribArray(0);
 
@@ -147,12 +146,12 @@ bool ParticleSystem::init(GLuint* programs)
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, 0);  //Do the shader plumbing here for this buffer
 	glEnableVertexAttribArray(1);
 
-      glLineWidth(1.0f);
-      glPointSize(2.0f);
+	glLineWidth(1.0f);
+	glPointSize(2.0f);
 
-      _pvm_matrix_loc = glGetUniformLocation(programs[1], "_pvm_matrix");
-      _projection_matrix_loc = glGetUniformLocation(programs[1], "_projection_matrix");
-      _view_matrix_loc = glGetUniformLocation(programs[1], "_view_matrix");
+	_pvm_matrix_loc = glGetUniformLocation(programs[1], "_pvm_matrix");
+	_projection_matrix_loc = glGetUniformLocation(programs[1], "_projection_matrix");
+	_view_matrix_loc = glGetUniformLocation(programs[1], "_view_matrix");
 
 	_initialized = true;
 	return true;
@@ -172,13 +171,13 @@ void ParticleSystem::draw(GLuint* programs, mat4 proj_mat, mat4 view_mat)
       int i;
       for (i = 0; i < _num_particles; i++)
       {
-            //_positions.push_back(_particles[i].x);
+            _positions.push_back(_particles[i].x);
       }
 
       glBindVertexArray(_vao);
 	glBindBuffer(GL_ARRAY_BUFFER, _buffers[0]);  //Buffers[0] wi ll be the position for each vertex
       glBufferData(GL_ARRAY_BUFFER, _num_particles * sizeof(vec3), NULL, GL_DYNAMIC_DRAW);
-	//glBufferData(GL_ARRAY_BUFFER, _num_particles * sizeof(vec3), _positions.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, _num_particles * sizeof(vec3), _positions.data(), GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);  //Do the shader plumbing here for this buffer
 	glEnableVertexAttribArray(0);
 

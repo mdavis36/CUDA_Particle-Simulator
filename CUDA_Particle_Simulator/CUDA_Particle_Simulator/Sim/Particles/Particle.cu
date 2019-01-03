@@ -1,6 +1,9 @@
 #include "Particle.h"
 
 __device__ __host__
+Particle::Particle(){}
+
+__device__ __host__
 Particle::Particle(float m, vec3 x, vec3 v, vec3 f)
 {
       this->m = m;

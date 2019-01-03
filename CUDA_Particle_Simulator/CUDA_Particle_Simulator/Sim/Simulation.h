@@ -25,6 +25,7 @@
 
 #include "../Graphics/Drawable.h"
 #include "../Utils/Utils.h"
+#include "../Utils/Config.h"
 
 #include "OctTree/OctTreeHandler.h"
 
@@ -40,7 +41,7 @@ public:
 	int sim_state = NOT_INITIALIZED;
 
 	Simulation();
-	Simulation(int n);
+	Simulation(configData c);
 	~Simulation();
 
 	// Simulation Control Functions
@@ -85,6 +86,8 @@ private:
 
 	double frame_time;
 	double sim_time_accu;
+
+	configData cfg;
 
 	// Simulation Variables
 	const int PARTICLE_COUNT = 500;

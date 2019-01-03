@@ -9,7 +9,7 @@ SceneObject::SceneObject(const char * filename)
 
       for(int i = 0; i < _vertices.size(); i += 3)
       {
-            _polygons.push_back( Polygon(_vertices[i], _vertices[i+1], _vertices[i+2]) );
+            _polygons.push_back( Polygon(_vertices[i], _vertices[i+1], _vertices[i+2], _normals[i/3]) );
       }
 }
 

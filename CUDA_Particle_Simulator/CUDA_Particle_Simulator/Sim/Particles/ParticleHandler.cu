@@ -164,11 +164,12 @@ namespace ParticleHandler
             ScaleVector(k_1, dt / 6, ParticleDims(p));
             AddVectors(k_1, k_0, k_1,ParticleDims(p));
 
-            CheckCollisions(poly, k_1, k_0, ParticleDims(p));
+		CheckCollisions(poly, k_1, k_0, ParticleDims(p));
 
             ParticleSetState(p, k_1);
-      }
 
+      }
+      
       __host__
       void CopyVector(float *out, float *in, int size)
       {

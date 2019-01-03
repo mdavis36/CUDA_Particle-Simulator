@@ -13,6 +13,7 @@ class Particle
 private:
 
 public:
+	__device__ __host__ Particle();
       __device__ __host__ Particle(float m, vec3 x, vec3 v, vec3 f);
       void print();
 
