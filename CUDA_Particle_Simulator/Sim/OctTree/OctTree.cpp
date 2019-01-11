@@ -6,42 +6,29 @@ OctTree::OctTree(int i) : indx(i) {}
 
 OctTree::~OctTree() {}
 
-/*
-void OctTree::generateSegmentIntersectionList(glm::vec3 x_0, glm::vec3 x_1, std::vector<OctTree*>& node_list)
+CollisionData OctTree::CheckCollisionOT(std::vector<OctTree*> node_list, glm::vec3 x_0, glm::vec3 x_1)
 {
-	CollisionData result;
-	bool r_set = false;
-
-	for (int c = 0; c < 8; c++)
+	CollisionData result, res;
+	for (int i = 0; i < 8; i++)
 	{
-		if (/*boxLineIntersection(node_list[leafs[c], x_0, x_1])/)
+		if (vol.lineNodeIntersection(x_0, x_1))
 		{
-			CollisionData t_res = node_list[leafs[c]]->generateSegmentIntersectionList(x_0, x_1, node_list);
-			if ( !r_set ) { result = t_res; r_set = true; }
-			if ( t_res.r_I < result.r_I ) result = t_res;
+			res = node_list[leafs[i]]->CheckCollisionOT(node_list, x_0, x_1);
+			if (res.r_I != -1 && ( res.r_I < result.r_I || result.r_I == -1))
+				result = res;
 		}
 	}
 
-	for (Polygon p : _polygons)
+	for (Polygon p : polygons)
 	{
-		CollisionData t_res = checkLinePolygonCollision(p, x_0, x_1);
-		if (CollisionData.r_I != -1) 
-		{	
-			if ( !r_set ) { result = t_res; r_set = true; }
-			if ( t_res.r_I < result.r_I ) result = t_res;
+		if (true)//if ( p.insection(x_0, x_1, &res) )
+		{
+			if (res.r_I != -1 && ( res.r_I < result.r_I || result.r_I == -1))
+				result = res;
 		}
 	}
-	return t_res;
+	return result;
 }
-*/
-
-/*bool OctTree::lineNodeIntersection(glm::vec3 x_0, glm::vec3 x_1)
-{
-	glm::vec3 B1 = vol.BBL;
-	glm::vec3 B2 = vol.TTR;
-	
-	if (x_1.x < ) return false;
-}*/
 
 
 void OctTree::generateOctTree(std::vector<Polygon> _polygons, Volume _vol, int p, int level, std::vector<OctTree*>& node_list)

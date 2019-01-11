@@ -24,7 +24,8 @@ PARTICLES   =  Sim/Particles/ParticleSystem.cu \
 		   Sim/Particles/Particle.cu \
 		   Sim/Particles/ParticleHandler.cu \
 		   Sim/Particles/ParticleHandler2.cu \
-		   Sim/Particles/cuParticleHandler.cu
+		   Sim/Particles/cuParticleHandler.cu \
+		   Sim/Particles/CollisionData.cpp
 
 SCENE       =  Sim/Scene/Plane.cpp \
 		   Sim/Scene/OrientationKey.cpp \

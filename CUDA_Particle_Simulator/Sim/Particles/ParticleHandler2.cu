@@ -211,53 +211,97 @@ namespace ParticleHandler
 	}
 */
 
+
+	__host__
+	bool checkPolygonIntersection(glm::vec3 x_0, glm::vec3 x_1, Polygon poly, CollisionData &result)
+	{
+
+            // http://geomalgorithms.com/a06-_intersect-2.html
+		result = CollisionData();
+            glm::vec3 x_01 = (x_1 - x_0);
+
+            glm::vec3 v_0  = poly.v[0];
+            glm::vec3 v_1  = poly.v[1];
+            glm::vec3 v_2  = poly.v[2];
+
+            glm::vec3 v_01 = v_1 - v_0;
+            glm::vec3 v_02 = v_2 - v_0;
+
+            glm::vec3 n = glm::normalize( glm::cross( ( v_1 - v_0 ), ( v_2 - v_0 ) ) );
+            float r_I = ( glm::dot(n, v_0 - x_0) ) / ( glm::dot(n, x_1 - x_0) );
+            if (!(0 <= r_I && r_I <= 1))
+            {
+            	return false;
+		}
+
+            glm::vec3 I(x_0 + r_I * x_01);
+
+            // Check if intersection lies within triangle
+            float uu, uv, vv, wu, wv, D;
+            uu = glm::dot(v_01, v_01);
+            uv = glm::dot(v_01, v_02);
+            vv = glm::dot(v_02, v_02);
+            glm::vec3 w = I - v_0;
+            wu = glm::dot(w,v_01);
+            wv = glm::dot(w,v_02);
+            D = uv * uv - uu * vv;
+
+            //test parametric co-ords
+            float s, t;
+            s = (uv * wv - vv * wu) / D;
+            t = (uv * wu - uu * wv) / D;
+
+            if (s >= 0 && t >= 0 && s+t <= 1) {
+                        //std::cout << "COLLISION!!!! Particle " << p_indx << " -> Polygon " << j << std::endl;
+			  	std::cout << "Collision!!!" << std::endl;
+				result = CollisionData(I, poly, r_I); 
+				return true;
+		}
+		
+		return false; 
+
+	}
+
+
+	
       __host__
       CollisionData CheckCollisions2(glm::vec3 x_0, glm::vec3 x_1, std::vector<Polygon>* poly, int p_indx)
       {
-            // http://geomalgorithms.com/a06-_intersect-2.html
 
-		CollisionData result(glm::vec3(), poly->at(0), -1);
+		CollisionData result, t_res;
             glm::vec3 x_01 = (x_1 - x_0);
 
             for (int j = 0; j < poly->size(); j++)
             {
-            	glm::vec3 v_0  = poly->at(j).v[0];
-                  glm::vec3 v_1  = poly->at(j).v[1];
-                  glm::vec3 v_2  = poly->at(j).v[2];
-
-                  glm::vec3 v_01 = v_1 - v_0;
-                  glm::vec3 v_02 = v_2 - v_0;
-
-                  glm::vec3 n = glm::normalize( glm::cross( ( v_1 - v_0 ), ( v_2 - v_0 ) ) );
-                  float r_I = ( glm::dot(n, v_0 - x_0) ) / ( glm::dot(n, x_1 - x_0) );
-                  if (!(0 <= r_I && r_I <= 1))
-                  {
-                       continue;
-                  }
-
-                  glm::vec3 I(x_0 + r_I * x_01);
-
-                  // Check if intersection lies within triangle
-                  float uu, uv, vv, wu, wv, D;
-                  uu = glm::dot(v_01, v_01);
-                  uv = glm::dot(v_01, v_02);
-                  vv = glm::dot(v_02, v_02);
-                  glm::vec3 w = I - v_0;
-                  wu = glm::dot(w,v_01);
-                  wv = glm::dot(w,v_02);
-                  D = uv * uv - uu * vv;
-
-                  //test parametric co-ords
-                  float s, t;
-                  s = (uv * wv - vv * wu) / D;
-                  t = (uv * wu - uu * wv) / D;
-
-                  if (s >= 0 && t >= 0 && s+t <= 1) {
-                        std::cout << "COLLISION!!!! Particle " << p_indx << " -> Polygon " << j << std::endl;
-				CollisionData t_res = CollisionData(I, poly->at(j), r_I); 
-
-		    		if (result.r_I == -1 || t_res.r_I < result.r_I) result = t_res;                   }
+			if (checkPolygonIntersection(x_0, x_1, poly->at(j), t_res))
+			{
+				if (t_res.r_I < result.r_I || result.r_I == -1) result = t_res;
+			}
 		} 
 		return result; 
       }
+
+
+	
+
+
+
+	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

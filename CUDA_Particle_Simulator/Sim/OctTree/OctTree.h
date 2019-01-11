@@ -8,6 +8,7 @@
 
 #include "../Geometry/Polygon.h"
 #include "../Geometry/Volume.h"
+#include "../Particles/CollisionData.h"
 
 class OctTree
 {
@@ -24,6 +25,8 @@ public:
       ~OctTree();
 
       void generateOctTree(std::vector<Polygon> polygons, Volume _vol, int p, int level, std::vector<OctTree*>& node_list);
+	
+	CollisionData CheckCollisionOT(std::vector<OctTree*> node_list, glm::vec3 x_0, glm::vec3 x_1);
 };
 
 #endif
