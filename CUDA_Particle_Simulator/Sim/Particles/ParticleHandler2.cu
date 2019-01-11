@@ -160,7 +160,7 @@ namespace ParticleHandler
 			Particle p_1 = p;
 			RK4_2_eval(&p, &p_1, dt);
 
-			CollisionData cd = CheckCollisions2(p, p_1, poly, indx);
+			CollisionData cd = CheckCollisions2(p.x, p_1.x, poly, indx);
 			
 			if (cd.r_I != -1)
 			{
@@ -182,16 +182,41 @@ namespace ParticleHandler
 			ps->_particles[indx] = p_1;
 		}
       }
+/*
+	void OctTreeCollisionDetection(glm::vec3 x_0, glm::vec3 x_1, std::vector<OctTree*>& node_list, int p_indx)
+	{
+		CollisionData result;
+		bool r_set = false;
+
+		for (int c = 0; c < 8; c++)
+			{
+				if (/*boxLineIntersection(node_list[leafs[c], x_0, x_1])/)
+				{
+					CollisionData t_res = node_list[leafs[c]]->OctTreeCollisionDetection(x_0, x_1, node_list);
+					if ( !r_set ) { result = t_res; r_set = true; }
+					if ( t_res.r_I < result.r_I ) result = t_res;
+				}
+			}
+
+			for (Polygon p : _polygons)
+			{
+				CollisionData t_res = CheckCollision2(x_0, x_1, p, p_indx);
+				if (CollisionData.r_I != -1) 
+				{	
+					if ( !r_set ) { result = t_res; r_set = true; }
+					if ( t_res.r_I < result.r_I ) result = t_res;
+				}
+			}
+			return t_res;
+	}
+*/
 
       __host__
-      CollisionData CheckCollisions2(Particle p_0, Particle p_1, std::vector<Polygon>* poly, int p_indx)
+      CollisionData CheckCollisions2(glm::vec3 x_0, glm::vec3 x_1, std::vector<Polygon>* poly, int p_indx)
       {
-            int i;
-
             // http://geomalgorithms.com/a06-_intersect-2.html
 
-            glm::vec3 x_0 = p_0.x;
-            glm::vec3 x_1 = p_1.x;
+		CollisionData result(glm::vec3(), poly->at(0), -1);
             glm::vec3 x_01 = (x_1 - x_0);
 
             for (int j = 0; j < poly->size(); j++)
@@ -229,11 +254,10 @@ namespace ParticleHandler
 
                   if (s >= 0 && t >= 0 && s+t <= 1) {
                         std::cout << "COLLISION!!!! Particle " << p_indx << " -> Polygon " << j << std::endl;
-		    		return CollisionData(I, poly->at(j), r_I); 
-                  }
+				CollisionData t_res = CollisionData(I, poly->at(j), r_I); 
+
+		    		if (result.r_I == -1 || t_res.r_I < result.r_I) result = t_res;                   }
 		} 
-            //}
-		//TODO :: Fix this terrible code
-		return CollisionData(glm::vec3(), poly->at(0), -1);
+		return result; 
       }
 }

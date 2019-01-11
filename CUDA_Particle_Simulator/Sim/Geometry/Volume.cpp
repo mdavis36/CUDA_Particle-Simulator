@@ -68,3 +68,13 @@ bool Volume::intersectPolygon(const Polygon p)
       int c = countContainedVertices(p);
       return (c == 1 || c == 2);
 }
+
+/*bool Volume::lineNodeIntersection(glm::vec3 x_0, glm::vec3 x_1)
+{
+	if (x_1.x < BBL.x && x_0.x < BBL.x) return false;
+	if (x_1.x > TTR.x && x_0.x > TTR.x) return false;
+	if (x_1.y < BBL.y && x_0.y < BBL.y) return false;
+	if (x_1.y > TTR.y && x_0.y > TTR.y) return false;
+	if (x_1.z < BBL.z && x_0.z < BBL.z) return false;
+	if (x_1.z > TTR.z && x_0.z > TTR.z) return false;
+}*/

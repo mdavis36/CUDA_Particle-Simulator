@@ -39,7 +39,7 @@ namespace ParticleHandler {
       __host__ __device__ void AddVectors(float *s, float *a, float *b);
 
 
-      __host__   CollisionData CheckCollisions2(Particle p_0, Particle p_1, std::vector<Polygon>* poly, int p_indx);
+      __host__   CollisionData CheckCollisions2(glm::vec3 x_0, glm::vec3 x_1, std::vector<Polygon>* poly, int p_indx);
       __host__   void CheckCollisions(std::vector<Polygon>* poly, float *curr, float *last, int size);
 };
 
