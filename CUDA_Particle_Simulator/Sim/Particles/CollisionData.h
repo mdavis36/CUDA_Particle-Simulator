@@ -8,9 +8,9 @@
 class CollisionData {
 public:
 	CollisionData(); 
-	CollisionData(glm::vec3 _I, Polygon _p, float _r_I) : I(_I), p(_p), r_I(_r_I) {};
+	CollisionData(glm::vec3 _I, glm::vec3 _n, float _r_I) : I(_I), n(_n), r_I(_r_I) {};
 	glm::vec3 I;
-	Polygon p;
+	glm::vec3 n;
 	float r_I;
 };
 

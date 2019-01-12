@@ -167,7 +167,7 @@ namespace ParticleHandler
 				std::cout << "cd test\n";
 				float t_I = dt * cd.r_I;
 				glm::vec3 v_I = p.v + (p.f / p.m)*t_I;
-				glm::vec3 v_R = v_I - 2*(glm::dot(v_I, cd.p.n))*cd.p.n;
+				glm::vec3 v_R = v_I - 2*(glm::dot(v_I, cd.n))*cd.n;
 
 				Particle p_RI = p;
 				p_RI.x = cd.I;
@@ -254,7 +254,7 @@ namespace ParticleHandler
             if (s >= 0 && t >= 0 && s+t <= 1) {
                         //std::cout << "COLLISION!!!! Particle " << p_indx << " -> Polygon " << j << std::endl;
 			  	std::cout << "Collision!!!" << std::endl;
-				result = CollisionData(I, poly, r_I); 
+				result = CollisionData(I, poly.n, r_I); 
 				return true;
 		}
 		
