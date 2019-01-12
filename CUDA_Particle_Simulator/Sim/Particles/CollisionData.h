@@ -2,7 +2,6 @@
 #define COLLISIONDATA
 
 #include "glm/glm.hpp"
-#include "../Geometry/Polygon.h"
 #include <cuda_runtime.h>
 
 class CollisionData {
