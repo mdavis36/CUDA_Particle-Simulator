@@ -21,9 +21,9 @@ CollisionData OctTree::CheckCollisionOT(std::vector<OctTree*> node_list, glm::ve
 
 	for (Polygon p : polygons)
 	{
-		if (true)//if ( p.insection(x_0, x_1, &res) )
+		if (p.checkPolygonIntersection(x_0, x_1, res))
 		{
-			if (res.r_I != -1 && ( res.r_I < result.r_I || result.r_I == -1))
+			if ( res.r_I < result.r_I || result.r_I == -1)
 				result = res;
 		}
 	}

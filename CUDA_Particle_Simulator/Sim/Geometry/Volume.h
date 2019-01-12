@@ -27,6 +27,11 @@ public:
       bool containsPolygon(const Polygon p);
       int countContainedVertices(const Polygon p);
       bool intersectPolygon(const Polygon p);
+
+
+
+	bool GetIntersect( float d1, float d2, glm::vec3 x_0, glm::vec3 x_1, glm::vec3 hit );
+	bool InBox( glm::vec3 hit, int axis );
 	bool lineNodeIntersection(glm::vec3 x_0, glm::vec3 x_1);
 };
 

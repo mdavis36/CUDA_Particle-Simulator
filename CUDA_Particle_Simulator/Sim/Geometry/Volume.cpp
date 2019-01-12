@@ -69,6 +69,25 @@ bool Volume::intersectPolygon(const Polygon p)
       return (c == 1 || c == 2);
 }
 
+
+// http://www.3dkingdoms.com/weekly/weekly.php?a=3
+
+bool Volume::GetIntersect( float d1, float d2, glm::vec3 x_0, glm::vec3 x_1, glm::vec3 hit )
+{
+	if ( d1 * d2 >= 0.0f ) return false;
+	if ( d1 == d2 ) return false;
+	hit = x_0 + (x_1 - x_0) * (-d1 / (d2-d1));
+	return true;
+}
+
+bool Volume::InBox( glm::vec3 hit, int axis )
+{
+	if ( axis == 1 && hit.z > BBL.z && hit.z < TTR.z && hit.y > BBL.y && hit.y < TTR.y ) return true;
+	if ( axis == 2 && hit.z > BBL.z && hit.z < TTR.z && hit.x > BBL.x && hit.x < TTR.x ) return true;
+	if ( axis == 3 && hit.x > BBL.x && hit.x < TTR.x && hit.y > BBL.y && hit.y < TTR.y ) return true;
+	return false;
+}
+
 bool Volume::lineNodeIntersection(glm::vec3 x_0, glm::vec3 x_1)
 {
 	if (x_1.x < BBL.x && x_0.x < BBL.x) return false;
@@ -77,4 +96,26 @@ bool Volume::lineNodeIntersection(glm::vec3 x_0, glm::vec3 x_1)
 	if (x_1.y > TTR.y && x_0.y > TTR.y) return false;
 	if (x_1.z < BBL.z && x_0.z < BBL.z) return false;
 	if (x_1.z > TTR.z && x_0.z > TTR.z) return false;
+	if (containsVertex(x_0))return true;
+	
+	glm::vec3 hit;
+
+	if ( GetIntersect( x_0.x - BBL.x, x_1.x - TTR.x, x_0, x_1, hit ) && InBox( hit, 1 ) ||
+	     GetIntersect( x_0.y - BBL.y, x_1.y - TTR.y, x_0, x_1, hit ) && InBox( hit, 2 ) ||
+	     GetIntersect( x_0.z - BBL.z, x_1.z - TTR.z, x_0, x_1, hit ) && InBox( hit, 3 ) ||
+	     GetIntersect( x_0.x - BBL.x, x_1.x - TTR.x, x_0, x_1, hit ) && InBox( hit, 1 ) ||
+	     GetIntersect( x_0.y - BBL.y, x_1.y - TTR.y, x_0, x_1, hit ) && InBox( hit, 2 ) ||
+	     GetIntersect( x_0.z - BBL.z, x_1.z - TTR.z, x_0, x_1, hit ) && InBox( hit, 3 ) ) return true;
+	return false;
 }
+
+
+
+
+
+
+
+
+
+
+
