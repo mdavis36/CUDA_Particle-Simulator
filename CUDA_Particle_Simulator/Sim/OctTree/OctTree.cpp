@@ -6,22 +6,46 @@ OctTree::OctTree(int i) : indx(i) {}
 
 OctTree::~OctTree() {}
 
+void OctTree::print()
+{
+	std::cout << "--------------NODE-------------" << std::endl;
+	std::cout << "Index    : " << indx << std::endl;
+	if (isLeaf)
+	{
+		std::cout << "LEAF NODE" << std::endl;
+	} else {
+		std::cout << "Children : ";
+		for (int i = 0; i < 8; i++)
+		{
+			std::cout << leafs[i] << "  ";
+		}
+		std::cout << std::endl;
+	}
+	vol.print();
+	std::cout << "Polygons : " << polygons.size() << std::endl;
+
+	std::cout << "-------------------------------" << std::endl;
+
+}
+
+
 CollisionData OctTree::CheckCollisionOT(std::vector<OctTree*> node_list, glm::vec3 x_0, glm::vec3 x_1)
 {
 	CollisionData result, res;
-	for (int i = 0; i < 8; i++)
-	{
-		if (vol.lineNodeIntersection(x_0, x_1))
+	if (!isLeaf){
+		for (int i = 0; i < 8; i++)
 		{
-			res = node_list[leafs[i]]->CheckCollisionOT(node_list, x_0, x_1);
-			if (res.r_I != -1 && ( res.r_I < result.r_I || result.r_I == -1))
-				result = res;
+			if (vol.lineNodeIntersection(x_0, x_1))
+			{
+				res = node_list[leafs[i]]->CheckCollisionOT(node_list, x_0, x_1);
+				if (res.r_I != -1 && ( res.r_I < result.r_I || result.r_I == -1))
+					result = res;
+			}
 		}
 	}
-
-	for (Polygon p : polygons)
+	for (int i = 0; i < polygons.size(); i++)
 	{
-		if (p.checkPolygonIntersection(x_0, x_1, res))
+		if (polygons[i].checkPolygonIntersection(x_0, x_1, res))
 		{
 			if ( res.r_I < result.r_I || result.r_I == -1)
 				result = res;
@@ -37,7 +61,7 @@ void OctTree::generateOctTree(std::vector<Polygon> _polygons, Volume _vol, int p
       vol = _vol;
       //std::cout << "Node INDX : " << indx << " : "; vol.print();
 
-      if (_polygons.size() <= 50 || vol.sz < 0.025)
+      if (_polygons.size() <= 30 || vol.sz < 0.025)
       {
 
             isLeaf = true;

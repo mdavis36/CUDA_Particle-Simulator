@@ -91,7 +91,7 @@ ParticleSystem::ParticleSystem(int n, int form)
       {
             //Ramdomly generate positions of particles.
             int radius = 2;
-            glm::vec3 center = vec3(0,6,2);
+            glm::vec3 center = vec3(0,6,4);
             glm::vec3 ranPos;
             glm::vec3 dist;
             for (int i = 0; i < _num_particles; i++)

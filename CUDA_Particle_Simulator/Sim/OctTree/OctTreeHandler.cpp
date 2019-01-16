@@ -10,11 +10,11 @@ OctTreeHandler::~OctTreeHandler() {}
 void OctTreeHandler::buildTree(std::vector<Polygon> p, Volume vol)
 {
       std::cout << "Building Tree" << std::endl;
-      OctTree root(0);
-      root.vol = vol;
+      OctTree* root = new OctTree(0);
+      root->vol = vol;
 
-      node_list.push_back(&root);
-      root.generateOctTree(p, vol, 0, 0, node_list);
+      node_list.push_back(root);
+      root->generateOctTree(p, vol, 0, 0, node_list);
 
       std::cout << "Number Nodes : " << node_list.size() << std::endl;
 }

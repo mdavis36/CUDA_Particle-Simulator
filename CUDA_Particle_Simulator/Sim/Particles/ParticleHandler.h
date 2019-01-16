@@ -6,6 +6,7 @@
 #include "../Geometry/Polygon.h"
 #include <cuda_runtime.h>
 #include "CollisionData.h"
+#include "../OctTree/OctTree.h"
 
 namespace ParticleHandler {
 
@@ -28,7 +29,7 @@ namespace ParticleHandler {
       __host__   void RK4(ParticleSystem *p, std::vector<Polygon>* poly, float dt);
       __host__   void RK4eval(float *k_0, float *k_1, std::vector<Polygon>* poly, float dt, int size);
       __host__   void cuRK4(ParticleSystem *p, float dt);
-      __host__   void RK4_2(ParticleSystem *ps, std::vector<Polygon>* poly, float dt);
+      __host__   void RK4_2(ParticleSystem *ps, std::vector<Polygon>* poly, std::vector<OctTree*> node_list, float dt);
 
       __host__   void CopyVector(float *out, float *in, int size);
       __host__ __device__ void CopyVector(float *out, float *in);

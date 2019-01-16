@@ -107,8 +107,8 @@ void Simulation::update()
 	{
 		if (cfg.Update_Protocol == "") std::cout << "Error : No Update Protocol\n";
 		if (cfg.Update_Protocol == "CPU_EULER") EulerStep(_p_sys, &_s_obj->_polygons, dt);
-		if (cfg.Update_Protocol == "CPU_RK4")   RK4(_p_sys, &_s_obj->_polygons, dt);
-		if (cfg.Update_Protocol == "CPU_RK4_2")   RK4_2(_p_sys, &_s_obj->_polygons, dt);
+		if (cfg.Update_Protocol == "CPU_RK4")   RK4(_p_sys, &_s_obj->_polygons,  dt);
+		if (cfg.Update_Protocol == "CPU_RK4_2")   RK4_2(_p_sys, &_s_obj->_polygons, OTH->node_list, dt);
 		if (cfg.Update_Protocol == "GPU_RK4") cuRK4(_p_sys, dt);
 	}
 }

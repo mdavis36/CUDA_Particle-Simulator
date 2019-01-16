@@ -142,7 +142,7 @@ namespace ParticleHandler
 	
 	}
 
-      void RK4_2(ParticleSystem* ps, std::vector<Polygon>* poly, float dt)
+      void RK4_2(ParticleSystem* ps, std::vector<Polygon>* poly, std::vector<OctTree*> node_list, float dt)
       {
             float k_0[6];
             float k_2[6];
@@ -160,11 +160,11 @@ namespace ParticleHandler
 			Particle p_1 = p;
 			RK4_2_eval(&p, &p_1, dt);
 
-			CollisionData cd = CheckCollisions2(p.x, p_1.x, poly, indx);
+			//CollisionData cd = CheckCollisions2(p.x, p_1.x, poly, indx);
+			CollisionData cd = node_list[0]->CheckCollisionOT( node_list, p.x, p_1.x);
 			
 			if (cd.r_I != -1)
 			{
-				std::cout << "cd test\n";
 				float t_I = dt * cd.r_I;
 				glm::vec3 v_I = p.v + (p.f / p.m)*t_I;
 				glm::vec3 v_R = v_I - 2*(glm::dot(v_I, cd.n))*cd.n;

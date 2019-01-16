@@ -33,6 +33,7 @@ public:
 
       std::vector<OctTree*> node_list;
       std::vector<glm::vec3> vertices;
+	    std::vector<Polygon*> poly_list;
 
       void buildTree(std::vector<Polygon> p, Volume vol);
       void toggleRender();

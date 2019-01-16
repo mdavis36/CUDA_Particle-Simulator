@@ -21,12 +21,16 @@ public:
       int leafs[8];
       int indx;
 
+	int poly_Start;
+	int poly_count;
+
+
       OctTree(int i);
       ~OctTree();
 
       void generateOctTree(std::vector<Polygon> polygons, Volume _vol, int p, int level, std::vector<OctTree*>& node_list);
-	
-	CollisionData CheckCollisionOT(std::vector<OctTree*> node_list, glm::vec3 x_0, glm::vec3 x_1);
+	    void print();
+	    CollisionData CheckCollisionOT(std::vector<OctTree*> node_list, glm::vec3 x_0, glm::vec3 x_1);
 };
 
 #endif

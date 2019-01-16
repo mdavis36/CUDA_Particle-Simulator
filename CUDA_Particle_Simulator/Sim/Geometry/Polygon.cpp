@@ -1,6 +1,10 @@
 #include "Polygon.h"
 
-Polygon::Polygon(){};
+Polygon::Polygon(){
+	v[0] = glm::vec3(0,0,0);
+	v[1] = v[0];
+	v[2] = v[0];
+};
 
 Polygon::Polygon(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3)
 {
@@ -50,12 +54,11 @@ bool Polygon::checkPolygonIntersection(glm::vec3 x_0, glm::vec3 x_1, CollisionDa
 
     if (s >= 0 && t >= 0 && s+t <= 1) {
 		    //std::cout << "collision!!!! particle " << p_indx << " -> polygon " << j << std::endl;
-		    std::cout << "collision!!!" << std::endl;
-		    result = CollisionData(i, n, r_i); 
+		    result = CollisionData(i, n, r_i);
 		    return true;
     }
-    
-    return false; 
+
+    return false;
 
 }
 
